@@ -1,0 +1,5 @@
+[project]
+name = "research-recommender-shared"
+version = "0.1.0"
+description = "Shared constants and types for Research Paper Recommendation System"
+requires-python = ">=3.11"

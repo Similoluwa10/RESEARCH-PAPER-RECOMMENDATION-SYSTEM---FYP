@@ -1,0 +1,10 @@
+# NLP Package Dependencies - Semantic Search System
+
+# Semantic Embeddings (core)
+sentence-transformers>=2.2.2
+
+# Text Processing
+nltk>=3.8.1
+
+# Utilities
+numpy>=1.26.3
