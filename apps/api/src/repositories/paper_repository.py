@@ -95,6 +95,7 @@ class PaperRepository(BaseRepository[Paper]):
         )
         return list(result.scalars().all())
     
+    #this is the function which implements sematic search
     async def find_similar(
         self,
         paper_id: UUID,

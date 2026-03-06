@@ -11,8 +11,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'apps', 'api'))
 
 from sqlalchemy import text
-from src.models.base import engine, Base
-from src.models import Paper, User, Interaction, Embedding
+from apps.api.src.models.base import engine, Base
+from apps.api.src.models import Paper, User, Interaction, Embedding
 
 
 async def init_db():

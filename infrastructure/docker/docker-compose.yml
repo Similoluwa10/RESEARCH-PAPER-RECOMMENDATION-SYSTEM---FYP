@@ -1,30 +1,30 @@
 version: '3.8'
 
 services:
-  db:
+  research_recommender_db:
     image: pgvector/pgvector:pg16
     container_name: research_recommender_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: research_recommender
+      POSTGRES_DB: research_recommender_db
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - research_recommender_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  api:
+  research_recommender_api:
     build:
       context: ../../apps/api
       dockerfile: ../../infrastructure/docker/Dockerfile.api
     container_name: research_recommender_api
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/research_recommender
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@research_recommender_db:5432/research_recommender_db
       - APP_ENV=development
       - DEBUG=true
     ports:
@@ -34,11 +34,11 @@ services:
       - ../../packages/nlp:/packages/nlp
       - ../../packages/shared:/packages/shared
     depends_on:
-      db:
+      research_recommender_db:
         condition: service_healthy
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 
-  web:
+  research_recommender_web:
     build:
       context: ../../apps/web
       dockerfile: ../../infrastructure/docker/Dockerfile.web
@@ -52,8 +52,8 @@ services:
       - /app/node_modules
       - /app/.next
     depends_on:
-      - api
+      - research_recommender_api
     command: npm run dev
 
 volumes:
-  postgres_data:
+  research_recommender_data:

@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     
     # Database
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/research_recommender"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/research_recommender_db"
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
     

@@ -1,0 +1,90 @@
+# Search Queries Configuration
+#
+# Search queries for fetching papers by SE research domain.
+# Used by the fetch_papers.py script for initial database population.
+#
+# Domains are aligned with packages/shared/constants/domains.py
+
+software_testing:
+  - "software testing"
+  - "unit testing"
+  - "test case generation"
+  - "test automation"
+  - "regression testing"
+  - "mutation testing"
+  - "metamorphic testing"
+  - "integration testing"
+
+software_maintenance:
+  - "software maintenance"
+  - "code refactoring"
+  - "technical debt"
+  - "code smell detection"
+  - "legacy system modernization"
+
+software_security:
+  - "software security"
+  - "vulnerability detection"
+  - "secure coding"
+  - "malware detection"
+  - "security testing"
+
+machine_learning_se:
+  - "machine learning software engineering"
+  - "deep learning code"
+  - "neural network code generation"
+  - "AI software development"
+  - "code embeddings"
+  - "bug prediction"
+
+code_review:
+  - "code review"
+  - "peer review software"
+  - "code inspection"
+  - "pull request analysis"
+  - "automated code review"
+
+requirements_engineering:
+  - "requirements engineering"
+  - "requirements elicitation"
+  - "requirements analysis"
+  - "user story"
+  - "requirements specification"
+  - "requirements traceability"
+
+software_architecture:
+  - "software architecture"
+  - "architectural patterns"
+  - "microservices architecture"
+  - "design patterns software"
+  - "system architecture"
+
+devops:
+  - "devops"
+  - "continuous integration"
+  - "continuous deployment"
+  - "agile software development"
+  - "scrum methodology"
+  - "CI/CD pipeline"
+
+program_analysis:
+  - "program analysis"
+  - "static code analysis"
+  - "dynamic analysis"
+  - "symbolic execution"
+  - "program slicing"
+  - "data flow analysis"
+
+software_evolution:
+  - "software evolution"
+  - "software versioning"
+  - "software migration"
+  - "software history"
+  - "code evolution"
+
+# General SE topics for broad coverage
+empirical_se:
+  - "empirical software engineering"
+  - "mining software repositories"
+  - "software metrics"
+  - "software quality"

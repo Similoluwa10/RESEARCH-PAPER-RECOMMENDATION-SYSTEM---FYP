@@ -96,6 +96,7 @@ class ExplanationService:
             "overall": 0.0,
         }
     
+    #this function may not be required
     def get_attention_weights(
         self,
         query: str,
