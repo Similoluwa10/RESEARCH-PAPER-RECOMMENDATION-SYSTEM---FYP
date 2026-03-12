@@ -2,13 +2,17 @@ import enum
 
 
 class PaperCategory(str, enum.Enum):
-    """SE research paper categories"""
+    """SE research paper categories — aligned with PaperCategorizer"""
     SOFTWARE_TESTING = "Software Testing"
-    AGILE_DEVOPS = "Agile/DevOps"
+    SOFTWARE_MAINTENANCE = "Software Maintenance"
+    SOFTWARE_SECURITY = "Software Security"
+    MACHINE_LEARNING_SE = "Machine Learning for SE"
+    CODE_REVIEW = "Code Review"
     REQUIREMENTS_ENGINEERING = "Requirements Engineering"
     SOFTWARE_ARCHITECTURE = "Software Architecture"
+    DEVOPS_CICD = "DevOps & CI/CD"
     PROGRAM_ANALYSIS = "Program Analysis"
-    CODE_QUALITY = "Code Quality"
+    SOFTWARE_EVOLUTION = "Software Evolution"
     OTHER = "Other"
 
 
@@ -17,6 +21,8 @@ class PaperSource(str, enum.Enum):
     ARXIV = "arXiv"
     DBLP = "DBLP"
     SEMANTIC_SCHOLAR = "Semantic Scholar"
+    DOAJ = "DOAJ"
+    ZENODO = "Zenodo"
     MANUAL = "Manual"
     OTHER = "Other"
 

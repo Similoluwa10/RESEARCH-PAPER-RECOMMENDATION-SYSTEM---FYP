@@ -7,6 +7,7 @@ DBLP focuses on peer-reviewed CS publications with high-quality metadata.
 API Documentation: https://dblp.org/faq/How+to+use+the+dblp+search+API.html
 """
 
+import time
 from typing import List, Optional
 
 import requests
@@ -23,6 +24,9 @@ class DBLPClient(BaseAPIClient):
     """
     
     BASE_URL = "https://dblp.org/search/publ/api"
+    MAX_RETRIES = 3
+    RETRY_DELAY = 5  # seconds between retries
+    REQUEST_DELAY = 1.0  # seconds between requests
     
     def __init__(self, timeout: int = 30):
         """
@@ -32,6 +36,7 @@ class DBLPClient(BaseAPIClient):
             timeout: Request timeout in seconds
         """
         super().__init__(timeout)
+        self._last_request_time: float = 0
     
     @property
     def source_name(self) -> str:
@@ -57,11 +62,32 @@ class DBLPClient(BaseAPIClient):
         }
         
         try:
-            response = requests.get(
-                self.BASE_URL,
-                params=params,
-                timeout=self.timeout,
-            )
+            # Rate limiting
+            elapsed = time.time() - self._last_request_time
+            if elapsed < self.REQUEST_DELAY:
+                time.sleep(self.REQUEST_DELAY - elapsed)
+            
+            response = None
+            for attempt in range(self.MAX_RETRIES):
+                self._last_request_time = time.time()
+                response = requests.get(
+                    self.BASE_URL,
+                    params=params,
+                    timeout=self.timeout,
+                )
+                
+                if response.status_code in (500, 502, 503):
+                    if attempt < self.MAX_RETRIES - 1:
+                        wait = self.RETRY_DELAY * (attempt + 1)
+                        self.logger.warning(
+                            f"DBLP returned {response.status_code}, retrying in {wait}s "
+                            f"(attempt {attempt + 1}/{self.MAX_RETRIES})"
+                        )
+                        time.sleep(wait)
+                        continue
+                
+                break
+            
             response.raise_for_status()
             
             data = response.json()

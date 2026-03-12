@@ -23,6 +23,8 @@ SAMPLE_PAPERS = [
         "year": 2024,
         "venue": "ICSE",
         "keywords": ["deep learning", "code clone", "neural network", "software maintenance"],
+        "category": "Machine Learning for SE",
+        "source": "Manual",
     },
     {
         "title": "Automated Bug Detection Using Graph Neural Networks",
@@ -31,6 +33,8 @@ SAMPLE_PAPERS = [
         "year": 2024,
         "venue": "FSE",
         "keywords": ["bug detection", "graph neural network", "static analysis", "machine learning"],
+        "category": "Machine Learning for SE",
+        "source": "Manual",
     },
     {
         "title": "An Empirical Study of Code Review Practices in Open Source",
@@ -39,6 +43,8 @@ SAMPLE_PAPERS = [
         "year": 2023,
         "venue": "MSR",
         "keywords": ["code review", "open source", "empirical study", "software quality"],
+        "category": "Code Review",
+        "source": "Manual",
     },
     {
         "title": "Transformer-Based Vulnerability Detection in C/C++ Code",
@@ -47,6 +53,8 @@ SAMPLE_PAPERS = [
         "year": 2024,
         "venue": "ISSTA",
         "keywords": ["vulnerability detection", "transformer", "security", "static analysis"],
+        "category": "Software Security",
+        "source": "Manual",
     },
     {
         "title": "Refactoring Recommendation Using Code Embeddings",
@@ -55,6 +63,8 @@ SAMPLE_PAPERS = [
         "year": 2023,
         "venue": "ASE",
         "keywords": ["refactoring", "code embeddings", "code smell", "software maintenance"],
+        "category": "Software Maintenance",
+        "source": "Manual",
     },
 ]
 
