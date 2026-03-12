@@ -9,7 +9,7 @@ import uuid
 from typing import TYPE_CHECKING, Optional
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -45,11 +45,23 @@ class Embedding(Base):
         nullable=False,
         default=settings.EMBEDDING_MODEL_NAME,
     )
+    model_version: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="1.0",
+    )
     
     # Vector embedding (dimension from settings)
     vector: Mapped[list] = mapped_column(
         Vector(settings.EMBEDDING_DIMENSION),
         nullable=False,
+    )
+    
+    # Quality metrics
+    embedding_quality_score: Mapped[Optional[float]] = mapped_column(
+        Float,
+        nullable=True,
+        default=None,
     )
     
     # Relationships
@@ -59,4 +71,4 @@ class Embedding(Base):
     )
     
     def __repr__(self) -> str:
-        return f"<Embedding(id={self.id}, paper_id={self.paper_id})>"
+        return f"<Embedding(paper_id={self.paper_id}, model='{self.model_name}')>"

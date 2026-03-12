@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'ap
 
 from src.config import settings
 from src.models.base import Base
-from src.models import Paper, User, Interaction, Embedding
+from src.models import Paper, User, Interaction, Embedding, Explanation, Recommendation
 
 # Alembic Config object
 config = context.config

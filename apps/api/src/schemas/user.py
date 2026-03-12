@@ -5,9 +5,12 @@ Pydantic models for user request/response validation.
 """
 
 from datetime import datetime
+from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field
+
+from src.core.enums import UserRole
 
 
 class UserBase(BaseModel):
@@ -23,10 +26,20 @@ class UserCreate(UserBase):
     password: str = Field(..., min_length=8, max_length=100)
 
 
+class UserUpdate(BaseModel):
+    """Schema for updating a user."""
+    
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    preferred_categories: Optional[List[str]] = None
+
+
 class UserResponse(UserBase):
     """Schema for user response."""
     
     id: UUID
+    role: UserRole
+    is_active: bool
+    preferred_categories: Optional[List[str]] = None
     created_at: datetime
     
     class Config:

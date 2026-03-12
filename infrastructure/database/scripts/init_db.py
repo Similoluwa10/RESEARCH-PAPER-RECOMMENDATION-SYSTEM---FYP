@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'ap
 
 from sqlalchemy import text
 from apps.api.src.models.base import engine, Base
-from apps.api.src.models import Paper, User, Interaction, Embedding
+from apps.api.src.models import Paper, User, Interaction, Embedding, Explanation, Recommendation
 
 
 async def init_db():

@@ -6,9 +6,19 @@ potential collaborative filtering in future iterations.
 """
 
 import uuid
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,15 +35,20 @@ class Interaction(Base):
     
     Records user interactions with papers for tracking
     engagement and building preference profiles.
-    
-    Interaction types:
-        - view: User viewed paper details
-        - bookmark: User saved paper for later
-        - download: User downloaded the paper
-        - cite: User cited the paper
     """
     
     __tablename__ = "interactions"
+    
+    __table_args__ = (
+        UniqueConstraint(
+            'user_id', 'paper_id', 'interaction_type',
+            name='uq_user_paper_interaction',
+        ),
+        CheckConstraint(
+            'rating IS NULL OR (rating >= 1 AND rating <= 5)',
+            name='ck_interaction_rating_range',
+        ),
+    )
     
     # Foreign keys
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -54,6 +69,24 @@ class Interaction(Base):
         String(50),
         nullable=False,
         index=True,
+    )
+    
+    # Engagement weight
+    weight: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        default=1.0,
+    )
+    
+    # User rating (explicit feedback, 1-5)
+    rating: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
+    # Interaction timestamp
+    interaction_timestamp: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        index=True,
+        server_default=func.now(),
     )
     
     # Relationships
