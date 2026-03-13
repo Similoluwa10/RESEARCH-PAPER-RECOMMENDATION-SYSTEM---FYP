@@ -34,13 +34,13 @@ class ArxivClient(BaseAPIClient):
         "cs.LG",  # Machine Learning (for ML4SE papers)
     ]
     
-    def __init__(self, timeout: int = 30, delay: float = 3.0):
+    def __init__(self, timeout: int = 30, delay: float = 5.0):
         """
         Initialize arXiv client.
         
         Args:
             timeout: Request timeout in seconds
-            delay: Delay between requests (arXiv requires 3+ seconds)
+            delay: Delay between requests (arXiv requires 3+ seconds, using 5s for safety)
         """
         super().__init__(timeout)
         self.delay = delay

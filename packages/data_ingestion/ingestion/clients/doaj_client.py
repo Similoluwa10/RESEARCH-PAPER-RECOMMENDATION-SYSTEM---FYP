@@ -23,7 +23,11 @@ class DOAJClient(BaseAPIClient):
     open access journals. No rate limiting, unlimited requests.
     """
     
-    BASE_URL = "https://doaj.org/api/search/articles"
+    API_ENDPOINTS = [
+        ("https://doaj.org/api/search/articles", True),
+        ("https://doaj.org/api/search/articles", False),
+        ("https://doaj.org/api/v1/search/articles", False),
+    ]
     
     # Rate limiting: DOAJ has NO strict rate limits (very generous!)
     REQUEST_DELAY = 0.3  # seconds between requests (optional, very fast)
@@ -39,6 +43,7 @@ class DOAJClient(BaseAPIClient):
         """
         super().__init__(timeout)
         self._last_request_time: float = 0
+        self._endpoint_index: int = 0
     
     @property
     def source_name(self) -> str:
@@ -46,7 +51,7 @@ class DOAJClient(BaseAPIClient):
     
     def search(self, query: str, max_results: int = 100) -> List[PaperData]:
         """
-        Search DOAJ for papers.
+        Search DOAJ for papers with Computer Science filtering.
         
         Args:
             query: Search query (e.g., "software testing")
@@ -58,18 +63,26 @@ class DOAJClient(BaseAPIClient):
         self.logger.info(f"Searching DOAJ for: '{query}'")
         
         papers: List[PaperData] = []
-        page = 0
-        page_size = 100  # DOAJ returns max 100 per page
+        page = 1
+        page_size = 20  # Reduced from 100 for reliability
         
         try:
             while len(papers) < max_results:
-                # DOAJ uses offset-based pagination
-                offset = page * page_size
+                # Build DOAJ query with Software Engineering specific filtering
+                # Query in 'q' parameter, not in URL path
+                # Focus on Software Engineering, Testing, Development, Quality Assurance
+                doaj_query = (
+                    f'(title:("{query}") OR abstract:("{query}") OR keywords:("{query}")) '
+                    f'AND (subject:"Software Engineering" OR subject:"Software Testing" OR '
+                    f'subject:"Software Development" OR subject:"Software Quality" OR '
+                    f'keywords:("software engineering" OR "software testing" OR "test case" OR '
+                    f'"quality assurance" OR "software development" OR "bug detection" OR '
+                    f'"code review" OR "requirements engineering" OR "software maintenance"))'
+                )
                 
-                # Note: DOAJ API expects search query in the URL path
                 params = {
-                    "page": page + 1,  # DOAJ uses 1-indexed pages
                     "pageSize": page_size,
+                    "page": page,
                 }
                 
                 self._wait_if_needed()
@@ -80,25 +93,96 @@ class DOAJClient(BaseAPIClient):
                     self._last_request_time = time.time()
                     
                     try:
-                        # Construct URL with search query in path
-                        url = f"{self.BASE_URL}/{query}"
+                        base_url, use_path_query = self.API_ENDPOINTS[self._endpoint_index]
+                        request_params = dict(params)
+                        request_url = base_url
+
+                        if use_path_query:
+                            request_url = f"{base_url}/{query}"
+                        else:
+                            request_params["q"] = doaj_query
+
                         response = requests.get(
-                            url,
-                            params=params,
+                            request_url,
+                            params=request_params,
                             timeout=self.timeout,
                         )
+
+                        if response.status_code == 404:
+                            if self._try_next_endpoint():
+                                next_url, next_is_path = self.API_ENDPOINTS[self._endpoint_index]
+                                mode = "path" if next_is_path else "q-parameter"
+                                self.logger.warning(
+                                    f"DOAJ endpoint returned 404, switching to {next_url} ({mode})"
+                                )
+                                continue
+                            self.logger.error("All DOAJ endpoint variants returned 404")
+                            return papers
+                        
+                        # Check status immediately before using response
+                        if response.status_code == 400:
+                            self.logger.error(f"Bad request: {response.text}")
+                            return papers  # Return what we have so far
+                        
+                        if response.status_code == 429:
+                            # Handle rate limiting
+                            wait = int(response.headers.get("Retry-After", 60))
+                            self.logger.warning(f"Rate limited by DOAJ, waiting {wait}s...")
+                            time.sleep(wait)
+                            continue
+                        
+                        if response.status_code >= 500:
+                            # Handle server errors with retry
+                            if attempt < self.MAX_RETRIES - 1:
+                                wait = self.RETRY_DELAY * (attempt + 1)
+                                self.logger.warning(
+                                    f"DOAJ server error ({response.status_code}), "
+                                    f"retrying in {wait}s..."
+                                )
+                                time.sleep(wait)
+                                continue
+                        
                         response.raise_for_status()
-                        break
+                        break  # Success!
+                        
+                    except requests.exceptions.Timeout:
+                        if attempt < self.MAX_RETRIES - 1:
+                            wait = self.RETRY_DELAY * (attempt + 1)
+                            self.logger.warning(
+                                f"DOAJ request timeout (attempt {attempt + 1}/{self.MAX_RETRIES}), "
+                                f"retrying in {wait}s..."
+                            )
+                            time.sleep(wait)
+                        else:
+                            self.logger.error("DOAJ request timeout - max retries exceeded")
+                            return papers  # Return what we have so far
+                            
+                    except requests.exceptions.ConnectionError:
+                        if attempt < self.MAX_RETRIES - 1:
+                            wait = self.RETRY_DELAY * (attempt + 1)
+                            self.logger.warning(
+                                f"Connection error (attempt {attempt + 1}/{self.MAX_RETRIES}), "
+                                f"retrying in {wait}s..."
+                            )
+                            time.sleep(wait)
+                        else:
+                            self.logger.error("Connection error - max retries exceeded")
+                            return papers  # Return what we have so far
+                            
                     except requests.exceptions.RequestException as e:
                         if attempt < self.MAX_RETRIES - 1:
                             wait = self.RETRY_DELAY * (attempt + 1)
                             self.logger.warning(
                                 f"DOAJ request failed (attempt {attempt + 1}/{self.MAX_RETRIES}), "
-                                f"retrying in {wait}s..."
+                                f"retrying in {wait}s... Error: {e}"
                             )
                             time.sleep(wait)
                         else:
-                            raise
+                            self.logger.error(f"DOAJ request failed after {self.MAX_RETRIES} attempts")
+                            return papers  # Return what we have so far
+                
+                if response is None:
+                    break
                 
                 data = response.json()
                 results = data.get("results", [])
@@ -110,10 +194,18 @@ class DOAJClient(BaseAPIClient):
                 # Parse papers from this page
                 for result in results:
                     paper = self._parse_result(result)
-                    if paper and self.validate_paper(paper):
+                    if (
+                        paper
+                        and self.validate_paper(paper)
+                        and self._is_software_engineering_relevant(paper, query)
+                    ):
                         papers.append(paper)
                         if len(papers) >= max_results:
                             break
+                
+                # Stop if we got fewer results than requested (last page)
+                if len(results) < page_size:
+                    break
                 
                 page += 1
             
@@ -121,12 +213,46 @@ class DOAJClient(BaseAPIClient):
             self.logger.info(f"Found {len(valid_papers)} valid papers from DOAJ")
             return valid_papers
             
-        except requests.exceptions.RequestException as e:
-            self.logger.error(f"Error searching DOAJ: {e}")
-            return []
         except Exception as e:
-            self.logger.error(f"Unexpected error parsing DOAJ response: {e}")
-            return []
+            self.logger.error(f"Unexpected error searching DOAJ: {e}")
+            return papers  # Return what we have so far
+
+    def _try_next_endpoint(self) -> bool:
+        """Try the next known DOAJ endpoint variant."""
+        if self._endpoint_index < len(self.API_ENDPOINTS) - 1:
+            self._endpoint_index += 1
+            return True
+        return False
+
+    def _is_software_engineering_relevant(self, paper: PaperData, query: str) -> bool:
+        """Enforce software engineering relevance even when endpoint filtering is limited."""
+        se_terms = [
+            "software engineering",
+            "software testing",
+            "unit testing",
+            "integration testing",
+            "test case",
+            "quality assurance",
+            "software quality",
+            "software maintenance",
+            "requirements engineering",
+            "code review",
+            "bug",
+            "debugging",
+        ]
+
+        query_terms = [t.strip().lower() for t in query.split() if t.strip()]
+        haystack = " ".join(
+            [
+                paper.title or "",
+                paper.abstract or "",
+                paper.venue or "",
+            ]
+        ).lower()
+
+        has_se_signal = any(term in haystack for term in se_terms)
+        has_query_signal = any(term in haystack for term in query_terms)
+        return has_se_signal and has_query_signal
     
     def _wait_if_needed(self) -> None:
         """Optional rate limiting (DOAJ doesn't require it, but be respectful)."""
