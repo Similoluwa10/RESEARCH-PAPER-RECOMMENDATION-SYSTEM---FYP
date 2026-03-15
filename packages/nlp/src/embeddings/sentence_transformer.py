@@ -8,7 +8,7 @@ from typing import List, Union
 
 import numpy as np
 
-from src.embeddings.base import BaseEmbedding
+from .base import BaseEmbedding
 
 
 class SentenceTransformerEmbedding(BaseEmbedding):

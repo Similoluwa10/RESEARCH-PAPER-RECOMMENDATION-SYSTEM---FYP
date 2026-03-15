@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.models.paper import Paper
 from src.repositories.paper_repository import PaperRepository
 from src.schemas.paper import PaperCreate, PaperUpdate
+from src.services.embedding_service import EmbeddingService
 
 
 class PaperService:
@@ -26,6 +27,7 @@ class PaperService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repository = PaperRepository(db)
+        self.embedding_service = EmbeddingService()
     
     async def list_papers(
         self,
@@ -106,8 +108,16 @@ class PaperService:
         Combines title and abstract for richer representation.
         Uses packages/nlp embedding module.
         """
-        # TODO: Implement embedding generation using packages/nlp
-        # text = f"{paper.title} {paper.abstract}"
-        # embedding = embedding_service.generate(text)
-        # await self.repository.store_embedding(paper.id, embedding)
-        pass
+        text = self.embedding_service.build_paper_text(paper.title, paper.abstract)
+        embedding = self.embedding_service.encode_text(text)
+        quality_score = self.embedding_service.compute_quality_score(paper.title, paper.abstract)
+
+        await self.repository.store_embedding(
+            paper_id=paper.id,
+            vector=embedding,
+            model_name=self.embedding_service.model_name,
+            model_version="1.0",
+            embedding_quality_score=quality_score,
+        )
+
+        return embedding

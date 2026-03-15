@@ -8,7 +8,7 @@ from typing import Dict, List
 
 import numpy as np
 
-from src.explainability.feature_importance import FeatureImportance
+from .feature_importance import FeatureImportance
 
 
 class ExplanationGenerator:

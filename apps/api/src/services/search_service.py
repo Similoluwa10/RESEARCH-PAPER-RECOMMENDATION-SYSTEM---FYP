@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.paper_repository import PaperRepository
+from src.services.embedding_service import EmbeddingService
 
 
 class SearchMethod(str, Enum):
@@ -30,6 +31,7 @@ class SearchService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repository = PaperRepository(db)
+        self.embedding_service = EmbeddingService()
     
     async def search(
         self,
@@ -71,14 +73,27 @@ class SearchService:
         Uses sentence-transformers to embed query, then
         finds similar papers via pgvector cosine distance.
         """
-        # TODO: Implement using packages/nlp and pgvector
-        # 1. Generate query embedding
-        # 2. Perform vector similarity search
+        normalized_filters = filters.model_dump() if hasattr(filters, "model_dump") else filters
+        query_vector = self.embedding_service.encode_text(query)
+        matches = await self.repository.search_by_embedding(
+            embedding=query_vector,
+            top_k=top_k,
+            filters=normalized_filters,
+        )
+
+        results = [
+            {
+                "paper": item["paper"],
+                "score": item["score"],
+                "highlights": None,
+            }
+            for item in matches
+        ]
         
         return {
-            "results": [],
+            "results": results,
             "method": "semantic",
-            "total": 0,
+            "total": len(results),
             "query": query,
         }
     
@@ -128,7 +143,3 @@ class SearchService:
             "total": 0,
             "query": query,
         }
-        
-        # TODO: Implement score fusion (e.g., reciprocal rank fusion)
-        
-        return {"results": [], "method": "hybrid", "total": 0}

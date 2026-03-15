@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.paper_repository import PaperRepository
 from src.services.explanation_service import ExplanationService
+from src.services.embedding_service import EmbeddingService
 
 
 class RecommendationService:
@@ -26,6 +27,7 @@ class RecommendationService:
         self.db = db
         self.repository = PaperRepository(db)
         self.explanation_service = ExplanationService()
+        self.embedding_service = EmbeddingService()
     
     async def get_recommendations_for_text(
         self,
@@ -46,13 +48,21 @@ class RecommendationService:
         Returns:
             Recommendations with scores and optional explanations
         """
-        # TODO: Implement using packages/nlp
-        # 1. Generate embedding for input text
-        # 2. Find similar papers via vector search
-        # 3. Generate explanations if requested
+        query_vector = self.embedding_service.encode_text(text)
+        matches = await self.repository.search_by_embedding(query_vector, top_k=top_k)
+
+        recommendations = []
+        for item in matches:
+            score = float(item["score"])
+            recommendation = {
+                "paper": item["paper"],
+                "score": max(0.0, min(1.0, score)),
+                "explanation": None,
+            }
+            recommendations.append(recommendation)
         
         return {
-            "recommendations": [],
+            "recommendations": recommendations,
             "method": "semantic",
             "query": text,
         }
@@ -81,13 +91,18 @@ class RecommendationService:
         if not paper:
             return {"recommendations": [], "error": "Paper not found"}
         
-        # TODO: Implement similarity search using paper's embedding
-        # 1. Retrieve paper's embedding
-        # 2. Find similar papers via pgvector
-        # 3. Generate explanations if requested
+        matches = await self.repository.find_similar(paper_id, top_k=top_k)
+        recommendations = [
+            {
+                "paper": item["paper"],
+                "score": item["score"],
+                "explanation": None,
+            }
+            for item in matches
+        ]
         
         return {
-            "recommendations": [],
+            "recommendations": recommendations,
             "source_paper_id": str(paper_id),
             "method": "paper_similarity",
         }

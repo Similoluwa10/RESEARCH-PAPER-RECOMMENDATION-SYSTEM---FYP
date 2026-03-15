@@ -8,7 +8,7 @@ Handles all database operations for research papers.
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
-from sqlalchemy import and_, func, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.embedding import Embedding
@@ -100,41 +100,84 @@ class PaperRepository(BaseRepository[Paper]):
         self,
         paper_id: UUID,
         top_k: int = 10,
-    ) -> List[Paper]:
+    ) -> List[Dict[str, Any]]:
         """
         Find similar papers using vector similarity.
         
         Uses pgvector for efficient cosine similarity search.
         """
-        # TODO: Implement using pgvector
-        # 1. Get embedding for source paper
-        # 2. Query similar papers using cosine distance
-        return []
+        source_result = await self.db.execute(
+            select(Embedding).where(Embedding.paper_id == paper_id)
+        )
+        source_embedding = source_result.scalar_one_or_none()
+        if source_embedding is None:
+            return []
+
+        return await self.search_by_embedding(
+            embedding=source_embedding.vector,
+            top_k=top_k,
+            exclude_paper_id=paper_id,
+        )
     
     async def search_by_embedding(
         self,
         embedding: List[float],
         top_k: int = 10,
-    ) -> List[Paper]:
+        filters: Optional[Dict[str, Any]] = None,
+        exclude_paper_id: Optional[UUID] = None,
+    ) -> List[Dict[str, Any]]:
         """
         Search papers by embedding similarity.
         
         Uses pgvector's cosine distance operator (<=>).
         """
-        # TODO: Implement using pgvector
-        # query = (
-        #     select(Paper, Embedding.vector.cosine_distance(embedding).label("distance"))
-        #     .join(Embedding)
-        #     .order_by("distance")
-        #     .limit(top_k)
-        # )
-        return []
+        distance = Embedding.vector.cosine_distance(embedding)
+        similarity = (1 - distance).label("similarity")
+
+        query = (
+            select(Paper, similarity)
+            .join(Embedding, Embedding.paper_id == Paper.id)
+        )
+
+        conditions = []
+        if exclude_paper_id is not None:
+            conditions.append(Paper.id != exclude_paper_id)
+
+        if filters:
+            year_min = filters.get("year_min")
+            year_max = filters.get("year_max")
+            venues = filters.get("venues") or []
+            keywords = filters.get("keywords") or []
+
+            if year_min is not None:
+                conditions.append(Paper.year >= year_min)
+            if year_max is not None:
+                conditions.append(Paper.year <= year_max)
+            if venues:
+                conditions.append(or_(*[Paper.venue.ilike(f"%{venue}%") for venue in venues]))
+            if keywords:
+                conditions.append(Paper.keywords.overlap(keywords))
+
+        if conditions:
+            query = query.where(and_(*conditions))
+
+        query = query.order_by(distance).limit(top_k)
+        rows = (await self.db.execute(query)).all()
+
+        results: List[Dict[str, Any]] = []
+        for paper, score in rows:
+            bounded_score = max(0.0, min(1.0, float(score)))
+            results.append({"paper": paper, "score": bounded_score})
+
+        return results
     
     async def store_embedding(
         self,
         paper_id: UUID,
         vector: List[float],
         model_name: str,
+        model_version: str = "1.0",
+        embedding_quality_score: Optional[float] = None,
     ) -> Embedding:
         """
         Store or update paper embedding.
@@ -156,6 +199,8 @@ class PaperRepository(BaseRepository[Paper]):
         if existing:
             existing.vector = vector
             existing.model_name = model_name
+            existing.model_version = model_version
+            existing.embedding_quality_score = embedding_quality_score
             await self.db.commit()
             return existing
         
@@ -164,6 +209,8 @@ class PaperRepository(BaseRepository[Paper]):
             paper_id=paper_id,
             vector=vector,
             model_name=model_name,
+            model_version=model_version,
+            embedding_quality_score=embedding_quality_score,
         )
         self.db.add(embedding)
         await self.db.commit()
