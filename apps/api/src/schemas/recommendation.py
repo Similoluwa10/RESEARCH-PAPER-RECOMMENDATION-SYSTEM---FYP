@@ -24,8 +24,13 @@ class RecommendationExplanation(BaseModel):
     """Explanation for a recommendation."""
     
     summary: str
-    key_terms: List[str]
-    similarity_breakdown: SimilarityBreakdown
+    # key_terms: List[str]
+    # similarity_breakdown: SimilarityBreakdown
+
+    @classmethod
+    def from_model(cls, result: dict) -> "RecommendationExplanation":
+        """Build explanation model from service-layer payload."""
+        return cls(summary=result.get("summary", ""))
 
 
 class RecommendationWithExplanation(BaseModel):
@@ -66,3 +71,31 @@ class RecommendationResponse(BaseModel):
     
     recommendations: List[RecommendationWithExplanation]
     total: int
+
+    @classmethod
+    def from_model(cls, result: dict) -> "RecommendationResponse":
+        """Build response model from service-layer result payload."""
+        recommendations = result.get("recommendations", [])
+        return RecommendationResponse(
+            recommendations=recommendations,
+            total=len(recommendations),
+        )
+        
+
+class PersonalizedRecommendationResponse(BaseModel):
+    """Response schema for recommendations."""
+    
+    recommendations: List[RecommendationWithExplanation]
+    total: int
+    user_id: str
+
+    @classmethod
+    def from_model(cls, result: dict) -> "PersonalizedRecommendationResponse":
+        """Build response model from service-layer result payload."""
+        recommendations = result.get("recommendations", [])
+        user_id = result.get("user_id", "no user found")
+        return PersonalizedRecommendationResponse(
+            recommendations=recommendations,
+            total=len(recommendations),
+            user_id=str(user_id),
+        )

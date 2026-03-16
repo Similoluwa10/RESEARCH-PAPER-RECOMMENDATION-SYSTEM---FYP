@@ -5,21 +5,14 @@ Business logic for semantic and keyword-based paper search.
 Supports multiple search methods for comparison.
 """
 
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.paper_repository import PaperRepository
 from src.services.embedding_service import EmbeddingService
-
-
-class SearchMethod(str, Enum):
-    """Available search methods."""
-    SEMANTIC = "semantic"
-    KEYWORD = "keyword"
-    HYBRID = "hybrid"
-
+from src.schemas.search import SearchRequest, SearchResponse
+from src.core.enums import SearchMethod
 
 class SearchService:
     """
@@ -35,74 +28,66 @@ class SearchService:
     
     async def search(
         self,
-        query: str,
-        method: SearchMethod = SearchMethod.SEMANTIC,
-        top_k: int = 10,
-        filters: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        search_request: SearchRequest,
+    ) -> SearchResponse:
         """
         Main search entry point.
         
         Dispatches to appropriate search method based on method parameter.
         
         Args:
-            query: Search query text
-            method: Search method (semantic, keyword, hybrid)
-            top_k: Number of results to return
-            filters: Optional filters (year, venue, etc.)
+            search_request: Encapsulated search parameters
             
         Returns:
             Search results with scores and metadata
         """
-        if method == SearchMethod.SEMANTIC:
-            return await self._semantic_search(query, top_k, filters)
-        elif method == SearchMethod.KEYWORD:
-            return await self._keyword_search(query, top_k, filters)
+        if search_request.method == SearchMethod.SEMANTIC:
+            return await self._semantic_search(search_request)
+        elif search_request.method == SearchMethod.KEYWORD:
+            return await self._keyword_search(search_request)
         else:
-            return await self._hybrid_search(query, top_k, filters)
-    
+            return await self._hybrid_search(search_request)
+
     async def _semantic_search(
         self,
-        query: str,
-        top_k: int,
-        filters: Optional[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        search_request: SearchRequest,
+    ) -> SearchResponse:
         """
         Perform semantic search using embeddings.
         
         Uses sentence-transformers to embed query, then
         finds similar papers via pgvector cosine distance.
         """
-        normalized_filters = filters.model_dump() if hasattr(filters, "model_dump") else filters
-        query_vector = self.embedding_service.encode_text(query)
+        normalized_filters = search_request.filters.model_dump() if hasattr(search_request.filters, "model_dump") else search_request.filters
+        query_vector = self.embedding_service.encode_text(search_request.query)
         matches = await self.repository.search_by_embedding(
             embedding=query_vector,
-            top_k=top_k,
+            top_k=search_request.top_k,
             filters=normalized_filters,
         )
 
         results = [
             {
-                "paper": item["paper"],
-                "score": item["score"],
-                "highlights": None,
+                "paper": item.get("paper"),
+                "score": float(item.get("score", 0.0)),
+                "highlights": item.get("highlights"),
             }
             for item in matches
         ]
-        
-        return {
+                
+        response = {
             "results": results,
             "method": "semantic",
             "total": len(results),
-            "query": query,
+            "query": search_request.query,
         }
+        
+        return SearchResponse.from_model(response)
     
     async def _keyword_search(
         self,
-        query: str,
-        top_k: int,
-        filters: Optional[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        search_request: SearchRequest,
+    ) -> SearchResponse:
         """
         Perform keyword-based search using TF-IDF.
         
@@ -111,35 +96,41 @@ class SearchService:
         """
         # TODO: Implement using packages/nlp baselines
         
-        return {
+        result = {
             "results": [],
             "method": "keyword",
             "total": 0,
-            "query": query,
+            "query": search_request.query,
         }
+        
+        return SearchResponse.from_model(result)
     
     async def _hybrid_search(
         self,
-        query: str,
-        top_k: int,
-        filters: Optional[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        search_request: SearchRequest,
+    ) -> SearchResponse:
         """
         Combine semantic and keyword search results.
         
         Uses reciprocal rank fusion to merge results from
         both search methods with configurable weights.
         """
+        search_request.top_k = search_request.top_k * 2
+          
         # Get results from both methods
-        semantic_results = await self._semantic_search(query, top_k * 2, filters)
-        keyword_results = await self._keyword_search(query, top_k * 2, filters)
+        semantic_results = await self._semantic_search(search_request)
+        keyword_results = await self._keyword_search(search_request)
+        
+        
         
         # TODO: Implement score fusion (e.g., reciprocal rank fusion)
         # combined = self._fuse_results(semantic_results, keyword_results, top_k)
         
-        return {
+        result = {
             "results": [],
             "method": "hybrid",
             "total": 0,
-            "query": query,
+            "query": search_request.query,
         }
+        
+        return SearchResponse.from_model(result)

@@ -95,7 +95,7 @@ class PaperRepository(BaseRepository[Paper]):
         )
         return list(result.scalars().all())
     
-    #this is the function which implements sematic search
+    #find similar paper by paper id    
     async def find_similar(
         self,
         paper_id: UUID,
@@ -119,6 +119,7 @@ class PaperRepository(BaseRepository[Paper]):
             exclude_paper_id=paper_id,
         )
     
+    #find similar paper by embedding
     async def search_by_embedding(
         self,
         embedding: List[float],

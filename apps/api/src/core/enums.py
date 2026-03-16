@@ -52,3 +52,11 @@ class ExplanationType(str, enum.Enum):
     COLLABORATIVE_FILTERING = "collaborative_filtering"
     CONTENT_BASED = "content_based"
     OTHER = "other"
+    
+    
+class SearchMethod(str, enum.Enum):
+    """Available search methods."""    
+    SEMANTIC = "semantic"
+    KEYWORD = "keyword"
+    HYBRID = "hybrid"
+

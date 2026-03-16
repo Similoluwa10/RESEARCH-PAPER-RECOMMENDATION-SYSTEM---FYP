@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/research_recommender_db"
+    #DATABASE_URL: str = "postgresql://research_recommender_db_user:uv3z6WKJ2WmOY7x9E4CfD2XEQjiWefvu@dpg-d6rl7khaae7s73crbsd0-a.oregon-postgres.render.com/research_recommender_db"
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
     

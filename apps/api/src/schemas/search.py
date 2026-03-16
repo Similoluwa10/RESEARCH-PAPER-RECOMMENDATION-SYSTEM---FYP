@@ -11,13 +11,7 @@ from pydantic import BaseModel, Field
 
 from src.schemas.paper import PaperResponse
 
-
-class SearchMethod(str, Enum):
-    """Available search methods."""
-    
-    SEMANTIC = "semantic"
-    KEYWORD = "keyword"
-    HYBRID = "hybrid"
+from src.core.enums import SearchMethod
 
 
 class SearchFilters(BaseModel):
@@ -35,6 +29,17 @@ class SearchResult(BaseModel):
     paper: PaperResponse
     score: float = Field(..., ge=0, le=1)
     highlights: Optional[Dict[str, List[str]]] = None
+    
+    @classmethod
+    def from_model(cls, result: dict) -> "SearchResult":
+        """Build search result model from service-layer payload."""
+        if isinstance(result, SearchResult):
+            return result
+        return cls(
+            paper=result.get("paper"),
+            score=float(result.get("score", 0)),
+            highlights=result.get("highlights"),
+        )
 
 
 class SearchRequest(BaseModel):
@@ -61,3 +66,20 @@ class SearchResponse(BaseModel):
     results: List[SearchResult]
     method: SearchMethod
     total: int
+    query: Optional[str] = None
+
+    @classmethod
+    def from_model(cls, result: dict) -> "SearchResponse":
+        """Build response model from service-layer result payload."""
+        results = result.get("results", [])
+        method = result.get("method", SearchMethod.SEMANTIC)
+        
+        if isinstance(method, str):
+            method = SearchMethod(method)
+            
+        return cls(
+            results=[SearchResult.from_model(r) for r in results],
+            method=method,
+            total=result.get("total", len(results)),
+            query=result.get("query"),
+        )

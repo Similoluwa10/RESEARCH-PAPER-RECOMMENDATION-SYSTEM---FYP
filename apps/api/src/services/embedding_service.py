@@ -27,8 +27,9 @@ NLP_SRC_PATH = PROJECT_ROOT / "packages" / "nlp" / "src"
 
 if str(NLP_SRC_PATH) not in sys.path:
     sys.path.insert(0, str(NLP_SRC_PATH))
-
 from embeddings.sentence_transformer import SentenceTransformerEmbedding
+
+#from packages.nlp.src.embeddings.sentence_transformer import SentenceTransformerEmbedding
 
 
 class EmbeddingService:

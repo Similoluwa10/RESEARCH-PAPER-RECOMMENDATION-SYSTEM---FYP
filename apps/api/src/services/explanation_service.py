@@ -7,6 +7,8 @@ Core component for the "Explainable" aspect of the system.
 
 from typing import Any, Dict, List
 
+from src.schemas.recommendation import RecommendationExplanation
+
 
 class ExplanationService:
     """
@@ -25,7 +27,7 @@ class ExplanationService:
         query_text: str,
         paper: Any,
         similarity_score: float,
-    ) -> Dict[str, Any]:
+    ) -> RecommendationExplanation:
         """
         Generate a full explanation for a recommendation.
         
@@ -40,12 +42,13 @@ class ExplanationService:
         key_terms = self.extract_key_terms(query_text, paper)
         breakdown = self.compute_similarity_breakdown(query_text, paper)
         
-        return {
+        result = {
             "summary": f"This paper matches your query with {similarity_score:.2%} similarity.",
             "key_terms": key_terms,
             "similarity_breakdown": breakdown,
             "feature_importance": [],  # TODO: Implement
         }
+        return RecommendationExplanation.from_model(result)
     
     def extract_key_terms(
         self,

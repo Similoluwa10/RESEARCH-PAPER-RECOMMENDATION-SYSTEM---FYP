@@ -16,14 +16,9 @@ from src.dependencies import get_db
 from src.schemas.search import SearchRequest, SearchResponse
 from src.services.search_service import SearchService
 
+from src.core.enums import SearchMethod
+
 router = APIRouter(prefix="/search")
-
-
-class SearchMethod(str, Enum):
-    """Available search methods."""
-    SEMANTIC = "semantic"
-    KEYWORD = "keyword"
-    HYBRID = "hybrid"
 
 
 @router.post("", response_model=SearchResponse)
@@ -39,18 +34,14 @@ async def search(
     """
     service = SearchService(db)
     results = await service.search(
-        query=request.query,
-        method=request.method,
-        top_k=request.top_k,
-        filters=request.filters,
+        search_request=request,
     )
     return results
 
 
-@router.get("/semantic", response_model=SearchResponse)
+@router.post("/semantic", response_model=SearchResponse)
 async def semantic_search(
-    q: str = Query(..., min_length=3, description="Search query"),
-    top_k: int = Query(10, ge=1, le=50, description="Number of results"),
+    request: SearchRequest, 
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -60,28 +51,23 @@ async def semantic_search(
     """
     service = SearchService(db)
     results = await service.search(
-        query=q,
-        method=SearchMethod.SEMANTIC,
-        top_k=top_k,
+        search_request=request
     )
     return results
 
-
-@router.get("/keyword", response_model=SearchResponse)
-async def keyword_search(
-    q: str = Query(..., min_length=3, description="Search query"),
-    top_k: int = Query(10, ge=1, le=50, description="Number of results"),
-    db: AsyncSession = Depends(get_db),
-):
-    """
-    Traditional keyword/TF-IDF search.
+#TODO: fix keyword search, endpoint request and response format
+# @router.post("/keyword", response_model=SearchResponse)
+# async def keyword_search(
+#     request: SearchRequest,
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     """
+#     Traditional keyword/TF-IDF search.
     
-    Used as baseline for comparison with semantic search.
-    """
-    service = SearchService(db)
-    results = await service.search(
-        query=q,
-        method=SearchMethod.KEYWORD,
-        top_k=top_k,
-    )
-    return results
+#     Used as baseline for comparison with semantic search.
+#     """
+#     service = SearchService(db)
+#     results = await service.search(
+#         search_request=request
+#     )
+#     return results

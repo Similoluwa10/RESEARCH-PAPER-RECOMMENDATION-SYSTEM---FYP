@@ -38,7 +38,7 @@ async def register(
     Register a new user account.
     
     - Validates email uniqueness
-    - Hashes password with bcrypt
+    - Hashes password with pbkdf2_sha256
     - Returns created user profile
     """
     service = UserService(db)

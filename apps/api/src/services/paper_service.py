@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.paper import Paper
 from src.repositories.paper_repository import PaperRepository
-from src.schemas.paper import PaperCreate, PaperUpdate
+from src.schemas.paper import PaperCreate, PaperListResponse, PaperResponse, PaperUpdate
 from src.services.embedding_service import EmbeddingService
 
 
@@ -27,7 +27,7 @@ class PaperService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repository = PaperRepository(db)
-        self.embedding_service = EmbeddingService()
+        self.embedding_service = EmbeddingService()   
     
     async def list_papers(
         self,
@@ -35,7 +35,7 @@ class PaperService:
         page_size: int = 20,
         year: Optional[int] = None,
         venue: Optional[str] = None,
-    ) -> Tuple[List[Paper], int]:
+    ) -> PaperListResponse:
         """
         Get paginated list of papers with optional filters.
         
@@ -46,7 +46,7 @@ class PaperService:
             venue: Filter by venue/conference
             
         Returns:
-            Tuple of (papers list, total count)
+            Paginated paper response
         """
         offset = (page - 1) * page_size
         papers = await self.repository.get_all(
@@ -55,14 +55,22 @@ class PaperService:
             year=year,
             venue=venue,
         )
+      
         total = await self.repository.count(year=year, venue=venue)
-        return papers, total
+        result = {
+            "papers": papers,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+        }
+        return PaperListResponse.from_model(result)
     
-    async def get_paper(self, paper_id: UUID) -> Optional[Paper]:
+    async def get_paper(self, paper_id: UUID) -> Optional[PaperResponse]:
         """Get a single paper by ID."""
-        return await self.repository.get_by_id(paper_id)
+        paper = await self.repository.get_by_id(paper_id)        
+        return PaperResponse.from_model(paper) if paper else None
     
-    async def create_paper(self, data: PaperCreate) -> Paper:
+    async def create_paper(self, data: PaperCreate) -> PaperResponse:
         """
         Create a new paper and generate its embedding.
         
@@ -70,20 +78,20 @@ class PaperService:
             data: Paper creation data
             
         Returns:
-            Created paper instance
+            Created paper response
         """
         paper = await self.repository.create(data.model_dump())
         
         # Generate embedding for the paper
-        await self._generate_embedding(paper)
-        
-        return paper
+        await self._generate_embedding(paper)        
+       
+        return PaperResponse.from_model(paper)
     
     async def update_paper(
         self,
         paper_id: UUID,
         data: PaperUpdate,
-    ) -> Optional[Paper]:
+    ) -> Optional[PaperResponse]:
         """
         Update an existing paper.
         
@@ -93,9 +101,9 @@ class PaperService:
         
         if paper and (data.title or data.abstract):
             # Regenerate embedding if content changed
-            await self._generate_embedding(paper)
+            await self._generate_embedding(paper)        
         
-        return paper
+        return PaperResponse.from_model(paper) if paper else None
     
     async def delete_paper(self, paper_id: UUID) -> bool:
         """Delete a paper by ID."""

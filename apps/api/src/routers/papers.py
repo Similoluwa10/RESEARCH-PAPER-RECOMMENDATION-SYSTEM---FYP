@@ -32,19 +32,13 @@ async def list_papers(
     Returns paginated list of papers with metadata.
     """
     service = PaperService(db)
-    papers, total = await service.list_papers(
+    result = await service.list_papers(
         page=page,
         page_size=page_size,
         year=year,
         venue=venue,
     )
-    
-    return {
-        "papers": papers,
-        "total": total,
-        "page": page,
-        "page_size": page_size,
-    }
+    return result
 
 
 @router.get("/{paper_id}", response_model=PaperResponse)
@@ -65,50 +59,50 @@ async def get_paper(
     return paper
 
 
-@router.post("", response_model=PaperResponse, status_code=status.HTTP_201_CREATED)
-async def create_paper(
-    paper_data: PaperCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user=Depends(get_current_user),
-):
-    """Create a new paper. Requires authentication."""
-    service = PaperService(db)
-    paper = await service.create_paper(paper_data)
-    return paper
+# @router.post("", response_model=PaperResponse, status_code=status.HTTP_201_CREATED)
+# async def create_paper(
+#     paper_data: PaperCreate,
+#     db: AsyncSession = Depends(get_db),
+#     current_user=Depends(get_current_user),
+# ):
+#     """Create a new paper. Requires authentication."""
+#     service = PaperService(db)
+#     paper = await service.create_paper(paper_data)
+#     return paper
 
 
-@router.put("/{paper_id}", response_model=PaperResponse)
-async def update_paper(
-    paper_id: UUID,
-    paper_data: PaperUpdate,
-    db: AsyncSession = Depends(get_db),
-    current_user=Depends(get_current_user),
-):
-    """Update an existing paper. Requires authentication."""
-    service = PaperService(db)
-    paper = await service.update_paper(paper_id, paper_data)
+# @router.put("/{paper_id}", response_model=PaperResponse)
+# async def update_paper(
+#     paper_id: UUID,
+#     paper_data: PaperUpdate,
+#     db: AsyncSession = Depends(get_db),
+#     current_user=Depends(get_current_user),
+# ):
+#     """Update an existing paper. Requires authentication."""
+#     service = PaperService(db)
+#     paper = await service.update_paper(paper_id, paper_data)
     
-    if not paper:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Paper not found",
-        )
+#     if not paper:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Paper not found",
+#         )
     
-    return paper
+#     return paper
 
 
-@router.delete("/{paper_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_paper(
-    paper_id: UUID,
-    db: AsyncSession = Depends(get_db),
-    current_user=Depends(get_current_user),
-):
-    """Delete a paper. Requires authentication."""
-    service = PaperService(db)
-    deleted = await service.delete_paper(paper_id)
+# @router.delete("/{paper_id}", status_code=status.HTTP_204_NO_CONTENT)
+# async def delete_paper(
+#     paper_id: UUID,
+#     db: AsyncSession = Depends(get_db),
+#     current_user=Depends(get_current_user),
+# ):
+#     """Delete a paper. Requires authentication."""
+#     service = PaperService(db)
+#     deleted = await service.delete_paper(paper_id)
     
-    if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Paper not found",
-        )
+#     if not deleted:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Paper not found",
+#         )

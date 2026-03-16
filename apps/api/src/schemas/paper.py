@@ -19,12 +19,12 @@ class PaperBase(BaseModel):
     authors: List[str] = Field(default_factory=list)
     year: Optional[int] = Field(None, ge=1990, le=2100)
     venue: Optional[str] = Field(None, max_length=200)
-    keywords: List[str] = Field(default_factory=list)
+    keywords: Optional[List[str]] = Field(default_factory=list)
     doi: Optional[str] = Field(None, max_length=100)
     url: Optional[str] = Field(None, max_length=500)
     category: str = Field(default="Other", max_length=100)
     source: str = Field(default="Other", max_length=50)
-
+    
 
 class PaperCreate(PaperBase):
     """Schema for creating a paper."""
@@ -57,6 +57,11 @@ class PaperResponse(PaperBase):
     class Config:
         from_attributes = True
 
+    @classmethod
+    def from_model(cls, paper) -> "PaperResponse":
+        """Build response model from ORM/model payload."""
+        return cls.model_validate(paper, from_attributes=True)
+
 
 class PaperList(BaseModel):
     """Schema for paginated paper list."""
@@ -65,6 +70,18 @@ class PaperList(BaseModel):
     total: int
     page: int
     page_size: int
+
+    @classmethod
+    def from_model(cls, result: dict) -> "PaperList":
+        """Build paginated response model from service-layer payload."""
+        papers = result.get("papers", [])
+        parsed_papers = [PaperResponse.from_model(paper) for paper in papers]
+        return cls(
+            papers=parsed_papers,
+            total=result.get("total", len(parsed_papers)),
+            page=result.get("page", 1),
+            page_size=result.get("page_size", len(parsed_papers)),
+        )
 
 
 # Alias for backwards compatibility
