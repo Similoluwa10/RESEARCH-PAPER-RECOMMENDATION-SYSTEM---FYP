@@ -61,7 +61,7 @@ const mockRecommendations = [
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
-  const [activeTab, setActiveTab] = useState<'recommendations' | 'saved'>('recommendations');
+  const [activeTab, setActiveTab] = useState<'saved' | 'recommendations'>('saved');
   const router = useRouter();
 
   useEffect(() => {
@@ -92,14 +92,14 @@ export default function DashboardPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {user.name}!</h1>
             <p className="text-muted-foreground">
-              Manage your saved papers and get personalized recommendations
+              Manage your saved papers and get recommendations
             </p>
           </div>
         </section>
 
         {/* Stats Section */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div className="card-base">
               <div className="flex items-start justify-between">
                 <div>
@@ -129,10 +129,10 @@ export default function DashboardPage() {
                 <Heart className="w-8 h-8 text-primary/20" />
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Tabs */}
-          <div className="flex gap-4 border-b border-border mb-8">
+          {/* <div className="flex gap-4 border-b border-border mb-8">
             <button
               onClick={() => setActiveTab('recommendations')}
               className={`px-4 py-3 font-medium transition-colors border-b-2 ${
@@ -153,23 +153,23 @@ export default function DashboardPage() {
             >
               Saved Papers
             </button>
-          </div>
+          </div> */}
 
           {/* Content */}
           <div>
-            {activeTab === 'recommendations' ? (
-              <>
-                <h2 className="text-2xl font-bold text-foreground mb-6">
-                  Papers recommended for you
-                </h2>
-                <PaperGrid papers={mockRecommendations} />
-              </>
-            ) : (
+            {activeTab === 'saved' ? (
               <>
                 <h2 className="text-2xl font-bold text-foreground mb-6">
                   Your saved papers
                 </h2>
                 <PaperGrid papers={mockSavedPapers} />
+              </>              
+            ) : (
+              <>
+                <h2 className="text-2xl font-bold text-foreground mb-6">
+                  Papers recommended for you
+                </h2>
+                <PaperGrid papers={mockRecommendations} />
               </>
             )}
           </div>
@@ -180,10 +180,10 @@ export default function DashboardPage() {
               Want to discover more papers?
             </p>
             <Link
-              href="/explore"
+              href="/recommendation"
               className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-medium"
             >
-              Explore Papers
+              Get Research Recommendations
             </Link>
           </div>
         </section>

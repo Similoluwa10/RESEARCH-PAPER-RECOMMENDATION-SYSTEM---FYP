@@ -41,12 +41,12 @@ export default function PaperCard({
   };
 
   return (
-    <div className="card-base hover:shadow-md transition-shadow">
+    <div className="card-base p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
       {/* Header */}
       <div className="mb-4">
         <div className="flex items-start justify-between mb-2">
           <Link href={`/paper/${id}`}>
-            <h3 className="text-lg font-semibold text-foreground hover:text-primary transition-colors line-clamp-2">
+            <h3 className="text-lg font-semibold text-foreground hover:text-primary transition-colors duration-200 line-clamp-2">
               {title}
             </h3>
           </Link>
@@ -78,7 +78,7 @@ export default function PaperCard({
       <div className="flex items-center justify-between gap-2">
         <button
           onClick={handleLike}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 hover:-translate-y-0.5 ${
             liked
               ? 'bg-red-50 text-red-600'
               : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -89,14 +89,14 @@ export default function PaperCard({
         </button>
         <button
           onClick={() => onDownload(id)}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200 hover:-translate-y-0.5"
         >
           <Download className="w-4 h-4" />
           <span className="text-sm">Save</span>
         </button>
         <Link
           href={`/paper/${id}`}
-          className="flex-1 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-center text-sm font-medium hover:opacity-90 transition-opacity"
+          className="flex-1 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-center text-sm font-medium hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
         >
           View
         </Link>

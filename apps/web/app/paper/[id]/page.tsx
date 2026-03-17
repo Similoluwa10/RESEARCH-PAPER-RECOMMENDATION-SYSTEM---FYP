@@ -44,27 +44,35 @@ const mockPaperData: Record<string, any> = {
   },
 };
 
+function buildFallbackPaper(id: string) {
+  return {
+    id,
+    title: `Recommended Research Paper ${id}`,
+    authors: ['PaperHub Recommender', 'Research Assistant'],
+    abstract:
+      'This paper was generated from your recommendation results. Open this page to review details, metadata, and related works while backend recommendation integration is in progress.',
+    publicationDate: '2024-01-15',
+    citations: 0,
+    likes: 0,
+    category: 'Recommended',
+    doi: `10.0000/paperhub.${id}`,
+    arxivId: `paperhub-${id}`,
+    fullText: 'Recommendation detail placeholder content.',
+    keywords: ['Recommendation', 'Research Discovery', 'PaperHub'],
+    relatedPapers: [
+      {
+        id: '1',
+        title: 'Attention Is All You Need',
+        authors: ['Vaswani, A.', 'Shazeer, N.'],
+      },
+    ],
+  };
+}
+
 export default function PaperDetailPage({ params }: PaperDetailProps) {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
-  const paper = mockPaperData[params.id];
-
-  if (!paper) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Paper Not Found</h1>
-            <Link href="/explore" className="text-primary hover:underline">
-              Back to Explore
-            </Link>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const paper = mockPaperData[params.id] ?? buildFallbackPaper(params.id);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

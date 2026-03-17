@@ -5,14 +5,18 @@ import { useState } from 'react';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  onQueryChange?: (query: string) => void;
   placeholder?: string;
   className?: string;
+  inputClassName?: string;
 }
 
 export default function SearchBar({
   onSearch,
+  onQueryChange,
   placeholder = 'Search papers...',
   className = '',
+  inputClassName = '',
 }: SearchBarProps) {
   const [query, setQuery] = useState('');
 
@@ -23,6 +27,7 @@ export default function SearchBar({
 
   const handleClear = () => {
     setQuery('');
+    onQueryChange?.('');
     onSearch('');
   };
 
@@ -33,9 +38,13 @@ export default function SearchBar({
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setQuery(value);
+            onQueryChange?.(value);
+          }}
           placeholder={placeholder}
-          className="input-field pl-10 pr-10 w-full"
+          className={`input-field pl-10 pr-10 w-full ${inputClassName}`}
         />
         {query && (
           <button

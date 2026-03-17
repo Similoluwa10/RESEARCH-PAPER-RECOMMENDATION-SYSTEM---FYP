@@ -25,8 +25,8 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm animate-fade-up">
+      <div className="max-w-7xl mx-auto px-5 py-1 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -44,19 +44,19 @@ export default function Header({
               <>
                 <Link
                   href="/dashboard"
-                  className="text-foreground hover:text-primary transition-colors"
+                  className="text-foreground hover:text-secondary transition-all hover:-translate-y-0.5"
                 >
                   Dashboard
                 </Link>
                 <Link
-                  href="/explore"
-                  className="text-foreground hover:text-primary transition-colors"
+                  href="/recommendation"
+                  className="text-foreground hover:text-secondary transition-all hover:-translate-y-0.5"
                 >
-                  Explore
+                  Get Recommendations
                 </Link>
                 <Link
                   href="/profile"
-                  className="text-foreground hover:text-primary transition-colors"
+                  className="text-foreground hover:text-secondary transition-all hover:-translate-y-0.5"
                 >
                   Profile
                 </Link>
@@ -74,10 +74,10 @@ export default function Header({
             ) : (
               <>
                 <Link
-                  href="/explore"
-                  className="text-foreground hover:text-primary transition-colors"
+                  href="/recommendation"
+                  className="text-foreground hover:text-secondary transition-all hover:-translate-y-0.5"
                 >
-                  Browse Papers
+                  Get Recommendations
                 </Link>
                 <Link
                   href="/login"
@@ -87,7 +87,7 @@ export default function Header({
                 </Link>
                 <Link
                   href="/signup"
-                  className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+                  className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                 >
                   Sign Up
                 </Link>
@@ -111,30 +111,30 @@ export default function Header({
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden pb-4 space-y-2">
+          <nav className="md:hidden pb-4 space-y-2 animate-scale-in-soft">
             {isAuthenticated ? (
               <>
                 <Link
                   href="/dashboard"
-                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground"
+                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground transition-transform hover:translate-x-1"
                 >
                   Dashboard
                 </Link>
                 <Link
-                  href="/explore"
-                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground"
+                  href="/recommendation"
+                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground transition-transform hover:translate-x-1"
                 >
-                  Explore
+                  Recommendation
                 </Link>
                 <Link
                   href="/profile"
-                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground"
+                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground transition-transform hover:translate-x-1"
                 >
                   Profile
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-muted text-foreground flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-muted text-foreground flex items-center gap-2 transition-transform hover:translate-x-1"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
@@ -143,10 +143,10 @@ export default function Header({
             ) : (
               <>
                 <Link
-                  href="/explore"
-                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground"
+                  href="/recommendation"
+                  className="block px-3 py-2 rounded-lg hover:bg-muted text-foreground transition-transform hover:translate-x-1"
                 >
-                  Browse Papers
+                  Recommendation
                 </Link>
                 <Link
                   href="/login"
@@ -156,7 +156,7 @@ export default function Header({
                 </Link>
                 <Link
                   href="/signup"
-                  className="block px-3 py-2 rounded-lg bg-primary text-primary-foreground"
+                  className="block px-3 py-2 rounded-lg bg-secondary text-secondary-foreground"
                 >
                   Sign Up
                 </Link>

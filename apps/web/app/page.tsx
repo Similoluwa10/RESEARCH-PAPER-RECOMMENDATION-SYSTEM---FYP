@@ -12,33 +12,33 @@ export default function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance animate-fade-up">
                 Discover Research Papers That Matter
               </h1>
-              <p className="text-xl text-muted-foreground mb-8 text-pretty">
+              <p className="text-xl text-muted-foreground mb-8 text-pretty animate-fade-up animate-delay-1">
                 PaperHub connects researchers with the latest scientific discoveries. Get personalized recommendations, save papers, and build your research library.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animate-delay-2">
                 <Link
                   href="/signup"
-                  className="btn-primary flex items-center justify-center gap-2"
+                  className="btn-primary flex items-center justify-center gap-2 transition-transform duration-200 hover:-translate-y-0.5"
                 >
                   Get Started <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
-                  href="/explore"
-                  className="btn-outline flex items-center justify-center gap-2"
+                  href="/recommendation"
+                  className="btn-outline px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2"
                 >
-                  Browse Papers
+                  Get Recommendations
                 </Link>
               </div>
             </div>
             <div className="hidden md:flex items-center justify-center">
-              <div className="w-full aspect-square rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                <Sparkles className="w-32 h-32 text-primary/30" />
+              <div className="w-full aspect-square rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center animate-fade-up animate-delay-3 animate-float-soft">
+                <Sparkles className="w-32 h-32 text-secondary/35" />
               </div>
             </div>
           </div>
@@ -47,11 +47,11 @@ export default function HomePage() {
         {/* Features Section */}
         <section className="bg-muted py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-foreground mb-12 text-center">Why Choose PaperHub?</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-12 text-center animate-fade-up">Why Choose PaperHub?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="card-base">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Sparkles className="w-6 h-6 text-primary" />
+              <div className="card-base animate-fade-up transition-transform duration-300 hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center mb-4">
+                  <Sparkles className="w-6 h-6 text-secondary" />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Smart Recommendations</h3>
                 <p className="text-muted-foreground">
@@ -59,9 +59,9 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="card-base">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-primary" />
+              <div className="card-base animate-fade-up animate-delay-1 transition-transform duration-300 hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/15 to-secondary/15  flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-secondary" />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Community Driven</h3>
                 <p className="text-muted-foreground">
@@ -69,9 +69,9 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="card-base">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Zap className="w-6 h-6 text-primary" />
+              <div className="card-base animate-fade-up animate-delay-2 transition-transform duration-300 hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6 text-secondary" />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Lightning Fast</h3>
                 <p className="text-muted-foreground">
@@ -84,7 +84,7 @@ export default function HomePage() {
 
         {/* CTA Section */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-12 text-center">
+          <div className="rounded-2xl bg-gradient-to-r from-primary via-primary/90 to-secondary p-12 text-center animate-fade-up">
             <h2 className="text-3xl font-bold text-primary-foreground mb-6">
               Ready to Discover Your Next Paper?
             </h2>
