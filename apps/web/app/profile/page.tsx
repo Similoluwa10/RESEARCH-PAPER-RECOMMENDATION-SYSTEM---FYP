@@ -8,70 +8,52 @@ import ProfileCard from '@/components/ProfileCard';
 import PaperGrid from '@/components/PaperGrid';
 import { Mail, Edit2 } from 'lucide-react';
 import Link from 'next/link';
-
-interface User {
-  email: string;
-  name: string;
-}
-
-const mockUserPapers = [
-  {
-    id: '1',
-    title: 'Attention Is All You Need',
-    authors: ['Vaswani, A.', 'Shazeer, N.'],
-    abstract: 'The dominant sequence transduction models are based on complex recurrent or convolutional neural networks.',
-    publicationDate: '2017-06-12',
-    citations: 45000,
-    likes: 1200,
-    category: 'Machine Learning',
-  },
-  {
-    id: '2',
-    title: 'BERT: Pre-training of Deep Bidirectional Transformers',
-    authors: ['Devlin, J.', 'Chang, M.'],
-    abstract: 'We introduce BERT, a new method of pre-training language representations.',
-    publicationDate: '2018-10-11',
-    citations: 35000,
-    likes: 980,
-    category: 'NLP',
-  },
-  {
-    id: '3',
-    title: 'Language Models are Unsupervised Multitask Learners',
-    authors: ['Radford, A.', 'Wu, J.'],
-    abstract: 'Natural language processing tasks are typically approached with supervised learning.',
-    publicationDate: '2019-02-14',
-    citations: 28000,
-    likes: 850,
-    category: 'Machine Learning',
-  },
-];
+import { listSavedPapers, UIPaper } from '@/lib/api';
+import { AuthSession, clearStoredSession, getStoredSession } from '@/lib/auth';
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<AuthSession | null>(null);
+  const [savedPapers, setSavedPapers] = useState<UIPaper[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (!userData) {
+    const currentSession = getStoredSession();
+    if (!currentSession) {
       router.push('/login');
       return;
     }
-    setUser(JSON.parse(userData));
+
+    setSession(currentSession);
+
+    const loadSavedPapers = async () => {
+      try {
+        const papers = await listSavedPapers(currentSession);
+        setSavedPapers(papers);
+      } catch {
+        clearStoredSession();
+        router.push('/login');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadSavedPapers();
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    clearStoredSession();
+    setSession(null);
     router.push('/');
   };
 
-  if (!user) {
+  if (!session) {
     return null;
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header isAuthenticated={true} userName={user.name} onLogout={handleLogout} />
+      <Header isAuthenticated={true} userName={session.user.name} onLogout={handleLogout} />
 
       <main className="flex-1">
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -79,13 +61,13 @@ export default function ProfilePage() {
             {/* Profile Sidebar */}
             <div className="md:col-span-1">
               <ProfileCard
-                name={user.name}
-                email={user.email}
+                name={session.user.name}
+                email={session.user.email}
                 bio="Passionate researcher interested in machine learning and AI."
                 affiliation="Research Institute"
                 joinDate="January 2024"
-                savedPapers={12}
-                recommendations={8}
+                savedPapers={savedPapers.length}
+                recommendations={0}
               />
 
               {/* Edit Profile Button */}
@@ -136,7 +118,7 @@ export default function ProfilePage() {
                     <p className="text-sm text-muted-foreground mb-2">Email</p>
                     <p className="text-foreground flex items-center gap-2">
                       <Mail className="w-4 h-4" />
-                      {user.email}
+                      {session.user.email}
                     </p>
                   </div>
                   <div>
@@ -162,7 +144,11 @@ export default function ProfilePage() {
               {/* Recent Activity */}
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-6">Recently Saved Papers</h2>
-                <PaperGrid papers={mockUserPapers} />
+                <PaperGrid
+                  papers={savedPapers}
+                  isLoading={isLoading}
+                  isEmpty={!isLoading && savedPapers.length === 0}
+                />
               </div>
             </div>
           </div>

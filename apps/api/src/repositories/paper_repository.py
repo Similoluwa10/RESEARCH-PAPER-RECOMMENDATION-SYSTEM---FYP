@@ -99,7 +99,8 @@ class PaperRepository(BaseRepository[Paper]):
     async def find_similar(
         self,
         paper_id: UUID,
-        top_k: int = 10,
+        top_k: Optional[int] = 10,
+        min_similarity: float = 0.0,
     ) -> List[Dict[str, Any]]:
         """
         Find similar papers using vector similarity.
@@ -116,6 +117,7 @@ class PaperRepository(BaseRepository[Paper]):
         return await self.search_by_embedding(
             embedding=source_embedding.vector,
             top_k=top_k,
+            min_similarity=min_similarity,
             exclude_paper_id=paper_id,
         )
     
@@ -123,7 +125,8 @@ class PaperRepository(BaseRepository[Paper]):
     async def search_by_embedding(
         self,
         embedding: List[float],
-        top_k: int = 10,
+        top_k: Optional[int] = 10,
+        min_similarity: float = 0.0,
         filters: Optional[Dict[str, Any]] = None,
         exclude_paper_id: Optional[UUID] = None,
     ) -> List[Dict[str, Any]]:
@@ -162,7 +165,12 @@ class PaperRepository(BaseRepository[Paper]):
         if conditions:
             query = query.where(and_(*conditions))
 
-        query = query.order_by(distance).limit(top_k)
+        if min_similarity > 0.0:
+            query = query.where(similarity >= min_similarity)
+
+        query = query.order_by(distance)
+        if top_k is not None:
+            query = query.limit(top_k)
         rows = (await self.db.execute(query)).all()
 
         results: List[Dict[str, Any]] = []

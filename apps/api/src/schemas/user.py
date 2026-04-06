@@ -51,3 +51,9 @@ class Token(BaseModel):
     
     access_token: str
     token_type: str = "bearer"
+
+
+class GoogleAuthRequest(BaseModel):
+    """Schema for Google ID token authentication."""
+
+    id_token: str

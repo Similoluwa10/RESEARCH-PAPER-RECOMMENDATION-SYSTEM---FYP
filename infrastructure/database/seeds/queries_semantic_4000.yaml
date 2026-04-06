@@ -1,0 +1,101 @@
+frontend_development:
+  - "frontend development"
+  - "web frontend engineering"
+  - "react frontend architecture"
+  - "javascript ui development"
+
+backend_development:
+  - "backend development"
+  - "server side software engineering"
+  - "api backend architecture"
+  - "distributed backend systems"
+
+natural_language_processing:
+  - "natural language processing"
+  - "nlp for software engineering"
+  - "transformer language models"
+  - "information extraction nlp"
+
+software_testing:
+  - "software testing"
+  - "test automation"
+  - "unit and integration testing"
+  - "mutation testing"
+
+agile_devops:
+  - "agile software development"
+  - "devops engineering"
+  - "continuous integration continuous deployment"
+  - "scrum and devops practices"
+
+requirements_engineering:
+  - "requirements engineering"
+  - "requirements elicitation"
+  - "requirements traceability"
+  - "user story quality"
+
+software_architecture:
+  - "software architecture"
+  - "microservices architecture"
+  - "architectural design decisions"
+  - "software design patterns"
+
+software_security:
+  - "software security"
+  - "secure software development lifecycle"
+  - "vulnerability detection in source code"
+  - "application security testing"
+
+program_analysis:
+  - "program analysis"
+  - "static code analysis"
+  - "dynamic program analysis"
+  - "symbolic execution"
+
+machine_learning:
+  - "machine learning"
+  - "supervised and unsupervised learning"
+  - "deep learning methods"
+  - "representation learning"
+
+software_configuration_management:
+  - "software configuration management"
+  - "version control systems"
+  - "build and release management"
+  - "software change management"
+
+software_project_management:
+  - "software project management"
+  - "software effort estimation"
+  - "software risk management"
+  - "software team productivity"
+
+software_engineering:
+  - "software engineering"
+  - "empirical software engineering"
+  - "mining software repositories"
+  - "software process improvement"
+
+bug_prediction:
+  - "bug prediction"
+  - "defect prediction in software"
+  - "fault prone module prediction"
+  - "just in time defect prediction"
+
+artificial_intelligence:
+  - "artificial intelligence"
+  - "ai methods for software engineering"
+  - "intelligent software systems"
+  - "knowledge based systems"
+
+code_quality:
+  - "code quality"
+  - "code smell detection"
+  - "technical debt analysis"
+  - "maintainability metrics"
+
+other_se_topics:
+  - "software reliability"
+  - "human factors in software engineering"
+  - "software sustainability"
+  - "software engineering education"

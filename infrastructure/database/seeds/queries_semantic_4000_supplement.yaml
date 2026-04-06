@@ -1,0 +1,84 @@
+frontend_development:
+  - "single page application performance"
+  - "frontend state management"
+  - "web accessibility engineering"
+
+backend_development:
+  - "backend scalability patterns"
+  - "service orchestration backend"
+  - "event driven backend systems"
+
+natural_language_processing:
+  - "question answering systems nlp"
+  - "named entity recognition models"
+  - "text summarization techniques"
+
+software_testing:
+  - "fuzz testing software"
+  - "property based testing"
+  - "oracle problem software testing"
+
+agile_devops:
+  - "devsecops practices"
+  - "site reliability engineering devops"
+  - "value stream management software"
+
+requirements_engineering:
+  - "requirements prioritization"
+  - "requirements volatility"
+  - "non functional requirements analysis"
+
+software_architecture:
+  - "architecture recovery software systems"
+  - "architecture evaluation methods"
+  - "architecture technical debt"
+
+software_security:
+  - "secure code analysis"
+  - "software supply chain security"
+  - "vulnerability patch management"
+
+program_analysis:
+  - "control flow analysis"
+  - "taint analysis"
+  - "abstract interpretation"
+
+machine_learning:
+  - "few shot learning"
+  - "self supervised learning"
+  - "graph neural networks"
+
+software_configuration_management:
+  - "branching strategies version control"
+  - "configuration drift detection"
+  - "release train management"
+
+software_project_management:
+  - "software project scheduling"
+  - "agile estimation models"
+  - "software project governance"
+
+software_engineering:
+  - "evidence based software engineering"
+  - "software engineering economics"
+  - "global software engineering"
+
+bug_prediction:
+  - "cross project defect prediction"
+  - "defect localization"
+  - "software fault forecasting"
+
+artificial_intelligence:
+  - "automated reasoning ai"
+  - "planning under uncertainty"
+  - "multi agent artificial intelligence"
+
+code_quality:
+  - "code readability metrics"
+  - "code maintainability prediction"
+  - "automated refactoring recommendation"
+
+other_se_topics:
+  - "software process mining"
+  - "developer productivity analytics"
+  - "socio technical congruence software"

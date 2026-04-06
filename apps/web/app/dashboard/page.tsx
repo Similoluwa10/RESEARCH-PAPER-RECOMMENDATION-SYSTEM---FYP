@@ -5,92 +5,87 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import PaperGrid from '@/components/PaperGrid';
-import { BookOpen, Heart, Zap } from 'lucide-react';
 import Link from 'next/link';
-
-interface User {
-  email: string;
-  name: string;
-}
-
-const mockSavedPapers = [
-  {
-    id: '1',
-    title: 'Attention Is All You Need',
-    authors: ['Vaswani, A.', 'Shazeer, N.'],
-    abstract: 'The dominant sequence transduction models are based on complex recurrent or convolutional neural networks.',
-    publicationDate: '2017-06-12',
-    citations: 45000,
-    likes: 1200,
-    category: 'Machine Learning',
-  },
-  {
-    id: '2',
-    title: 'BERT: Pre-training of Deep Bidirectional Transformers',
-    authors: ['Devlin, J.', 'Chang, M.'],
-    abstract: 'We introduce BERT, a new method of pre-training language representations.',
-    publicationDate: '2018-10-11',
-    citations: 35000,
-    likes: 980,
-    category: 'NLP',
-  },
-];
-
-const mockRecommendations = [
-  {
-    id: '3',
-    title: 'Language Models are Unsupervised Multitask Learners',
-    authors: ['Radford, A.', 'Wu, J.'],
-    abstract: 'Natural language processing tasks are typically approached with supervised learning.',
-    publicationDate: '2019-02-14',
-    citations: 28000,
-    likes: 850,
-    category: 'Machine Learning',
-  },
-  {
-    id: '4',
-    title: 'An Image is Worth 16x16 Words',
-    authors: ['Dosovitskiy, A.', 'Beyer, L.'],
-    abstract: 'While the Transformer architecture has become the de-facto standard.',
-    publicationDate: '2020-10-22',
-    citations: 18000,
-    likes: 720,
-    category: 'Computer Vision',
-  },
-];
+import {
+  fetchPersonalizedRecommendations,
+  listSavedPapers,
+  savePaper,
+  UIPaper,
+} from '@/lib/api';
+import { AuthSession, clearStoredSession, getStoredSession } from '@/lib/auth';
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [activeTab, setActiveTab] = useState<'saved' | 'recommendations'>('saved');
+  const [session, setSession] = useState<AuthSession | null>(null);
+  const [savedPapers, setSavedPapers] = useState<UIPaper[]>([]);
+  const [recommendations, setRecommendations] = useState<UIPaper[]>([]);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (!userData) {
+    const currentSession = getStoredSession();
+    if (!currentSession) {
       router.push('/login');
       return;
     }
-    setUser(JSON.parse(userData));
+
+    setSession(currentSession);
+
+    const loadData = async () => {
+      try {
+        const [saved, personalized] = await Promise.all([
+          listSavedPapers(currentSession),
+          fetchPersonalizedRecommendations(currentSession),
+        ]);
+        setSavedPapers(saved);
+        setRecommendations(personalized);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Failed to load dashboard data';
+        if (message.toLowerCase().includes('validate credentials')) {
+          clearStoredSession();
+          router.push('/login');
+          return;
+        }
+        setError(message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadData();
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    clearStoredSession();
+    setSession(null);
     router.push('/');
   };
 
-  if (!user) {
+  const handleSavePaper = async (paperId: string) => {
+    if (!session) return;
+
+    try {
+      await savePaper(paperId, session);
+      const updated = await listSavedPapers(session);
+      setSavedPapers(updated);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to update saved paper');
+    }
+  };
+
+  if (!session) {
     return null;
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header isAuthenticated={true} userName={user.name} onLogout={handleLogout} />
+      <Header isAuthenticated={true} userName={session.user.name} onLogout={handleLogout} />
 
       <main className="flex-1">
         {/* Welcome Section */}
         <section className="bg-gradient-to-r from-primary/5 to-secondary/5 border-b border-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {user.name}!</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {session.user.name}!</h1>
             <p className="text-muted-foreground">
               Manage your saved papers and get recommendations
             </p>
@@ -99,79 +94,31 @@ export default function DashboardPage() {
 
         {/* Stats Section */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="card-base">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Saved Papers</p>
-                  <p className="text-3xl font-bold text-foreground">{mockSavedPapers.length}</p>
-                </div>
-                <BookOpen className="w-8 h-8 text-primary/20" />
-              </div>
+          {error ? (
+            <div className="mb-6 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-600">
+              {error}
+            </div>
+          ) : null}
+
+          <div className="space-y-12">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Your saved papers</h2>
+              <PaperGrid
+                papers={savedPapers}
+                isLoading={isLoading}
+                isEmpty={!isLoading && savedPapers.length === 0}
+              />
             </div>
 
-            <div className="card-base">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Recommendations</p>
-                  <p className="text-3xl font-bold text-foreground">{mockRecommendations.length}</p>
-                </div>
-                <Zap className="w-8 h-8 text-primary/20" />
-              </div>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Papers recommended for you</h2>
+              <PaperGrid
+                papers={recommendations}
+                isLoading={isLoading}
+                isEmpty={!isLoading && recommendations.length === 0}
+                onDownload={handleSavePaper}
+              />
             </div>
-
-            <div className="card-base">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Favorite Topics</p>
-                  <p className="text-3xl font-bold text-foreground">5</p>
-                </div>
-                <Heart className="w-8 h-8 text-primary/20" />
-              </div>
-            </div>
-          </div> */}
-
-          {/* Tabs */}
-          {/* <div className="flex gap-4 border-b border-border mb-8">
-            <button
-              onClick={() => setActiveTab('recommendations')}
-              className={`px-4 py-3 font-medium transition-colors border-b-2 ${
-                activeTab === 'recommendations'
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Personalized Recommendations
-            </button>
-            <button
-              onClick={() => setActiveTab('saved')}
-              className={`px-4 py-3 font-medium transition-colors border-b-2 ${
-                activeTab === 'saved'
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Saved Papers
-            </button>
-          </div> */}
-
-          {/* Content */}
-          <div>
-            {activeTab === 'saved' ? (
-              <>
-                <h2 className="text-2xl font-bold text-foreground mb-6">
-                  Your saved papers
-                </h2>
-                <PaperGrid papers={mockSavedPapers} />
-              </>              
-            ) : (
-              <>
-                <h2 className="text-2xl font-bold text-foreground mb-6">
-                  Papers recommended for you
-                </h2>
-                <PaperGrid papers={mockRecommendations} />
-              </>
-            )}
           </div>
 
           {/* Browse More */}

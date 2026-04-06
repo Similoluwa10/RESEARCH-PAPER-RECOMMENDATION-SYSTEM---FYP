@@ -4,6 +4,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import {
+  getCurrentUser,
+  loginWithGoogleToken,
+  loginWithPassword,
+  registerUser,
+} from '@/lib/api';
+import { setStoredSession } from '@/lib/auth';
+import { getGoogleIdToken } from '@/lib/google-auth';
 
 const formInputClass =
   'w-full rounded-lg border border-granite/60 bg-light px-3 py-2 text-foreground placeholder:text-granite/75 transition-colors focus-visible:outline-none focus-visible:border-secondary focus-visible:ring-2 focus-visible:ring-secondary/40';
@@ -23,9 +31,19 @@ export default function SignUpPage() {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+
+  const persistSession = async (accessToken: string, tokenType: string) => {
+    const user = await getCurrentUser(accessToken, tokenType);
+    setStoredSession({
+      accessToken,
+      tokenType,
+      user,
+    });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,16 +72,30 @@ export default function SignUpPage() {
         return;
       }
 
-      // Simulate registration
-      localStorage.setItem('user', JSON.stringify({ 
-        email: formData.email, 
-        name: formData.name 
-      }));
+      await registerUser(formData.name, formData.email, formData.password);
+      const token = await loginWithPassword(formData.email, formData.password);
+      await persistSession(token.access_token, token.token_type);
       router.push('/dashboard');
-    } catch (err) {
-      setError('Sign up failed. Please try again.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Sign up failed. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setError('');
+    setIsGoogleLoading(true);
+
+    try {
+      const idToken = await getGoogleIdToken();
+      const token = await loginWithGoogleToken(idToken);
+      await persistSession(token.access_token, token.token_type);
+      router.push('/dashboard');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Google sign-up failed.');
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -203,7 +235,7 @@ export default function SignUpPage() {
                 </div>
 
                 <div className="mb-6">
-                  <button type="button" className={googleButtonClass}>
+                  <button type="button" onClick={handleGoogleSignUp} disabled={isGoogleLoading} className={googleButtonClass}>
                     <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
                       <path
                         fill="#EA4335"
@@ -222,7 +254,7 @@ export default function SignUpPage() {
                         d="M21.6 12.2c0-.7-.1-1.3-.2-1.9H12v3.9h5.5c-.3 1.3-1.1 2.5-2.3 3.2l2.8 2.2c2.2-2 3.6-5 3.6-8.4Z"
                       />
                     </svg>
-                    Continue with Google
+                    {isGoogleLoading ? 'Connecting Google...' : 'Continue with Google'}
                   </button>
                 </div>
 

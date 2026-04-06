@@ -1,11 +1,12 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
   onQueryChange?: (query: string) => void;
+  value?: string;
   placeholder?: string;
   className?: string;
   inputClassName?: string;
@@ -14,11 +15,27 @@ interface SearchBarProps {
 export default function SearchBar({
   onSearch,
   onQueryChange,
+  value,
   placeholder = 'Search papers...',
   className = '',
   inputClassName = '',
 }: SearchBarProps) {
-  const [query, setQuery] = useState('');
+  const [internalQuery, setInternalQuery] = useState('');
+  const isControlled = value !== undefined;
+  const query = isControlled ? value : internalQuery;
+
+  useEffect(() => {
+    if (isControlled) {
+      setInternalQuery(value ?? '');
+    }
+  }, [isControlled, value]);
+
+  const updateQuery = (nextValue: string) => {
+    if (!isControlled) {
+      setInternalQuery(nextValue);
+    }
+    onQueryChange?.(nextValue);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +43,7 @@ export default function SearchBar({
   };
 
   const handleClear = () => {
-    setQuery('');
-    onQueryChange?.('');
+    updateQuery('');
     onSearch('');
   };
 
@@ -39,9 +55,7 @@ export default function SearchBar({
           type="text"
           value={query}
           onChange={(e) => {
-            const value = e.target.value;
-            setQuery(value);
-            onQueryChange?.(value);
+            updateQuery(e.target.value);
           }}
           placeholder={placeholder}
           className={`input-field pl-10 pr-10 w-full ${inputClassName}`}

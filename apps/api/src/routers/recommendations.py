@@ -8,7 +8,7 @@ The core feature of the intelligent recommendation system.
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies import get_current_user, get_db
@@ -40,13 +40,22 @@ async def get_recommendations(
     if request.paper_id:
         result = await service.get_similar_papers(
             paper_id=request.paper_id,
-            top_k=request.top_k,
+            top_k=None,
+            include_explanations=request.include_explanation,
+        )
+        return result
+
+    if not request.query_text:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Either query_text or paper_id must be provided",
         )
 
     result = await service.get_recommendations_for_text(
         text=request.query_text,
-        top_k=request.top_k,
-    )    
+        top_k=None,
+        include_explanations=request.include_explanation,
+    )
     return result
 
 

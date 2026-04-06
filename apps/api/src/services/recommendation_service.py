@@ -29,11 +29,12 @@ class RecommendationService:
         self.repository = PaperRepository(db)
         self.explanation_service = ExplanationService()
         self.embedding_service = EmbeddingService()
+        self.min_recommendation_similarity = 0.5
     
     async def get_recommendations_for_text(
         self,
         text: str,
-        top_k: int = 10,
+        top_k: Optional[int] = 10,
         include_explanations: bool = True,
     ) -> RecommendationResponse:
         """
@@ -43,14 +44,18 @@ class RecommendationService:
         
         Args:
             text: Query text to find similar papers for
-            top_k: Number of recommendations to return
+            top_k: Maximum recommendations to return; set to None for all matches
             include_explanations: Whether to generate XAI explanations
             
         Returns:
             Recommendations with scores and optional explanations
         """
         query_vector = self.embedding_service.encode_text(text)
-        matches = await self.repository.search_by_embedding(query_vector, top_k=top_k)
+        matches = await self.repository.search_by_embedding(
+            embedding=query_vector,
+            top_k=top_k,
+            min_similarity=self.min_recommendation_similarity,
+        )
 
         recommendations = []
         for item in matches:
@@ -82,7 +87,7 @@ class RecommendationService:
     async def get_similar_papers(
         self,
         paper_id: UUID,
-        top_k: int = 10,
+        top_k: Optional[int] = 10,
         include_explanations: bool = True,
     ) -> RecommendationResponse:
         """
@@ -92,7 +97,7 @@ class RecommendationService:
         
         Args:
             paper_id: ID of the paper to find similar papers for
-            top_k: Number of results to return
+            top_k: Maximum results to return; set to None for all matches
             include_explanations: Whether to generate explanations
             
         Returns:
@@ -103,7 +108,11 @@ class RecommendationService:
         if not paper:
             return RecommendationResponse.from_model({"recommendations": []})
         
-        matches = await self.repository.find_similar(paper_id, top_k=top_k)
+        matches = await self.repository.find_similar(
+            paper_id=paper_id,
+            top_k=top_k,
+            min_similarity=self.min_recommendation_similarity,
+        )
         query_text = f"{paper.title} {paper.abstract}" if paper else ""
         recommendations = [
             {

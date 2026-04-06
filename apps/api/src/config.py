@@ -6,16 +6,22 @@ Loads settings from environment variables and .env files.
 """
 
 from functools import lru_cache
+from pathlib import Path
 from typing import List
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
+ROOT_DIR = Path(__file__).resolve().parents[3]
+
+ROOT_ENV_FILE = ROOT_DIR / "apps" / "api" / ".env"
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=ROOT_ENV_FILE,
         env_file_encoding="utf-8",
         case_sensitive=False,
     )
@@ -27,18 +33,18 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     
     # Database
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/research_recommender_db"
-    #DATABASE_URL: str = "postgresql://research_recommender_db_user:uv3z6WKJ2WmOY7x9E4CfD2XEQjiWefvu@dpg-d6rl7khaae7s73crbsd0-a.oregon-postgres.render.com/research_recommender_db"
+    DATABASE_URL: str 
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
     
     # JWT Authentication
-    JWT_SECRET_KEY: str = "your-secret-key-change-in-production"
-    JWT_ALGORITHM: str = "HS256"
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    JWT_SECRET_KEY: str 
+    JWT_ALGORITHM: str 
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int 
+    GOOGLE_CLIENT_ID: str 
     
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: List[str] 
     
     # NLP/Embeddings
     EMBEDDING_MODEL_NAME: str = "all-MiniLM-L6-v2"
@@ -46,6 +52,8 @@ class Settings(BaseSettings):
     
     # Logging
     LOG_LEVEL: str = "INFO"
+    
+    SEMANTIC_SCHOLAR_API_KEY: str
 
 
 @lru_cache()

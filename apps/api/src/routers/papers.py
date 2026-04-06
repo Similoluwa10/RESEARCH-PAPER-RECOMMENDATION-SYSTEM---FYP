@@ -8,12 +8,19 @@ This is the primary router for paper management.
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies import get_current_user, get_db
-from src.schemas.paper import PaperCreate, PaperResponse, PaperUpdate, PaperListResponse
+from src.schemas.paper import (
+    PaperCreate,
+    PaperListResponse,
+    PaperResponse,
+    PaperUpdate,
+    SavedPaperActionResponse,
+)
 from src.services.paper_service import PaperService
+from src.services.saved_paper_service import SavedPaperService
 
 router = APIRouter(prefix="/papers")
 
@@ -39,6 +46,49 @@ async def list_papers(
         venue=venue,
     )
     return result
+
+
+@router.get("/saved", response_model=PaperListResponse)
+async def list_saved_papers(
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """List papers saved by the authenticated user."""
+    service = SavedPaperService(db)
+    return await service.list_saved_papers(
+        user_id=current_user.id,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@router.post(
+    "/{paper_id}/save",
+    response_model=SavedPaperActionResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def save_paper(
+    paper_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """Save a paper for the authenticated user."""
+    service = SavedPaperService(db)
+    return await service.save_paper(user_id=current_user.id, paper_id=paper_id)
+
+
+@router.delete("/{paper_id}/save", status_code=status.HTTP_204_NO_CONTENT)
+async def unsave_paper(
+    paper_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """Remove a paper from the authenticated user's saved list."""
+    service = SavedPaperService(db)
+    await service.unsave_paper(user_id=current_user.id, paper_id=paper_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get("/{paper_id}", response_model=PaperResponse)

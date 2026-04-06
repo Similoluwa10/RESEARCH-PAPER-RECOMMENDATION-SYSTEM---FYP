@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Heart, Download, Eye } from 'lucide-react';
 import { useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 interface PaperCardProps {
   id: string;
@@ -31,8 +32,13 @@ export default function PaperCard({
   onDownload = () => {},
   isLiked = false,
 }: PaperCardProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [liked, setLiked] = useState(isLiked);
   const [likeCount, setLikeCount] = useState(likes);
+
+  const currentSearch = searchParams.toString();
+  const returnPath = currentSearch ? `${pathname}?${currentSearch}` : pathname;
 
   const handleLike = () => {
     setLiked(!liked);
@@ -45,14 +51,19 @@ export default function PaperCard({
       {/* Header */}
       <div className="mb-4">
         <div className="flex items-start justify-between mb-2">
-          <Link href={`/paper/${id}`}>
+          <Link
+            href={{
+              pathname: `/paper/${id}`,
+              query: { from: returnPath },
+            }}
+          >
             <h3 className="text-lg font-semibold text-foreground hover:text-primary transition-colors duration-200 line-clamp-2">
               {title}
             </h3>
           </Link>
-          <span className="ml-2 px-2 py-1 bg-muted text-muted-foreground text-xs rounded whitespace-nowrap">
+          {/* <span className="ml-2 px-2 py-1 bg-muted text-muted-foreground text-xs rounded whitespace-nowrap">
             {category}
-          </span>
+          </span> */}
         </div>
         <p className="text-sm text-muted-foreground">
           {authors.slice(0, 3).join(', ')}
@@ -67,10 +78,10 @@ export default function PaperCard({
       <div className="flex items-center justify-between text-xs text-muted-foreground mb-4 pb-4 border-b border-border">
         <span>{publicationDate}</span>
         <div className="flex gap-4">
-          <span className="flex items-center gap-1">
+          {/* <span className="flex items-center gap-1">
             <Eye className="w-3 h-3" />
             {citations}
-          </span>
+          </span> */}
         </div>
       </div>
 
@@ -95,7 +106,10 @@ export default function PaperCard({
           <span className="text-sm">Save</span>
         </button>
         <Link
-          href={`/paper/${id}`}
+          href={{
+            pathname: `/paper/${id}`,
+            query: { from: returnPath },
+          }}
           className="flex-1 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-center text-sm font-medium hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
         >
           View

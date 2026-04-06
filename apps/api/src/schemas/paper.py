@@ -49,6 +49,11 @@ class PaperUpdate(BaseModel):
 
 class PaperResponse(PaperBase):
     """Schema for paper response."""
+
+    # Response payloads may contain legacy/imported venue values longer than
+    # request-time validation limits. Keep read-path resilient without
+    # weakening create/update validation in PaperCreate/PaperUpdate.
+    venue: Optional[str] = None
     
     id: UUID    
     created_at: datetime
@@ -82,6 +87,13 @@ class PaperList(BaseModel):
             page=result.get("page", 1),
             page_size=result.get("page_size", len(parsed_papers)),
         )
+
+
+class SavedPaperActionResponse(BaseModel):
+    """Response for save/unsave paper actions."""
+
+    paper: PaperResponse
+    saved: bool
 
 
 # Alias for backwards compatibility
