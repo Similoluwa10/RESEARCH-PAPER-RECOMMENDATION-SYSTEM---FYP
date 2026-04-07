@@ -29,6 +29,7 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     """Schema for updating a user."""
     
+    email: Optional[EmailStr] = None
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     preferred_categories: Optional[List[str]] = None
 
@@ -57,3 +58,23 @@ class GoogleAuthRequest(BaseModel):
     """Schema for Google ID token authentication."""
 
     id_token: str
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Schema for forgot password request."""
+
+    email: EmailStr
+
+
+class MessageResponse(BaseModel):
+    """Simple message response schema."""
+
+    message: str
+    reset_url: Optional[str] = None
+
+
+class ResetPasswordRequest(BaseModel):
+    """Schema for reset password submission."""
+
+    token: str
+    new_password: str = Field(..., min_length=8, max_length=100)

@@ -71,10 +71,13 @@ export default function ProfilePage() {
               />
 
               {/* Edit Profile Button */}
-              <button className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border text-foreground hover:bg-muted transition-colors font-medium">
+              <Link
+                href="/profile/edit"
+                className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border text-foreground hover:bg-muted transition-colors font-medium"
+              >
                 <Edit2 className="w-4 h-4" />
                 Edit Profile
-              </button>
+              </Link>
 
               {/* Settings Section */}
               <div className="mt-8 card-base">

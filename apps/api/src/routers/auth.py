@@ -9,18 +9,30 @@ from datetime import datetime, timedelta
 import secrets
 import importlib
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from jose import jwt
+from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import settings
 from src.dependencies import get_current_user, get_db
-from src.schemas.user import GoogleAuthRequest, Token, UserCreate, UserResponse
+from src.schemas.user import (
+    ForgotPasswordRequest,
+    GoogleAuthRequest,
+    MessageResponse,
+    ResetPasswordRequest,
+    Token,
+    UserCreate,
+    UserResponse,
+    UserUpdate,
+)
 from src.services.user_service import UserService
 
 router = APIRouter(prefix="/auth")
+
+PASSWORD_RESET_EXPIRE_MINUTES = 30
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
@@ -38,6 +50,17 @@ def build_user_token(user_id: str) -> Token:
         expires_delta=timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     return Token(access_token=access_token)
+
+
+def create_password_reset_token(user_id: str) -> str:
+    """Create a short-lived JWT token for password reset."""
+    expire = datetime.utcnow() + timedelta(minutes=PASSWORD_RESET_EXPIRE_MINUTES)
+    payload = {
+        "sub": user_id,
+        "type": "password_reset",
+        "exp": expire,
+    }
+    return jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
@@ -156,3 +179,104 @@ async def login_with_google(
 async def get_me(current_user=Depends(get_current_user)):
     """Get current authenticated user profile."""
     return current_user
+
+
+@router.patch("/me", response_model=UserResponse)
+async def update_me(
+    payload: UserUpdate,
+    current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update current authenticated user's profile."""
+    service = UserService(db)
+
+    try:
+        updated = await service.update_profile(current_user.id, payload)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
+
+    if not updated:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    return updated
+
+
+@router.post("/forgot-password", response_model=MessageResponse)
+async def forgot_password(
+    payload: ForgotPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Accept password reset request.
+
+    Always returns a generic response to avoid email enumeration.
+    """
+    service = UserService(db)
+    user = await service.get_by_email(payload.email)
+
+    reset_url = None
+    if user and settings.APP_ENV.lower() != "production":
+        token = create_password_reset_token(str(user.id))
+        reset_url = f"http://localhost:3000/reset-password?token={token}"
+
+    return MessageResponse(
+        message="If an account exists for that email, reset instructions have been sent.",
+        reset_url=reset_url,
+    )
+
+
+@router.post("/reset-password", response_model=MessageResponse)
+async def reset_password(
+    payload: ResetPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Reset password using a valid password reset JWT token."""
+    try:
+        token_payload = jwt.decode(
+            payload.token,
+            settings.JWT_SECRET_KEY,
+            algorithms=[settings.JWT_ALGORITHM],
+        )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired reset token",
+        )
+
+    if token_payload.get("type") != "password_reset":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid reset token",
+        )
+
+    user_id = token_payload.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid reset token",
+        )
+
+    service = UserService(db)
+
+    try:
+        parsed_user_id = UUID(str(user_id))
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid reset token",
+        )
+
+    updated = await service.update_password(parsed_user_id, payload.new_password)
+    if not updated:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    return MessageResponse(message="Password has been reset successfully.")

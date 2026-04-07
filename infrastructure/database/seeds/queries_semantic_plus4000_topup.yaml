@@ -1,0 +1,50 @@
+frontend_development:
+  - "webassembly frontend tooling"
+
+backend_development:
+  - "backend idempotency patterns"
+
+natural_language_processing:
+  - "retrieval augmented generation nlp"
+
+software_testing:
+  - "differential testing software"
+
+agile_devops:
+  - "platform engineering devops"
+
+requirements_engineering:
+  - "goal model requirements analysis"
+
+software_architecture:
+  - "architecture conformance checking"
+
+software_security:
+  - "secure by design software systems"
+
+program_analysis:
+  - "program dependence graph analysis"
+
+machine_learning:
+  - "continual learning machine learning"
+
+software_configuration_management:
+  - "software configuration item management"
+
+software_project_management:
+  - "software project delay prediction"
+
+software_engineering:
+  - "evidence synthesis software engineering"
+
+bug_prediction:
+  - "deep learning bug prediction"
+
+artificial_intelligence:
+  - "agentic ai systems"
+
+code_quality:
+  - "automated code quality assessment"
+
+other_se_topics:
+  - "software engineering knowledge graphs"

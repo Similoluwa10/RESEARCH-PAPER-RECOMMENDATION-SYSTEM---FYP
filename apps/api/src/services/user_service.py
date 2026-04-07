@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.security import hash_password, verify_password
 from src.models.user import User
 from src.repositories.user_repository import UserRepository
-from src.schemas.user import UserCreate
+from src.schemas.user import UserCreate, UserUpdate
 
 
 class UserService:
@@ -76,3 +76,27 @@ class UserService:
     async def get_user(self, user_id: UUID) -> Optional[User]:
         """Get user by ID."""
         return await self.repository.get_by_id(user_id)
+
+    async def update_profile(self, user_id: UUID, data: UserUpdate) -> Optional[User]:
+        """
+        Update user profile fields.
+
+        Performs email uniqueness validation when email is changed.
+        """
+        current_user = await self.repository.get_by_id(user_id)
+        if not current_user:
+            return None
+
+        update_data = data.model_dump(exclude_unset=True)
+
+        new_email = update_data.get("email")
+        if new_email and new_email != current_user.email:
+            existing = await self.repository.get_by_email(new_email)
+            if existing and existing.id != user_id:
+                raise ValueError("Email already registered")
+
+        return await self.repository.update(user_id, update_data)
+
+    async def update_password(self, user_id: UUID, new_password: str) -> Optional[User]:
+        """Update user password with hashing."""
+        return await self.repository.update_password(user_id, hash_password(new_password))
