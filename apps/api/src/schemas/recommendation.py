@@ -53,14 +53,12 @@ class RecommendationRequest(BaseModel):
         None,
         description="Paper ID to find similar papers for",
     )
-    top_k: int = Field(10, ge=1, le=50)
     include_explanation: bool = Field(True)
     
     class Config:
         json_schema_extra = {
             "example": {
                 "query_text": "machine learning approaches for software bug detection",
-                "top_k": 10,
                 "include_explanation": True,
             }
         }

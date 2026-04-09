@@ -11,7 +11,10 @@ one reusable component.
 import asyncio
 import logging
 import sys
+import time
+from collections import OrderedDict
 from pathlib import Path
+from threading import Lock
 from typing import Any, Dict, List, Sequence, Tuple
 
 import numpy as np
@@ -40,6 +43,14 @@ class EmbeddingService:
     `SentenceTransformerEmbedding`, which lazily loads the underlying model.
     """
 
+    _model_cache: Dict[str, SentenceTransformerEmbedding] = {}
+    _model_cache_lock = Lock()
+
+    _embedding_cache: "OrderedDict[str, tuple[float, List[float]]]" = OrderedDict()
+    _embedding_cache_lock = Lock()
+    _embedding_cache_ttl_seconds = 900
+    _embedding_cache_max_items = 2048
+
     def __init__(self, model_name: str | None = None):
         """
         Initialize embedding service.
@@ -49,7 +60,46 @@ class EmbeddingService:
                 `settings.EMBEDDING_MODEL_NAME`.
         """
         self.model_name = model_name or settings.EMBEDDING_MODEL_NAME
-        self.model = SentenceTransformerEmbedding(self.model_name)
+        self.model = self._get_or_create_model(self.model_name)
+
+    @classmethod
+    def _get_or_create_model(cls, model_name: str) -> SentenceTransformerEmbedding:
+        with cls._model_cache_lock:
+            model = cls._model_cache.get(model_name)
+            if model is None:
+                model = SentenceTransformerEmbedding(model_name)
+                cls._model_cache[model_name] = model
+            return model
+
+    @staticmethod
+    def _normalize_text_for_cache(text: str) -> str:
+        return " ".join((text or "").strip().split())
+
+    @classmethod
+    def _get_cached_embedding(cls, cache_key: str) -> List[float] | None:
+        now = time.monotonic()
+        with cls._embedding_cache_lock:
+            cached = cls._embedding_cache.get(cache_key)
+            if cached is None:
+                return None
+
+            created_at, vector = cached
+            if now - created_at > cls._embedding_cache_ttl_seconds:
+                cls._embedding_cache.pop(cache_key, None)
+                return None
+
+            cls._embedding_cache.move_to_end(cache_key)
+            return list(vector)
+
+    @classmethod
+    def _set_cached_embedding(cls, cache_key: str, vector: List[float]) -> None:
+        now = time.monotonic()
+        with cls._embedding_cache_lock:
+            cls._embedding_cache[cache_key] = (now, list(vector))
+            cls._embedding_cache.move_to_end(cache_key)
+
+            while len(cls._embedding_cache) > cls._embedding_cache_max_items:
+                cls._embedding_cache.popitem(last=False)
 
     @property
     def dimension(self) -> int:
@@ -84,8 +134,15 @@ class EmbeddingService:
         Returns:
             Dense embedding as a Python list of floats.
         """
+        cache_key = self._normalize_text_for_cache(text)
+        cached_vector = self._get_cached_embedding(cache_key)
+        if cached_vector is not None:
+            return cached_vector
+
         embedding = self.model.encode(text)[0]
-        return embedding.tolist()
+        vector = embedding.tolist()
+        self._set_cached_embedding(cache_key, vector)
+        return vector
 
     def encode_texts(self, texts: List[str], batch_size: int = 32) -> List[List[float]]:
         """

@@ -5,10 +5,9 @@ Provides paper recommendation endpoints with explainability features.
 The core feature of the intelligent recommendation system.
 """
 
-from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies import get_current_user, get_db
@@ -40,7 +39,6 @@ async def get_recommendations(
     if request.paper_id:
         result = await service.get_similar_papers(
             paper_id=request.paper_id,
-            top_k=None,
             include_explanations=request.include_explanation,
         )
         return result
@@ -53,7 +51,6 @@ async def get_recommendations(
 
     result = await service.get_recommendations_for_text(
         text=request.query_text,
-        top_k=None,
         include_explanations=request.include_explanation,
     )
     return result
@@ -62,7 +59,6 @@ async def get_recommendations(
 @router.get("/similar/{paper_id}", response_model=RecommendationResponse)
 async def get_similar_papers(
     paper_id: UUID,
-    top_k: int = Query(10, ge=1, le=50),
     db: AsyncSession = Depends(get_db),
 ) -> RecommendationResponse:
     """
@@ -71,13 +67,12 @@ async def get_similar_papers(
     Uses semantic similarity based on paper embeddings.
     """
     service = RecommendationService(db)
-    result = await service.get_similar_papers(paper_id, top_k=top_k)
+    result = await service.get_similar_papers(paper_id)
     return result
 
 
 @router.get("/personalized", response_model=RecommendationResponse)
 async def get_personalized_recommendations(
-    top_k: int = Query(10, ge=1, le=50),
     db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user),
 ) -> RecommendationResponse:
@@ -90,6 +85,5 @@ async def get_personalized_recommendations(
     service = RecommendationService(db)
     result = await service.get_personalized(
         user_id=current_user.id,
-        top_k=top_k,
     )
     return result
