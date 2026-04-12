@@ -50,10 +50,19 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL_NAME: str = "all-MiniLM-L6-v2"
     EMBEDDING_DIMENSION: int = 384
     
+    # Caching Configuration
+    EMBEDDING_CACHE_TTL_SECONDS: int = 3600  # 1 hour
+    EMBEDDING_CACHE_MAX_ITEMS: int = 5000    # Larger cache for frequently queried texts
+    RECOMMENDATION_CACHE_TTL_SECONDS: int = 3600  # 1 hour for recommendation results
+    RECOMMENDATION_CACHE_MAX_ITEMS: int = 500     # Caches for different queries/papers
+    
     # Logging
     LOG_LEVEL: str = "INFO"
     
     SEMANTIC_SCHOLAR_API_KEY: str
+    
+    # Hugging Face API (for higher rate limits on model downloads and inference)
+    HUGGINGFACE_API_KEY: str 
 
 
 @lru_cache()

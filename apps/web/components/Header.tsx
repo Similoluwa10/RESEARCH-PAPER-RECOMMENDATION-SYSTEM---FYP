@@ -64,10 +64,11 @@ export default function Header({
                   <span className="text-sm text-muted-foreground">{userName}</span>
                   <button
                     onClick={handleLogout}
-                    className="p-2 hover:bg-muted rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium"
                     aria-label="Logout"
                   >
-                    <LogOut className="w-5 h-5 text-foreground" />
+                    <LogOut className="w-4 h-4" />
+                    Logout
                   </button>
                 </div>
               </>
@@ -81,7 +82,7 @@ export default function Header({
                 </Link>
                 <Link
                   href="/login"
-                  className="px-4 py-2 rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground hover:from-secondary/90 hover:to-secondary/70 transition-all font-medium shadow-sm"
                 >
                   Sign In
                 </Link>
@@ -134,7 +135,7 @@ export default function Header({
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-muted text-foreground flex items-center gap-2 transition-transform hover:translate-x-1"
+                  className="w-full text-left px-3 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 transition-colors font-medium"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
@@ -150,7 +151,7 @@ export default function Header({
                 </Link>
                 <Link
                   href="/login"
-                  className="block px-3 py-2 rounded-lg border border-border text-foreground"
+                  className="block px-3 py-2 rounded-lg bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground font-medium"
                 >
                   Sign In
                 </Link>

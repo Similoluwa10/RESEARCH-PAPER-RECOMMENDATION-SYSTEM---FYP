@@ -5,6 +5,7 @@ Core business logic for generating paper recommendations.
 Orchestrates embedding generation, similarity search, and explanations.
 """
 
+import logging
 import time
 from collections import OrderedDict
 from threading import Lock
@@ -13,10 +14,13 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.config import settings
 from src.repositories.paper_repository import PaperRepository
 from src.schemas.recommendation import RecommendationResponse
 from src.services.explanation_service import ExplanationService
 from src.services.embedding_service import EmbeddingService
+
+logger = logging.getLogger(__name__)
 
 
 class RecommendationService:
@@ -25,19 +29,24 @@ class RecommendationService:
     
     Provides semantic similarity-based recommendations
     with optional explainability features.
+    
+    Implements result caching to avoid repeated expensive searches.
     """
 
     _result_cache: "OrderedDict[str, tuple[float, Dict[str, Any]]]" = OrderedDict()
     _result_cache_lock = Lock()
-    _result_cache_ttl_seconds = 120
-    _result_cache_max_items = 256
+    
+    # Stats for cache performance monitoring
+    _cache_hits: int = 0
+    _cache_misses: int = 0
+    _stats_lock = Lock()
     
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repository = PaperRepository(db)
         self.explanation_service = ExplanationService()
         self.embedding_service = EmbeddingService()
-        self.min_recommendation_similarity = 0.55
+        self.min_recommendation_similarity = 0.5
 
     @classmethod
     def _make_text_cache_key(cls, text: str, include_explanations: bool, min_similarity: float) -> str:
@@ -59,14 +68,23 @@ class RecommendationService:
         with cls._result_cache_lock:
             cached = cls._result_cache.get(key)
             if cached is None:
+                with cls._stats_lock:
+                    cls._cache_misses += 1
                 return None
 
             created_at, payload = cached
-            if now - created_at > cls._result_cache_ttl_seconds:
+            # Use configurable TTL from settings
+            ttl = settings.RECOMMENDATION_CACHE_TTL_SECONDS
+            if now - created_at > ttl:
                 cls._result_cache.pop(key, None)
+                with cls._stats_lock:
+                    cls._cache_misses += 1
                 return None
 
             cls._result_cache.move_to_end(key)
+            with cls._stats_lock:
+                cls._cache_hits += 1
+            logger.debug(f"Recommendation cache HIT for key: {key[:50]}...")
             return payload
 
     @classmethod
@@ -76,8 +94,12 @@ class RecommendationService:
             cls._result_cache[key] = (now, payload)
             cls._result_cache.move_to_end(key)
 
-            while len(cls._result_cache) > cls._result_cache_max_items:
+            # Use configurable max items from settings
+            max_items = settings.RECOMMENDATION_CACHE_MAX_ITEMS
+            while len(cls._result_cache) > max_items:
                 cls._result_cache.popitem(last=False)
+            
+            logger.debug(f"Recommendation cache SET: {len(cls._result_cache)} items in cache")
     
     async def get_recommendations_for_text(
         self,
@@ -228,3 +250,36 @@ class RecommendationService:
             "method": "personalized",
         }
         return RecommendationResponse.from_model(result)
+
+    @classmethod
+    def get_cache_stats(cls) -> Dict[str, Any]:
+        """
+        Get current recommendation result cache statistics.
+        
+        Returns:
+            Dict with cache hit/miss stats and current cache size
+        """
+        with cls._stats_lock:
+            total_requests = cls._cache_hits + cls._cache_misses
+            hit_rate = (
+                (cls._cache_hits / total_requests * 100)
+                if total_requests > 0
+                else 0
+            )
+        
+        return {
+            "cache_hits": cls._cache_hits,
+            "cache_misses": cls._cache_misses,
+            "total_requests": total_requests,
+            "hit_rate_percent": round(hit_rate, 2),
+            "cache_size": len(cls._result_cache),
+            "max_cache_size": settings.RECOMMENDATION_CACHE_MAX_ITEMS,
+        }
+
+    @classmethod
+    def reset_cache_stats(cls) -> None:
+        """Reset cache statistics counters."""
+        with cls._stats_lock:
+            cls._cache_hits = 0
+            cls._cache_misses = 0
+        logger.info("Recommendation cache statistics reset")

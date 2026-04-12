@@ -8,7 +8,7 @@ import ProfileCard from '@/components/ProfileCard';
 import PaperGrid from '@/components/PaperGrid';
 import { Mail, Edit2 } from 'lucide-react';
 import Link from 'next/link';
-import { listSavedPapers, UIPaper } from '@/lib/api';
+import { listSavedPapers, unsavePaper, UIPaper } from '@/lib/api';
 import { AuthSession, clearStoredSession, getStoredSession } from '@/lib/auth';
 
 export default function ProfilePage() {
@@ -45,6 +45,23 @@ export default function ProfilePage() {
     clearStoredSession();
     setSession(null);
     router.push('/');
+  };
+
+  const handleUnsavePaper = async (paperId: string) => {
+    if (!session) return;
+
+    try {
+      await unsavePaper(paperId, session);
+      const updated = await listSavedPapers(session);
+      setSavedPapers(updated);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to unsave paper';
+      if (message.toLowerCase().includes('validate credentials')) {
+        clearStoredSession();
+        router.push('/login');
+        return;
+      }
+    }
   };
 
   if (!session) {
@@ -151,6 +168,7 @@ export default function ProfilePage() {
                   papers={savedPapers}
                   isLoading={isLoading}
                   isEmpty={!isLoading && savedPapers.length === 0}
+                  onUnsave={handleUnsavePaper}
                 />
               </div>
             </div>

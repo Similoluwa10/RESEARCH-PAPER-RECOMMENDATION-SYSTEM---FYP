@@ -18,6 +18,8 @@ interface RecommendationPageState {
   searchQuery: string;
   generatedPapers: UIPaper[];
   hasGenerated: boolean;
+  visibleCount: number;
+  scrollY: number;
 }
 
 export default function RecommendationPage() {
@@ -32,6 +34,7 @@ export default function RecommendationPage() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const pendingScrollRestoreRef = useRef<number | null>(null);
 
   useEffect(() => {
     setSession(getStoredSession());
@@ -43,6 +46,13 @@ export default function RecommendationPage() {
         setSearchQuery(parsed.searchQuery ?? '');
         setGeneratedPapers(Array.isArray(parsed.generatedPapers) ? parsed.generatedPapers : []);
         setHasGenerated(Boolean(parsed.hasGenerated));
+        setVisibleCount(
+          typeof parsed.visibleCount === 'number' && parsed.visibleCount > 0
+            ? parsed.visibleCount
+            : INITIAL_VISIBLE_PAPERS,
+        );
+        pendingScrollRestoreRef.current =
+          typeof parsed.scrollY === 'number' && parsed.scrollY >= 0 ? parsed.scrollY : 0;
       }
     } catch {
       window.sessionStorage.removeItem(RECOMMENDATION_STATE_KEY);
@@ -60,9 +70,52 @@ export default function RecommendationPage() {
       searchQuery,
       generatedPapers,
       hasGenerated,
+      visibleCount,
+      scrollY: window.scrollY,
     };
     window.sessionStorage.setItem(RECOMMENDATION_STATE_KEY, JSON.stringify(snapshot));
-  }, [isStateHydrated, searchQuery, generatedPapers, hasGenerated]);
+  }, [isStateHydrated, searchQuery, generatedPapers, hasGenerated, visibleCount]);
+
+  useEffect(() => {
+    if (!isStateHydrated) {
+      return;
+    }
+
+    let timeoutId = 0;
+    const handleScroll = () => {
+      window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(() => {
+        const snapshot: RecommendationPageState = {
+          searchQuery,
+          generatedPapers,
+          hasGenerated,
+          visibleCount,
+          scrollY: window.scrollY,
+        };
+        window.sessionStorage.setItem(RECOMMENDATION_STATE_KEY, JSON.stringify(snapshot));
+      }, 120);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isStateHydrated, searchQuery, generatedPapers, hasGenerated, visibleCount]);
+
+  useEffect(() => {
+    if (!isStateHydrated || pendingScrollRestoreRef.current === null) {
+      return;
+    }
+
+    const scrollTarget = pendingScrollRestoreRef.current;
+    pendingScrollRestoreRef.current = null;
+
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: scrollTarget, behavior: 'auto' });
+    });
+  }, [isStateHydrated, hasGenerated, generatedPapers.length]);
 
   useEffect(() => {
     if (!hasGenerated) {
@@ -113,6 +166,7 @@ export default function RecommendationPage() {
   const handleUnauthorized = () => {
     clearStoredSession();
     setSession(null);
+    window.sessionStorage.removeItem(RECOMMENDATION_STATE_KEY);
     router.push('/login');
   };
 
@@ -143,13 +197,14 @@ export default function RecommendationPage() {
     setSuccessMessage('');
 
     if (!session) {
-      router.push('/login');
+      router.push('/login?from=/recommendation');
       return;
     }
 
     try {
       await savePaper(paperId, session);
       setSuccessMessage('Paper saved to your library.');
+      setTimeout(() => setSuccessMessage(''), 2000);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to save paper';
       if (message.toLowerCase().includes('validate credentials')) {
@@ -168,6 +223,7 @@ export default function RecommendationPage() {
         onLogout={() => {
           clearStoredSession();
           setSession(null);
+          window.sessionStorage.removeItem(RECOMMENDATION_STATE_KEY);
           router.push('/');
         }}
       />
@@ -207,13 +263,20 @@ export default function RecommendationPage() {
               {error}
             </div>
           ) : null}
-          {successMessage ? (
-            <div className="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-              {successMessage}
-            </div>
-          ) : null}
 
-          {hasGenerated && isGenerating ? (
+          {successMessage && (
+            <div
+              className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+              onClick={() => setSuccessMessage('')}
+            >
+              <div className="fixed inset-0 bg-black/20 pointer-events-auto" />
+              <div className="relative bg-white rounded-lg shadow-2xl px-6 py-4 text-center pointer-events-auto animate-fade-up">
+                <p className="text-emerald-600 font-semibold">{successMessage}</p>
+              </div>
+            </div>
+          )}
+
+          {isGenerating ? (
             <div className="flex min-h-[280px] items-center justify-center">
               <div className="relative flex flex-col items-center gap-3 text-center">
                 <span className="absolute inline-flex h-20 w-20 animate-ping rounded-full bg-secondary/20" />
@@ -221,9 +284,9 @@ export default function RecommendationPage() {
                 <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-md">
                   <Sparkles className="h-7 w-7 animate-pulse" />
                 </div>
-                {/* <p className="relative z-10 text-sm text-muted-foreground">
-                  Generating recommendations for "{searchQuery}"...
-                </p> */}
+                <p className="relative z-10 text-sm text-muted-foreground font-medium">
+                  Generating recommendations...
+                </p>
               </div>
             </div>
           ) : hasGenerated ? (

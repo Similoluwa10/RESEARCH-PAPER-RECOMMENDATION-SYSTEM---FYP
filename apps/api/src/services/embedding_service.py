@@ -41,6 +41,11 @@ class EmbeddingService:
 
     The implementation uses the local NLP package's
     `SentenceTransformerEmbedding`, which lazily loads the underlying model.
+    
+    Implements multi-level caching:
+    - Model cache: Reuses loaded models across instances
+    - Embedding cache: LRU cache for computed embeddings (1 hour TTL, 5000 items)
+    - Batch caching: Intelligently caches batch operations
     """
 
     _model_cache: Dict[str, SentenceTransformerEmbedding] = {}
@@ -48,8 +53,11 @@ class EmbeddingService:
 
     _embedding_cache: "OrderedDict[str, tuple[float, List[float]]]" = OrderedDict()
     _embedding_cache_lock = Lock()
-    _embedding_cache_ttl_seconds = 900
-    _embedding_cache_max_items = 2048
+    
+    # Stats for cache performance monitoring
+    _cache_hits: int = 0
+    _cache_misses: int = 0
+    _stats_lock = Lock()
 
     def __init__(self, model_name: str | None = None):
         """
@@ -61,13 +69,20 @@ class EmbeddingService:
         """
         self.model_name = model_name or settings.EMBEDDING_MODEL_NAME
         self.model = self._get_or_create_model(self.model_name)
+        
+        # Use configurable cache settings
+        self._embedding_cache_ttl = settings.EMBEDDING_CACHE_TTL_SECONDS
+        self._embedding_cache_max = settings.EMBEDDING_CACHE_MAX_ITEMS
 
     @classmethod
     def _get_or_create_model(cls, model_name: str) -> SentenceTransformerEmbedding:
         with cls._model_cache_lock:
             model = cls._model_cache.get(model_name)
             if model is None:
-                model = SentenceTransformerEmbedding(model_name)
+                # Pass Hugging Face API token for authenticated requests
+                # This avoids rate limits when downloading models
+                hf_token = settings.HUGGINGFACE_API_KEY if settings.HUGGINGFACE_API_KEY else None
+                model = SentenceTransformerEmbedding(model_name, hf_token=hf_token)
                 cls._model_cache[model_name] = model
             return model
 
@@ -81,14 +96,23 @@ class EmbeddingService:
         with cls._embedding_cache_lock:
             cached = cls._embedding_cache.get(cache_key)
             if cached is None:
+                with cls._stats_lock:
+                    cls._cache_misses += 1
                 return None
 
             created_at, vector = cached
-            if now - created_at > cls._embedding_cache_ttl_seconds:
+            # Use configurable TTL from settings
+            ttl = settings.EMBEDDING_CACHE_TTL_SECONDS
+            if now - created_at > ttl:
                 cls._embedding_cache.pop(cache_key, None)
+                with cls._stats_lock:
+                    cls._cache_misses += 1
                 return None
 
             cls._embedding_cache.move_to_end(cache_key)
+            with cls._stats_lock:
+                cls._cache_hits += 1
+            logger.debug(f"Embedding cache HIT for key: {cache_key[:50]}...")
             return list(vector)
 
     @classmethod
@@ -98,8 +122,12 @@ class EmbeddingService:
             cls._embedding_cache[cache_key] = (now, list(vector))
             cls._embedding_cache.move_to_end(cache_key)
 
-            while len(cls._embedding_cache) > cls._embedding_cache_max_items:
+            # Use configurable max items from settings
+            max_items = settings.EMBEDDING_CACHE_MAX_ITEMS
+            while len(cls._embedding_cache) > max_items:
                 cls._embedding_cache.popitem(last=False)
+            
+            logger.debug(f"Embedding cache SET: {len(cls._embedding_cache)} items in cache")
 
     @property
     def dimension(self) -> int:
@@ -146,7 +174,10 @@ class EmbeddingService:
 
     def encode_texts(self, texts: List[str], batch_size: int = 32) -> List[List[float]]:
         """
-        Encode multiple texts in batches.
+        Encode multiple texts in batches with intelligent caching.
+
+        Checks cache for each text first, encoding only uncached texts.
+        Significantly improves performance for repeated or overlapping queries.
 
         Args:
             texts: Input texts to embed.
@@ -155,8 +186,84 @@ class EmbeddingService:
         Returns:
             List of embedding vectors in the same order as `texts`.
         """
-        embeddings = self.model.encode_batch(texts, batch_size=batch_size, show_progress=False)
-        return [vector.tolist() for vector in embeddings]
+        # Normalize cache keys for all texts
+        cache_keys = [self._normalize_text_for_cache(text) for text in texts]
+        
+        # Check which texts are already cached
+        cached_vectors = []
+        uncached_indices = []
+        uncached_texts = []
+        
+        for idx, (text, cache_key) in enumerate(zip(texts, cache_keys)):
+            cached = self._get_cached_embedding(cache_key)
+            if cached is not None:
+                cached_vectors.append((idx, cached))
+            else:
+                uncached_indices.append(idx)
+                uncached_texts.append(text)
+        
+        # Initialize result list
+        result = [None] * len(texts)
+        
+        # Add cached vectors to result
+        for idx, vector in cached_vectors:
+            result[idx] = vector
+        
+        # Encode only uncached texts if any
+        if uncached_texts:
+            logger.info(
+                f"Batch encoding {len(uncached_texts)}/{len(texts)} texts "
+                f"({len(cached_vectors)} from cache)"
+            )
+            embeddings = self.model.encode_batch(
+                uncached_texts,
+                batch_size=batch_size,
+                show_progress=False,
+            )
+            
+            # Cache the newly encoded embeddings
+            for idx_in_uncached, (text_idx, text) in enumerate(
+                zip(uncached_indices, uncached_texts)
+            ):
+                vector = embeddings[idx_in_uncached].tolist()
+                cache_key = cache_keys[text_idx]
+                self._set_cached_embedding(cache_key, vector)
+                result[text_idx] = vector
+        
+        return result
+
+    @classmethod
+    def get_cache_stats(cls) -> Dict[str, Any]:
+        """
+        Get current embedding cache statistics.
+        
+        Returns:
+            Dict with cache hit/miss stats and current cache size
+        """
+        with cls._stats_lock:
+            total_requests = cls._cache_hits + cls._cache_misses
+            hit_rate = (
+                (cls._cache_hits / total_requests * 100)
+                if total_requests > 0
+                else 0
+            )
+        
+        return {
+            "cache_hits": cls._cache_hits,
+            "cache_misses": cls._cache_misses,
+            "total_requests": total_requests,
+            "hit_rate_percent": round(hit_rate, 2),
+            "cache_size": len(cls._embedding_cache),
+            "max_cache_size": settings.EMBEDDING_CACHE_MAX_ITEMS,
+        }
+
+    @classmethod
+    def reset_cache_stats(cls) -> None:
+        """Reset cache statistics counters."""
+        with cls._stats_lock:
+            cls._cache_hits = 0
+            cls._cache_misses = 0
+        logger.info("Cache statistics reset")
 
     # def compute_quality_score(self, title: str, abstract: str) -> float:
     #     """

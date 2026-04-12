@@ -4,7 +4,7 @@ Sentence Transformer Embedding
 Embedding generation using sentence-transformers library.
 """
 
-from typing import List, Union
+from typing import List, Optional, Union
 
 import numpy as np
 
@@ -17,16 +17,22 @@ class SentenceTransformerEmbedding(BaseEmbedding):
     
     Uses pre-trained models from Hugging Face for semantic text embeddings.
     Default model: all-MiniLM-L6-v2 (384 dimensions, fast inference)
+    
+    When a Hugging Face API token is provided, it enables authenticated requests
+    which allow higher rate limits and access to private models.
     """
     
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2", hf_token: Optional[str] = None):
         """
         Initialize the embedding model.
         
         Args:
             model_name: Name of the sentence-transformers model
+            hf_token: Optional Hugging Face API token for authenticated requests
+                     (higher rate limits and access to private models)
         """
         self._model_name = model_name
+        self._hf_token = hf_token
         self._model = None
         self._dimension = None
     
@@ -41,12 +47,17 @@ class SentenceTransformerEmbedding(BaseEmbedding):
         return self._dimension
     
     def _load_model(self):
-        """Lazy load the model."""
+        """Lazy load the model with Hugging Face authentication if available."""
         if self._model is None:
             # Import here to avoid loading torch on import
             from sentence_transformers import SentenceTransformer
             
-            self._model = SentenceTransformer(self._model_name)
+            # Pass HF token to SentenceTransformer for authenticated requests
+            # This allows higher rate limits and access to private models
+            self._model = SentenceTransformer(
+                self._model_name,
+                use_auth_token=self._hf_token
+            )
             self._dimension = self._model.get_sentence_embedding_dimension()
     
     def encode(self, texts: Union[str, List[str]]) -> np.ndarray:

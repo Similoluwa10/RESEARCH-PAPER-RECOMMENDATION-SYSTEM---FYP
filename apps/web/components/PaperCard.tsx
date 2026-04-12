@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Download, Eye } from 'lucide-react';
-import { useState } from 'react';
+import { Trash2, Download } from 'lucide-react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 interface PaperCardProps {
@@ -11,12 +10,9 @@ interface PaperCardProps {
   authors: string[];
   abstract: string;
   publicationDate: string;
-  citations: number;
-  likes: number;
   category: string;
-  onLike?: (id: string, liked: boolean) => void;
   onDownload?: (id: string) => void;
-  isLiked?: boolean;
+  onUnsave?: (id: string) => void;
 }
 
 export default function PaperCard({
@@ -25,26 +21,15 @@ export default function PaperCard({
   authors,
   abstract,
   publicationDate,
-  citations,
-  likes,
   category,
-  onLike = () => {},
   onDownload = () => {},
-  isLiked = false,
+  onUnsave,
 }: PaperCardProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [liked, setLiked] = useState(isLiked);
-  const [likeCount, setLikeCount] = useState(likes);
 
   const currentSearch = searchParams.toString();
   const returnPath = currentSearch ? `${pathname}?${currentSearch}` : pathname;
-
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-    onLike(id, !liked);
-  };
 
   return (
     <div className="card-base p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
@@ -87,24 +72,24 @@ export default function PaperCard({
 
       {/* Actions */}
       <div className="flex items-center justify-between gap-2">
-        <button
-          onClick={handleLike}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 hover:-translate-y-0.5 ${
-            liked
-              ? 'bg-red-50 text-red-600'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-          }`}
-        >
-          <Heart className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} />
-          <span className="text-sm">{likeCount}</span>
-        </button>
-        <button
-          onClick={() => onDownload(id)}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200 hover:-translate-y-0.5"
-        >
-          <Download className="w-4 h-4" />
-          <span className="text-sm">Save</span>
-        </button>
+        {onUnsave ? (
+          <button
+            onClick={() => onUnsave(id)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all duration-200 hover:-translate-y-0.5"
+            title="Unsave this paper"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span className="text-sm">Unsave</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => onDownload(id)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200 hover:-translate-y-0.5"
+          >
+            <Download className="w-4 h-4" />
+            <span className="text-sm">Save</span>
+          </button>
+        )}
         <Link
           href={{
             pathname: `/paper/${id}`,

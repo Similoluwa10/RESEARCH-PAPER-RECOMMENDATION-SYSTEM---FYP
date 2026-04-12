@@ -10,6 +10,7 @@ import {
   fetchPersonalizedRecommendations,
   listSavedPapers,
   savePaper,
+  unsavePaper,
   UIPaper,
 } from '@/lib/api';
 import { AuthSession, clearStoredSession, getStoredSession } from '@/lib/auth';
@@ -73,6 +74,18 @@ export default function DashboardPage() {
     }
   };
 
+  const handleUnsavePaper = async (paperId: string) => {
+    if (!session) return;
+
+    try {
+      await unsavePaper(paperId, session);
+      const updated = await listSavedPapers(session);
+      setSavedPapers(updated);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to unsave paper');
+    }
+  };
+
   if (!session) {
     return null;
   }
@@ -87,7 +100,7 @@ export default function DashboardPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {session.user.name}!</h1>
             <p className="text-muted-foreground">
-              Manage your saved papers and get recommendations
+              You have {savedPapers.length} saved paper{savedPapers.length !== 1 ? 's' : ''}. Manage your collection and get recommendations.
             </p>
           </div>
         </section>
@@ -107,6 +120,7 @@ export default function DashboardPage() {
                 papers={savedPapers}
                 isLoading={isLoading}
                 isEmpty={!isLoading && savedPapers.length === 0}
+                onUnsave={handleUnsavePaper}
               />
             </div>
 

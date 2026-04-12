@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { getCurrentUser, loginWithGoogleToken, loginWithPassword } from '@/lib/api';
 import { setStoredSession } from '@/lib/auth';
@@ -25,6 +25,8 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('from') || '/dashboard';
 
   const persistSession = async (accessToken: string, tokenType: string) => {
     const user = await getCurrentUser(accessToken, tokenType);
@@ -48,7 +50,7 @@ export default function LoginPage() {
 
       const token = await loginWithPassword(email, password);
       await persistSession(token.access_token, token.token_type);
-      router.push('/dashboard');
+      router.push(redirectTo);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
     } finally {
@@ -64,7 +66,7 @@ export default function LoginPage() {
       const idToken = await getGoogleIdToken();
       const token = await loginWithGoogleToken(idToken);
       await persistSession(token.access_token, token.token_type);
-      router.push('/dashboard');
+      router.push(redirectTo);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Google sign-in failed.');
     } finally {

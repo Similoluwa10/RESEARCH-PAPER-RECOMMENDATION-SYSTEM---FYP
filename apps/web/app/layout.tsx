@@ -34,7 +34,9 @@ html {
 }
         `}</style>
       </head>
-      <body className={dmSans.variable}>{children}</body>
+      <body className={dmSans.variable}>
+        {children}
+      </body>
     </html>
   )
 }

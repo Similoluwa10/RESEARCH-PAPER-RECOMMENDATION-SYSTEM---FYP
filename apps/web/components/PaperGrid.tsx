@@ -8,23 +8,21 @@ interface Paper {
   authors: string[];
   abstract: string;
   publicationDate: string;
-  citations: number;
-  likes: number;
   category: string;
 }
 
 interface PaperGridProps {
   papers: Paper[];
-  onLike?: (id: string, liked: boolean) => void;
   onDownload?: (id: string) => void;
+  onUnsave?: (id: string) => void;
   isLoading?: boolean;
   isEmpty?: boolean;
 }
 
 export default function PaperGrid({
   papers,
-  onLike,
   onDownload,
+  onUnsave,
   isLoading = false,
   isEmpty = false,
 }: PaperGridProps) {
@@ -63,8 +61,8 @@ export default function PaperGrid({
         <div key={paper.id} className="animate-fade-up" style={{ animationDelay: `${index * 60}ms` }}>
           <PaperCard
             {...paper}
-            onLike={onLike}
             onDownload={onDownload}
+            onUnsave={onUnsave}
           />
         </div>
       ))}

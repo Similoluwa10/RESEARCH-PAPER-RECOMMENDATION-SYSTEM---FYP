@@ -4,11 +4,32 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ArrowRight, Sparkles, Users, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { AuthSession, clearStoredSession, getStoredSession } from '@/lib/auth';
 
 export default function HomePage() {
+  const [session, setSession] = useState<AuthSession | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const currentSession = getStoredSession();
+    setSession(currentSession);
+  }, []);
+
+  const handleLogout = () => {
+    clearStoredSession();
+    setSession(null);
+    router.push('/');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <Header
+        isAuthenticated={!!session}
+        userName={session?.user.name}
+        onLogout={handleLogout}
+      />
 
       <main className="flex-1">
         {/* Hero Section */}

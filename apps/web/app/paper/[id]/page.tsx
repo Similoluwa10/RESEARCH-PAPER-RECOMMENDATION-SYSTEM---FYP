@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Heart, Download, Share2, ExternalLink, ChevronLeft } from 'lucide-react';
+import { Download, ExternalLink, ChevronLeft } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { fetchPaperById, UIPaperDetail } from '@/lib/api';
+import { AuthSession, clearStoredSession, getStoredSession } from '@/lib/auth';
 
 interface PaperDetailProps {
   params: {
@@ -16,7 +17,7 @@ interface PaperDetailProps {
 export default function PaperDetailPage({ params }: PaperDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isLiked, setIsLiked] = useState(false);
+  const [session, setSession] = useState<AuthSession | null>(null);
   const [paper, setPaper] = useState<UIPaperDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +31,18 @@ export default function PaperDetailPage({ params }: PaperDetailProps) {
     }
     router.back();
   };
+
+  const handleLogout = () => {
+    clearStoredSession();
+    setSession(null);
+    router.push('/');
+  };
+
+  // Load session on mount
+  useEffect(() => {
+    const currentSession = getStoredSession();
+    setSession(currentSession);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -64,7 +77,11 @@ export default function PaperDetailPage({ params }: PaperDetailProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
+        <Header
+          isAuthenticated={!!session}
+          userName={session?.user.name}
+          onLogout={handleLogout}
+        />
         <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
           <p className="text-muted-foreground">Loading paper details...</p>
         </main>
@@ -76,7 +93,11 @@ export default function PaperDetailPage({ params }: PaperDetailProps) {
   if (error || !paper) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
+        <Header
+          isAuthenticated={!!session}
+          userName={session?.user.name}
+          onLogout={handleLogout}
+        />
         <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 space-y-4">
           <button
             onClick={handleBack}
@@ -95,7 +116,11 @@ export default function PaperDetailPage({ params }: PaperDetailProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <Header
+        isAuthenticated={!!session}
+        userName={session?.user.name}
+        onLogout={handleLogout}
+      />
 
       <main className="flex-1">
         {/* Header */}
@@ -121,25 +146,6 @@ export default function PaperDetailPage({ params }: PaperDetailProps) {
                   {/* <span>{paper.category}</span> */}
                   <span>{paper.venue}</span>
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setIsLiked(!isLiked)}
-                  className={`p-2 rounded-lg transition-colors ${
-                    isLiked
-                      ? 'bg-red-50 text-red-600'
-                      : 'bg-muted text-muted-foreground hover:text-foreground'
-                  }`}
-                  title="Like this paper"
-                >
-                  <Heart className={`w-6 h-6 ${isLiked ? 'fill-current' : ''}`} />
-                </button>
-                {/* <button
-                  className="p-2 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                  title="Share this paper"
-                >
-                  <Share2 className="w-6 h-6" />
-                </button> */}
               </div>
             </div>
           </div>
