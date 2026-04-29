@@ -6,6 +6,7 @@ It creates the FastAPI app instance, configures middleware, and
 registers all API routers.
 """
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -13,16 +14,30 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import settings
 from src.routers import auth, health, papers, recommendations, search
+from src.services.embedding_service import EmbeddingService
+
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Handle startup and shutdown events."""
     # Startup: Initialize database connections, load models, etc.
-    print(f"Starting {settings.APP_NAME}...")
+    logger.info(f"Starting {settings.APP_NAME}...")
+    
+    # Pre-warm embedding model to avoid slowness on first request
+    logger.info("Pre-warming embedding model...")
+    try:
+        embedding_service = EmbeddingService()
+        # Force model loading with a dummy encode
+        embedding_service.encode_text("Warm up embedding model")
+        logger.info("✓ Embedding model loaded successfully")
+    except Exception as e:
+        logger.error(f"Failed to pre-warm embedding model: {e}")
+    
     yield
     # Shutdown: Clean up resources
-    print(f"Shutting down {settings.APP_NAME}...")
+    logger.info(f"Shutting down {settings.APP_NAME}...")
 
 
 # Create FastAPI application

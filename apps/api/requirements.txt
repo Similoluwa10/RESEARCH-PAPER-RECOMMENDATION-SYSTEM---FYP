@@ -21,6 +21,13 @@ google-auth==2.38.0
 # NLP (reference to packages/nlp)
 # sentence-transformers and scikit-learn are in packages/nlp
 
+# LangChain - Explainability Module
+langchain>=0.1.0
+langchain-openai>=0.0.1  # For OpenAI (GPT-3.5, GPT-4)
+langchain-anthropic>=0.1.0  # For Claude
+langchain-groq>=0.1.0  # For Groq (free, fast)
+langchain-community>=0.0.1  # For Ollama and other providers
+
 # Utilities
 httpx==0.26.0
 

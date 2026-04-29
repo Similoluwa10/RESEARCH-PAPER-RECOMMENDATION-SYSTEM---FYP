@@ -2,6 +2,10 @@
 
 import PaperCard from './PaperCard';
 
+interface Explanation {
+  summary: string;
+}
+
 interface Paper {
   id: string;
   title: string;
@@ -9,6 +13,7 @@ interface Paper {
   abstract: string;
   publicationDate: string;
   category: string;
+  explanation?: Explanation;
 }
 
 interface PaperGridProps {

@@ -29,13 +29,13 @@ class Settings(BaseSettings):
     # Application
     APP_NAME: str = "Research Paper Recommender API"
     APP_ENV: str = "development"
-    DEBUG: bool = True
-    API_V1_PREFIX: str = "/api/v1"
+    DEBUG: bool 
+    API_V1_PREFIX: str 
     
     # Database
     DATABASE_URL: str 
-    DB_POOL_SIZE: int = 5
-    DB_MAX_OVERFLOW: int = 10
+    DB_POOL_SIZE: int 
+    DB_MAX_OVERFLOW: int
     
     # JWT Authentication
     JWT_SECRET_KEY: str 
@@ -47,22 +47,38 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] 
     
     # NLP/Embeddings
-    EMBEDDING_MODEL_NAME: str = "all-MiniLM-L6-v2"
-    EMBEDDING_DIMENSION: int = 384
+    EMBEDDING_MODEL_NAME: str 
+    EMBEDDING_DIMENSION: int 
     
     # Caching Configuration
-    EMBEDDING_CACHE_TTL_SECONDS: int = 3600  # 1 hour
-    EMBEDDING_CACHE_MAX_ITEMS: int = 5000    # Larger cache for frequently queried texts
-    RECOMMENDATION_CACHE_TTL_SECONDS: int = 3600  # 1 hour for recommendation results
-    RECOMMENDATION_CACHE_MAX_ITEMS: int = 500     # Caches for different queries/papers
+    EMBEDDING_CACHE_TTL_SECONDS: int
+    EMBEDDING_CACHE_MAX_ITEMS: int 
+    RECOMMENDATION_CACHE_TTL_SECONDS: int 
+    RECOMMENDATION_CACHE_MAX_ITEMS: int 
+    
+    # Query Optimization
+    EMBEDDING_BATCH_SIZE: int
     
     # Logging
-    LOG_LEVEL: str = "INFO"
+    LOG_LEVEL: str
     
     SEMANTIC_SCHOLAR_API_KEY: str
     
     # Hugging Face API (for higher rate limits on model downloads and inference)
     HUGGINGFACE_API_KEY: str 
+    
+    # LangChain Configuration for Explainability
+    LANGCHAIN_PROVIDER: str  # "openai", "ollama", "anthropic", or "groq"
+    LANGCHAIN_CHAT_MODEL: str # For OpenAI provider
+    LANGCHAIN_TEMPERATURE: float # Lower for consistency
+    
+    # Provider-specific API keys/configurations
+    OPENAI_API_KEY: str 
+    ANTHROPIC_API_KEY: str
+    GROQ_API_KEY: str
+    GROQ_MODEL: str  # Groq model
+    OLLAMA_BASE_URL: str # Default Ollama endpoint
+    OLLAMA_MODEL: str  # Default Ollama model 
 
 
 @lru_cache()

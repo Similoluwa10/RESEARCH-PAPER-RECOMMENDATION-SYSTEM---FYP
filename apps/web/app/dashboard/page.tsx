@@ -124,7 +124,7 @@ export default function DashboardPage() {
               />
             </div>
 
-            <div>
+            {/* <div>
               <h2 className="text-2xl font-bold text-foreground mb-6">Papers recommended for you</h2>
               <PaperGrid
                 papers={recommendations}
@@ -132,7 +132,7 @@ export default function DashboardPage() {
                 isEmpty={!isLoading && recommendations.length === 0}
                 onDownload={handleSavePaper}
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Browse More */}

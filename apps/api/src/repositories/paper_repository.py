@@ -11,6 +11,7 @@ from uuid import UUID
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.config import settings
 from src.models.embedding import Embedding
 from src.models.paper import Paper
 from src.repositories.base import BaseRepository
@@ -134,6 +135,7 @@ class PaperRepository(BaseRepository[Paper]):
         Search papers by embedding similarity.
         
         Uses pgvector's cosine distance operator (<=>).
+        Optimized for performance with query limits and eager loading controls.
         """
         distance = Embedding.vector.cosine_distance(embedding)
         similarity = (1 - distance).label("similarity")
@@ -169,6 +171,7 @@ class PaperRepository(BaseRepository[Paper]):
             query = query.where(similarity >= min_similarity)
 
         query = query.order_by(distance)
+        # Apply limit: use top_k if specified, otherwise return all results
         if top_k is not None:
             query = query.limit(top_k)
         rows = (await self.db.execute(query)).all()

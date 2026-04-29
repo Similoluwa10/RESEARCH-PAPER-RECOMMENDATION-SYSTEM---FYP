@@ -1,8 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Trash2, Download } from 'lucide-react';
+import { Trash2, Download, Lightbulb } from 'lucide-react';
 import { usePathname, useSearchParams } from 'next/navigation';
+
+interface Explanation {
+  summary: string;
+}
 
 interface PaperCardProps {
   id: string;
@@ -11,6 +15,7 @@ interface PaperCardProps {
   abstract: string;
   publicationDate: string;
   category: string;
+  explanation?: Explanation;
   onDownload?: (id: string) => void;
   onUnsave?: (id: string) => void;
 }
@@ -22,6 +27,7 @@ export default function PaperCard({
   abstract,
   publicationDate,
   category,
+  explanation,
   onDownload = () => {},
   onUnsave,
 }: PaperCardProps) {
@@ -58,6 +64,16 @@ export default function PaperCard({
 
       {/* Abstract */}
       <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{abstract}</p>
+
+      {/* Explanation */}
+      {explanation?.summary && (
+        <div className="mb-4 p-3 bg-secondary/10 border border-secondary/30 rounded-lg">
+          <div className="flex items-start gap-2">
+            <Lightbulb className="w-4 h-4 text-secondary mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-foreground">{explanation.summary}</p>
+          </div>
+        </div>
+      )}
 
       {/* Metadata */}
       <div className="flex items-center justify-between text-xs text-muted-foreground mb-4 pb-4 border-b border-border">

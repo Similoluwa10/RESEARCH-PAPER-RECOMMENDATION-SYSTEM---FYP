@@ -185,6 +185,10 @@
 }
 
 @layer utilities {
+  .input-field {
+    @apply border border-border rounded-lg bg-transparent text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring;
+  }
+
   .animate-fade-up {
     animation: fade-up 500ms ease-out both;
   }

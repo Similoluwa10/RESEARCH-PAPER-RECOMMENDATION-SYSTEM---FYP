@@ -46,7 +46,6 @@ class RecommendationRequest(BaseModel):
     
     query_text: Optional[str] = Field(
         None,
-        min_length=10,
         description="Text to find similar papers for",
     )
     paper_id: Optional[UUID] = Field(

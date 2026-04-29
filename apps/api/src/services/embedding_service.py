@@ -172,7 +172,7 @@ class EmbeddingService:
         self._set_cached_embedding(cache_key, vector)
         return vector
 
-    def encode_texts(self, texts: List[str], batch_size: int = 32) -> List[List[float]]:
+    def encode_texts(self, texts: List[str], batch_size: int = 64) -> List[List[float]]:
         """
         Encode multiple texts in batches with intelligent caching.
 

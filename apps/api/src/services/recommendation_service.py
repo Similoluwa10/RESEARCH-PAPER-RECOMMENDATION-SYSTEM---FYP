@@ -44,7 +44,8 @@ class RecommendationService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repository = PaperRepository(db)
-        self.explanation_service = ExplanationService()
+        # EXPLANATION MODULE DISABLED: Uncomment to re-enable
+        # self.explanation_service = ExplanationService()
         self.embedding_service = EmbeddingService()
         self.min_recommendation_similarity = 0.5
 
@@ -130,23 +131,25 @@ class RecommendationService:
         query_vector = self.embedding_service.encode_text(text)
         matches = await self.repository.search_by_embedding(
             embedding=query_vector,
-            top_k=None,
+            top_k=None,  # Return all matching papers
             min_similarity=self.min_recommendation_similarity,
         )
 
-        recommendations = []
+        recommendations = []       
         for item in matches:
             score = float(item["score"])
             bounded_score = max(0.0, min(1.0, score))
-            explanation = (
-                self.explanation_service.generate_explanation(
-                    query_text=text,
-                    paper=item["paper"],
-                    similarity_score=bounded_score,
-                )
-                if include_explanations
-                else None
-            )
+            # EXPLANATION MODULE DISABLED: Uncomment to re-enable
+            # explanation = (
+            #     self.explanation_service.generate_explanation(
+            #         query_text=text,
+            #         paper=item["paper"],
+            #         similarity_score=bounded_score,
+            #     )
+            #     if include_explanations
+            #     else None
+            # )
+            explanation = None
             recommendation = {
                 "paper": item["paper"],
                 "score": bounded_score,
@@ -195,23 +198,26 @@ class RecommendationService:
         
         matches = await self.repository.find_similar(
             paper_id=paper_id,
-            top_k=None,
+            top_k=None,  # Return all matching papers
             min_similarity=self.min_recommendation_similarity,
         )
         query_text = f"{paper.title} {paper.abstract}" if paper else ""
+        # EXPLANATION MODULE DISABLED: Uncomment to re-enable
         recommendations = [
             {
                 "paper": item["paper"],
                 "score": item["score"],
-                "explanation": (
-                    self.explanation_service.generate_explanation(
-                        query_text=query_text,
-                        paper=item["paper"],
-                        similarity_score=max(0.0, min(1.0, float(item["score"]))),
-                    )
-                    if include_explanations
-                    else None
-                ),
+                # Explanation generation disabled
+                # "explanation": (
+                #     self.explanation_service.generate_explanation(
+                #         query_text=query_text,
+                #         paper=item["paper"],
+                #         similarity_score=max(0.0, min(1.0, float(item["score"]))),
+                #     )
+                #     if include_explanations
+                #     else None
+                # ),
+                "explanation": None,
             }
             for item in matches
         ]

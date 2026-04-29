@@ -37,10 +37,10 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance animate-fade-up">
-                Discover Research Papers That Matter
+                Discover Software Engineering Research Papers That Matter
               </h1>
               <p className="text-xl text-muted-foreground mb-8 text-pretty animate-fade-up animate-delay-1">
-                PaperHub connects researchers with the latest scientific discoveries. Get personalized recommendations, save papers, and build your research library.
+                PaperHub connects researchers with the latest scientific discoveries in Software Engineering. Get personalized recommendations, save papers, and build your research library.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animate-delay-2">
                 <Link

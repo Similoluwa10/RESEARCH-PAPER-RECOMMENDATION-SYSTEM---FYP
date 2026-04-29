@@ -44,7 +44,6 @@ export default function SearchBar({
 
   const handleClear = () => {
     updateQuery('');
-    onSearch('');
   };
 
   return (

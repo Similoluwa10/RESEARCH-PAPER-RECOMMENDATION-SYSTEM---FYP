@@ -232,12 +232,13 @@ export default function RecommendationPage() {
         {/* Search Section */}
         <section className="bg-muted border-b border-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl font-bold text-foreground mb-6">Recommendation Papers</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-6">Software Engineering Paper Recommendations</h1>
+            <h3 className="text-foreground mb-6">Search for Research Papers in the Field of Software Engineering</h3>
             <div className="flex flex-col gap-3 md:flex-row md:items-center">
               <div className="flex-1">
                 <SearchBar
                   value={searchQuery}
-                  onSearch={setSearchQuery}
+                  onSearch={handleGenerateRecommendations}
                   onQueryChange={setSearchQuery}
                   placeholder="Enter a research topic or query..."
                   inputClassName="h-12"
