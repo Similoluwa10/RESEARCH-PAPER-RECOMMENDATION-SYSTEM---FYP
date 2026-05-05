@@ -1,0 +1,205 @@
+# Choreo Deployment Configuration for Research Recommendation System
+# 
+# This file documents the expected Choreo service configuration.
+# Services should be created in Choreo Console and configured as documented here.
+
+services:
+  database:
+    name: "research-db"
+    type: "PostgreSQL"
+    description: "PostgreSQL database with pgvector for embeddings"
+    configuration:
+      engine: "PostgreSQL 16"
+      username: "postgres_user"
+      database_name: "research_recommender"
+      port: 5432
+      storage: "50Gi"  # Adjust based on paper corpus size
+      memory: "2Gi"
+      backup_enabled: true
+      backup_retention_days: 7
+    output:
+      connection_string: "postgresql://postgres_user:[PASSWORD]@[HOST]:5432/research_recommender"
+      notes: "Store connection string securely in API service secrets"
+
+  api:
+    name: "research-api"
+    type: "Service"
+    description: "FastAPI backend for research paper recommendation"
+    configuration:
+      buildpack: "Python"
+      repository_path: "apps/api"
+      dockerfile: "infrastructure/docker/Dockerfile.api"
+      build_context: "/"
+      port: 8000
+      memory: "1Gi"
+      cpu: "0.5"
+      replicas:
+        min: 1
+        max: 5
+      health_check:
+        path: "/api/health"
+        interval: 10s
+        timeout: 5s
+    
+    secrets:
+      DATABASE_URL: "postgresql://postgres_user:[PASSWORD]@[DB_HOST]:5432/research_recommender"
+      JWT_SECRET_KEY: "[GENERATE_STRONG_KEY]"
+      APP_ENV: "production"
+      DEBUG: "false"
+      GROQ_API_KEY: "[YOUR_GROQ_API_KEY]"
+      LANGCHAIN_API_KEY: "[OPTIONAL_LANGCHAIN_KEY]"
+    
+    startup_command: "uvicorn src.main:app --host 0.0.0.0 --port 8000"
+    
+    output:
+      service_url: "https://research-api-[CHOREO_ID].e1-us-cdp-1.choreoapis.com"
+      health_check_url: "/api/health"
+      notes: "Copy this URL to WEB service NEXT_PUBLIC_API_URL"
+
+  web:
+    name: "research-web"
+    type: "Service"
+    description: "Next.js frontend for research paper recommendations"
+    configuration:
+      buildpack: "Node.js"
+      repository_path: "apps/web"
+      dockerfile: "infrastructure/docker/Dockerfile.web"
+      build_context: "/"
+      port: 3000
+      memory: "512Mi"
+      cpu: "0.25"
+      replicas:
+        min: 1
+        max: 5
+      health_check:
+        path: "/"
+        interval: 10s
+        timeout: 5s
+    
+    build_arguments:
+      NEXT_PUBLIC_API_URL: "[API_URL_FROM_API_SERVICE]/api"
+    
+    environment:
+      NEXT_PUBLIC_API_URL: "[API_URL_FROM_API_SERVICE]/api"
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: "[OPTIONAL_GOOGLE_CLIENT_ID]"
+    
+    startup_command: "node server.js"
+    
+    output:
+      service_url: "https://research-web-[CHOREO_ID].e1-us-cdp-1.choreoapis.com"
+      notes: "Update apps/api/src/main.py CORS allow_origins with this URL"
+
+deployment_order:
+  1: "Create database service first and note connection string"
+  2: "Create API service with database connection string in secrets"
+  3: "After API is deployed, copy service URL"
+  4: "Create web service with API URL in build arguments"
+  5: "Run database migrations"
+  6: "Verify integration between all services"
+
+post_deployment:
+  - name: "Initialize Database"
+    command: "cd infrastructure/database && alembic upgrade head"
+    notes: "Run via API service shell or local environment with DATABASE_URL set"
+  
+  - name: "Update CORS Configuration"
+    file: "apps/api/src/main.py"
+    changes: |
+      Update allow_origins list to include web service URL:
+      allow_origins=[
+          "https://[WEB_SERVICE_URL]",
+          "http://localhost:3000",  # for local development
+      ]
+    notes: "Redeploy API service after making changes"
+  
+  - name: "Update Frontend API URL"
+    file: "apps/web/lib/api.ts"
+    notes: "Verify NEXT_PUBLIC_API_URL is set correctly"
+  
+  - name: "Test Integration"
+    tests:
+      - "curl https://[API_URL]/api/health"
+      - "Visit web service URL in browser"
+      - "Check service logs for errors"
+
+monitoring:
+  metrics:
+    - "CPU utilization"
+    - "Memory usage"
+    - "Request latency"
+    - "Error rate (5xx responses)"
+    - "Database connection pool"
+  
+  logs:
+    api: "Services → research-api → Logs"
+    web: "Services → research-web → Logs"
+    database: "Services → research-db → Logs"
+  
+  alerts:
+    - "Memory usage > 90%"
+    - "Error rate > 5%"
+    - "Response time > 2000ms"
+    - "Database connection failures"
+
+scaling_recommendations:
+  api:
+    min_replicas: 2
+    max_replicas: 5
+    target_cpu: "70%"
+    target_memory: "80%"
+  
+  web:
+    min_replicas: 2
+    max_replicas: 5
+    target_cpu: "70%"
+    target_memory: "80%"
+  
+  database:
+    memory: "4Gi-8Gi"  # Adjust based on data size
+    cpu: "1-2"
+    storage: "100Gi"   # Should be larger than estimated data size
+
+cost_estimation:
+  database: "~$30-50/month (managed PostgreSQL)"
+  api_service: "~$10-20/month (2-5 replicas)"
+  web_service: "~$5-10/month (2-5 replicas)"
+  total: "~$45-80/month"
+  notes: "Costs vary by region and actual usage. Choreo free tier available for testing."
+
+troubleshooting_guide:
+  database_connection_failed:
+    cause: "Incorrect connection string or network issues"
+    solution: |
+      1. Verify DATABASE_URL format in API service secrets
+      2. Check firewall rules allow Choreo IP
+      3. Test connection locally with: psql $DATABASE_URL
+  
+  api_build_fails:
+    cause: "Missing dependencies or Python version mismatch"
+    solution: |
+      1. Update requirements.txt: pip freeze > apps/api/requirements.txt
+      2. Verify Python 3.11+ is available
+      3. Check Dockerfile paths are relative to repo root
+  
+  cors_errors:
+    cause: "Frontend domain not in API CORS allow_origins"
+    solution: |
+      1. Update allow_origins in apps/api/src/main.py
+      2. Redeploy API service
+      3. Clear browser cache and retry
+  
+  migrations_fail:
+    cause: "Database schema mismatch or migration errors"
+    solution: |
+      1. Check alembic versions: SELECT * FROM alembic_version;
+      2. Review migration files in infrastructure/database/versions/
+      3. Check API service logs for errors
+
+notes: |
+  - All sensitive data (passwords, API keys) should be stored as Choreo secrets
+  - Never commit .env files or credentials to GitHub
+  - Enable HTTPS/TLS in Choreo (automatically configured)
+  - Configure automated backups for database
+  - Set up monitoring and alerting
+  - Plan for data retention policies
+  - Document any custom modifications for maintainability

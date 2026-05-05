@@ -1,0 +1,187 @@
+name: Deploy to Choreo
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:  # Allow manual trigger from GitHub Actions UI
+
+env:
+  REGISTRY: ghcr.io
+  CHOREO_ORG_HANDLE: ${{ secrets.CHOREO_ORG_HANDLE }}  # Set in GitHub Secrets
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11']
+        node-version: ['18']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup Python
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Test API
+      - name: Install API dependencies
+        working-directory: ./apps/api
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint API with pylint
+        working-directory: ./apps/api
+        run: |
+          pip install pylint
+          pylint src/ --exit-zero  # Don't fail on linting issues
+        continue-on-error: true
+
+      - name: Run API tests
+        working-directory: ./apps/api
+        run: |
+          pip install pytest pytest-asyncio
+          pytest tests/ -v --tb=short
+        continue-on-error: true
+
+      # Setup Node.js
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Test Frontend
+      - name: Install frontend dependencies
+        working-directory: ./apps/web
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ./apps/web
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000/api
+        run: npm run build
+
+      - name: Lint frontend
+        working-directory: ./apps/web
+        run: npm run lint
+        continue-on-error: true
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Login to Container Registry (optional - if using GitHub Packages)
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      # Build and push API image
+      - name: Build and push API Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./infrastructure/docker/Dockerfile.api
+          push: false  # Set to true if pushing to registry
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}/api:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository }}/api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Build and push Web image
+      - name: Build and push Web Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./infrastructure/docker/Dockerfile.web
+          push: false  # Set to true if pushing to registry
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://research-api.choreo.dev/api
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}/web:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository }}/web:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-to-choreo:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Optional: Deploy using Choreo CLI
+      - name: Deploy to Choreo
+        env:
+          CHOREO_API_TOKEN: ${{ secrets.CHOREO_API_TOKEN }}
+          CHOREO_ORG_HANDLE: ${{ secrets.CHOREO_ORG_HANDLE }}
+        run: |
+          # Install Choreo CLI
+          npm install -g @wso2/choreo-cli
+          
+          # Authenticate with Choreo
+          choreo auth --token $CHOREO_API_TOKEN
+          
+          # Deploy API service
+          echo "Deploying API service to Choreo..."
+          choreo push \
+            --project research-recommendation-system \
+            --component research-api \
+            --path apps/api
+          
+          # Deploy Web service
+          echo "Deploying Web service to Choreo..."
+          choreo push \
+            --project research-recommendation-system \
+            --component research-web \
+            --path apps/web
+        continue-on-error: true
+
+  notify:
+    needs: [test, build-and-push, deploy-to-choreo]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Determine deployment status
+        run: |
+          if [ "${{ needs.deploy-to-choreo.result }}" = "success" ]; then
+            echo "✅ Deployment to Choreo completed successfully"
+            exit 0
+          else
+            echo "⚠️ Deployment completed with warnings or errors"
+            exit 0
+          fi
+
+      # Optional: Send Slack notification
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          text: 'Choreo deployment ${{ job.status }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          fields: repo,message,commit,author
+        continue-on-error: true

@@ -20,8 +20,8 @@ services:
 
   research_recommender_api:
     build:
-      context: ../../apps/api
-      dockerfile: ../../infrastructure/docker/Dockerfile.api
+      context: ../../
+      dockerfile: infrastructure/docker/Dockerfile.api
     container_name: research_recommender_api
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@research_recommender_db:5432/research_recommender_db

@@ -96,7 +96,7 @@ class BaseAPIClient(ABC, LoggerMixin):
     
     def validate_paper(self, paper: PaperData) -> bool:
         """
-        Validate that a paper has required fields.
+        Validate that a paper has required fields and is from 2019 or later.
         
         Args:
             paper: PaperData object to validate
@@ -109,5 +109,11 @@ class BaseAPIClient(ABC, LoggerMixin):
         
         if not is_valid:
             self.logger.debug(f"Invalid paper: missing required fields - {paper.title[:50]}")
+            return False
         
-        return is_valid
+        # Filter papers from 2019 onwards
+        if paper.year is not None and paper.year < 2019:
+            self.logger.debug(f"Invalid paper: published before 2019 ({paper.year}) - {paper.title[:50]}")
+            return False
+        
+        return True

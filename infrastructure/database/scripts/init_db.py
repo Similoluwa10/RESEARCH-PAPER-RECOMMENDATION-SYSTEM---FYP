@@ -7,12 +7,16 @@ Creates all tables and enables pgvector extension.
 import asyncio
 import sys
 import os
+from pathlib import Path
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'apps', 'api'))
+# Add the apps/api directory to Python path
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+API_PATH = PROJECT_ROOT / "apps" / "api"
+sys.path.insert(0, str(API_PATH))
 
 from sqlalchemy import text
-from apps.api.src.models.base import engine, Base
-from apps.api.src.models import Paper, User, Interaction, Embedding, Explanation, Recommendation
+from src.models.base import engine, Base
+from src.models import Paper, User, Interaction, Embedding, Explanation, Recommendation
 
 
 async def init_db():

@@ -1,0 +1,188 @@
+# Choreo Deployment Environment Variables Template
+
+## Instructions
+# 1. Copy this file to create your environment configuration
+# 2. Replace all [PLACEHOLDER] values with your actual values
+# 3. Store secrets securely in Choreo Console (not in version control)
+# 4. Never commit this file with real values to GitHub
+
+## ============================================================================
+## DATABASE SERVICE CONFIGURATION
+## ============================================================================
+
+# PostgreSQL Connection Details (from Choreo Database Service)
+DB_HOST=[choreo-postgres-host.choreo.dev]
+DB_PORT=5432
+DB_USER=postgres_user
+DB_PASSWORD=[STRONG_PASSWORD_GENERATED_DURING_DB_SETUP]
+DB_NAME=research_recommender
+
+# Full connection string for FastAPI (combine above values)
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+## ============================================================================
+## API SERVICE CONFIGURATION
+## ============================================================================
+
+# Application Environment
+APP_ENV=production
+DEBUG=false
+
+# Security - Generate using: python -c "import secrets; print(secrets.token_urlsafe(32))"
+JWT_SECRET_KEY=[GENERATE_STRONG_SECRET_KEY]
+
+# External API Keys
+GROQ_API_KEY=[GET_FROM_GROQ_CONSOLE]
+LANGCHAIN_API_KEY=[OPTIONAL_LANGCHAIN_KEY]
+
+# CORS Configuration (update with your web service domain after deployment)
+CORS_ORIGINS=["https://research-web-[CHOREO_ID].e1-us-cdp-1.choreoapis.com","http://localhost:3000"]
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FORMAT=json
+
+# Rate Limiting (optional)
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_REQUESTS_PER_MINUTE=60
+
+## ============================================================================
+## WEB SERVICE CONFIGURATION
+## ============================================================================
+
+# API Endpoint (copy from deployed API service URL)
+NEXT_PUBLIC_API_URL=https://research-api-[CHOREO_ID].e1-us-cdp-1.choreoapis.com/api
+
+# Google OAuth (optional - for sign-in functionality)
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=[GET_FROM_GOOGLE_CLOUD_CONSOLE]
+GOOGLE_CLIENT_SECRET=[GET_FROM_GOOGLE_CLOUD_CONSOLE]
+
+# Application Environment
+NODE_ENV=production
+
+# Analytics (optional)
+NEXT_PUBLIC_GA_ID=[OPTIONAL_GOOGLE_ANALYTICS_ID]
+
+## ============================================================================
+## DEPLOYMENT-SPECIFIC VALUES
+## ============================================================================
+
+# These values will be provided by Choreo after service deployment
+API_SERVICE_URL=[PROVIDED_BY_CHOREO_AFTER_API_DEPLOYMENT]
+WEB_SERVICE_URL=[PROVIDED_BY_CHOREO_AFTER_WEB_DEPLOYMENT]
+API_DOMAIN=[CUSTOM_API_DOMAIN_OPTIONAL]
+WEB_DOMAIN=[CUSTOM_WEB_DOMAIN_OPTIONAL]
+
+## ============================================================================
+## OPTIONAL ADVANCED CONFIGURATION
+## ============================================================================
+
+# Database Connection Pool (for performance tuning)
+DB_POOL_SIZE=20
+DB_MAX_OVERFLOW=40
+DB_POOL_TIMEOUT=30
+DB_POOL_RECYCLE=3600
+
+# API Performance
+API_WORKER_COUNT=4
+API_RELOAD=false
+
+# Frontend Build Configuration
+NEXT_PUBLIC_STATIC_EXPORT=false
+NEXT_TELEMETRY_DISABLED=true
+
+# Monitoring and Observability
+SENTRY_DSN=[OPTIONAL_SENTRY_URL_FOR_ERROR_TRACKING]
+DATADOG_API_KEY=[OPTIONAL_DATADOG_MONITORING]
+
+# Email Configuration (if using email notifications)
+SMTP_HOST=[OPTIONAL_SMTP_SERVER]
+SMTP_PORT=587
+SMTP_USER=[OPTIONAL_SMTP_USER]
+SMTP_PASSWORD=[OPTIONAL_SMTP_PASSWORD]
+SMTP_FROM_EMAIL=[OPTIONAL_FROM_EMAIL]
+
+# Feature Flags (optional)
+ENABLE_EXPLAINABILITY=true
+ENABLE_VECTOR_SEARCH=true
+ENABLE_SEMANTIC_CACHE=true
+
+## ============================================================================
+## HOW TO DEPLOY
+## ============================================================================
+
+# 1. Database Setup
+#    - Create PostgreSQL service in Choreo
+#    - Replace DB_HOST, DB_PASSWORD with actual values
+#    - Note the connection string
+
+# 2. API Service Setup
+#    - Create API service in Choreo (apps/api)
+#    - Set these secrets in Choreo Console:
+#      DATABASE_URL, JWT_SECRET_KEY, APP_ENV, DEBUG, GROQ_API_KEY
+#    - Copy the provided API service URL
+
+# 3. Web Service Setup
+#    - Create Web service in Choreo (apps/web)
+#    - Set NEXT_PUBLIC_API_URL to the API service URL from step 2
+#    - Deploy
+
+# 4. Post-Deployment
+#    - Run database migrations
+#    - Update CORS origins with web service URL
+#    - Test integration
+
+## ============================================================================
+## SECURITY BEST PRACTICES
+## ============================================================================
+
+# ✅ DO:
+# - Store all secrets in Choreo Console (not in version control)
+# - Use strong, randomly generated passwords
+# - Rotate secrets regularly (quarterly recommended)
+# - Use separate credentials for development/staging/production
+# - Enable HTTPS/TLS for all services
+# - Restrict database access to Choreo services only
+
+# ❌ DON'T:
+# - Commit this file with real values to GitHub
+# - Use simple/predictable passwords
+# - Share credentials in messages or tickets
+# - Use same credentials across environments
+# - Expose API keys in browser console
+# - Store credentials in .env files in repo
+
+## ============================================================================
+## GENERATING SECURE VALUES
+## ============================================================================
+
+# Generate JWT_SECRET_KEY:
+# python -c "import secrets; print(secrets.token_urlsafe(32))"
+
+# Generate strong password:
+# openssl rand -base64 32
+
+# Generate random database password:
+# pwgen -s 32 1
+
+## ============================================================================
+## TESTING DEPLOYMENT
+## ============================================================================
+
+# Test API connectivity:
+# curl https://[API_URL]/api/health
+
+# Test database connection (from API service shell):
+# psql $DATABASE_URL -c "SELECT 1"
+
+# Test frontend loading:
+# curl https://[WEB_URL]
+
+# Check API logs:
+# In Choreo Console: Services → research-api → Logs
+
+# Check Web logs:
+# In Choreo Console: Services → research-web → Logs
+
+# Check Database health:
+# In Choreo Console: Services → research-db → Health

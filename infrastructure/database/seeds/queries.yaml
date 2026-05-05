@@ -88,3 +88,57 @@ empirical_se:
   - "mining software repositories"
   - "software metrics"
   - "software quality"
+
+# Machine Learning and AI topics
+machine_learning:
+  - "machine learning"
+  - "deep learning"
+  - "neural networks"
+  - "gradient descent"
+  - "convolutional neural networks"
+  - "recurrent neural networks"
+  - "transfer learning"
+  - "reinforcement learning"
+
+artificial_intelligence:
+  - "artificial intelligence"
+  - "expert systems"
+  - "knowledge representation"
+  - "reasoning systems"
+  - "intelligent agents"
+  - "AI planning"
+
+natural_language_processing:
+  - "natural language processing"
+  - "text classification"
+  - "sentiment analysis"
+  - "language models"
+  - "word embeddings"
+  - "named entity recognition"
+  - "machine translation"
+  - "semantic similarity"
+
+computer_vision:
+  - "computer vision"
+  - "image classification"
+  - "object detection"
+  - "image segmentation"
+  - "pose estimation"
+  - "face recognition"
+  - "scene understanding"
+
+supervised_learning:
+  - "supervised learning"
+  - "classification algorithms"
+  - "regression analysis"
+  - "support vector machines"
+  - "decision trees"
+  - "random forests"
+
+unsupervised_learning:
+  - "unsupervised learning"
+  - "clustering algorithms"
+  - "dimensionality reduction"
+  - "principal component analysis"
+  - "autoencoders"
+  - "anomaly detection"
