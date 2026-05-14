@@ -62,7 +62,7 @@ class Settings(BaseSettings):
     # Logging
     LOG_LEVEL: str
     
-    SEMANTIC_SCHOLAR_API_KEY: str
+    SEMANTIC_SCHOLAR_API_KEY: str = ""
     
     # Hugging Face API (for higher rate limits on model downloads and inference)
     HUGGINGFACE_API_KEY: str 

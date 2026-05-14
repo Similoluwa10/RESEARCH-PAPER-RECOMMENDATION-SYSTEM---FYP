@@ -1,0 +1,339 @@
+frontend_development:
+  # Base queries
+  - "frontend development"
+  - "web frontend engineering"
+  - "react frontend architecture"
+  - "javascript ui development"
+  # Wave1 queries
+  - "frontend performance optimization"
+  - "client side rendering"
+  - "server side rendering web"
+  - "web component architecture"
+  - "progressive web applications"
+  - "accessibility testing web"
+  - "responsive design engineering"
+  - "frontend build tooling"
+  - "browser compatibility engineering"
+  - "state management in web apps"
+  # Topup query
+  - "webassembly frontend tooling"
+
+backend_development:
+  # Base queries
+  - "backend development"
+  - "server side software engineering"
+  - "api backend architecture"
+  - "distributed backend systems"
+  # Wave1 queries
+  - "backend microservices design"
+  - "rest api engineering"
+  - "graphql backend systems"
+  - "backend caching strategies"
+  - "message queue backend architecture"
+  - "database scalability backend"
+  - "cloud native backend"
+  - "event sourcing backend"
+  - "backend observability"
+  - "high availability backend"
+  # Topup query
+  - "backend idempotency patterns"
+
+natural_language_processing:
+  # Base queries
+  - "natural language processing"
+  - "nlp for software engineering"
+  - "transformer language models"
+  - "information extraction nlp"
+  # Wave1 queries
+  - "text classification nlp"
+  - "neural machine translation"
+  - "sentiment analysis methods"
+  - "topic modeling approaches"
+  - "question answering with transformers"
+  - "information retrieval nlp"
+  - "named entity recognition"
+  - "relation extraction nlp"
+  - "text summarization models"
+  - "prompt engineering for llms"
+  # Topup query
+  - "retrieval augmented generation nlp"
+
+software_testing:
+  # Base queries
+  - "software testing"
+  - "test automation"
+  - "unit and integration testing"
+  - "mutation testing"
+  # Wave1 queries
+  - "model based software testing"
+  - "search based software testing"
+  - "fuzzing software systems"
+  - "automated test generation"
+  - "test oracle inference"
+  - "performance testing software"
+  - "security testing software"
+  - "api testing automation"
+  - "flaky test detection"
+  - "continuous testing in ci"
+  # Topup query
+  - "differential testing software"
+
+agile_devops:
+  # Base queries
+  - "agile software development"
+  - "devops engineering"
+  - "continuous integration continuous deployment"
+  - "scrum and devops practices"
+  # Wave1 queries
+  - "devops automation"
+  - "continuous delivery practices"
+  - "infrastructure as code"
+  - "site reliability engineering"
+  - "deployment pipeline optimization"
+  - "release engineering practices"
+  - "observability in devops"
+  - "trunk based development"
+  - "agile metrics software teams"
+  - "value stream analytics"
+  # Topup query
+  - "platform engineering devops"
+
+requirements_engineering:
+  # Base queries
+  - "requirements engineering"
+  - "requirements elicitation"
+  - "requirements traceability"
+  - "user story quality"
+  # Wave1 queries
+  - "requirements prioritization techniques"
+  - "requirements ambiguity detection"
+  - "goal oriented requirements engineering"
+  - "requirements quality assessment"
+  - "requirements change management"
+  - "requirements negotiation"
+  - "requirements validation methods"
+  - "non functional requirements"
+  - "requirements reuse"
+  - "requirements engineering in agile"
+  # Topup query
+  - "goal model requirements analysis"
+
+software_architecture:
+  # Base queries
+  - "software architecture"
+  - "microservices architecture"
+  - "architectural design decisions"
+  - "software design patterns"
+  # Wave1 queries
+  - "architectural technical debt"
+  - "architecture decision records"
+  - "software architecture evaluation"
+  - "layered architecture software"
+  - "event driven architecture software"
+  - "service oriented architecture"
+  - "architecture reconstruction"
+  - "quality attributes architecture"
+  - "software architecture recovery"
+  - "architectural refactoring"
+  # Topup query
+  - "architecture conformance checking"
+
+software_security:
+  # Base queries
+  - "software security"
+  - "secure software development lifecycle"
+  - "vulnerability detection in source code"
+  - "application security testing"
+  # Wave1 queries
+  - "secure software architecture"
+  - "threat modeling software"
+  - "static application security testing"
+  - "dynamic application security testing"
+  - "software supply chain attacks"
+  - "dependency vulnerability management"
+  - "secure code review"
+  - "authentication security software"
+  - "authorization vulnerabilities"
+  - "security misconfiguration software"
+  # Topup query
+  - "secure by design software systems"
+
+program_analysis:
+  # Base queries
+  - "program analysis"
+  - "static code analysis"
+  - "dynamic program analysis"
+  - "symbolic execution"
+  # Wave1 queries
+  - "interprocedural analysis"
+  - "control flow graph analysis"
+  - "data flow analysis programs"
+  - "alias analysis"
+  - "pointer analysis"
+  - "taint tracking"
+  - "abstract interpretation techniques"
+  - "symbolic execution tools"
+  - "program verification"
+  - "compiler analysis techniques"
+  # Topup query
+  - "program dependence graph analysis"
+
+machine_learning:
+  # Base queries
+  - "machine learning"
+  - "supervised and unsupervised learning"
+  - "deep learning methods"
+  - "representation learning"
+  # Wave1 queries
+  - "semi supervised learning"
+  - "self supervised representation learning"
+  - "few shot learning methods"
+  - "transfer learning applications"
+  - "graph machine learning"
+  - "federated learning systems"
+  - "reinforcement learning algorithms"
+  - "active learning strategies"
+  - "ml model calibration"
+  - "uncertainty estimation machine learning"
+  # Topup query
+  - "continual learning machine learning"
+
+software_configuration_management:
+  # Base queries
+  - "software configuration management"
+  - "version control systems"
+  - "build and release management"
+  - "software change management"
+  # Wave1 queries
+  - "configuration management in software"
+  - "version control analytics"
+  - "branching and merging strategies"
+  - "software release management"
+  - "build reproducibility"
+  - "configuration drift"
+  - "artifact management software"
+  - "change impact analysis configuration"
+  - "software baseline management"
+  - "configuration auditing"
+  # Topup query
+  - "software configuration item management"
+
+software_project_management:
+  # Base queries
+  - "software project management"
+  - "software effort estimation"
+  - "software risk management"
+  - "software team productivity"
+  # Wave1 queries
+  - "software cost estimation"
+  - "software schedule prediction"
+  - "project risk assessment software"
+  - "resource allocation software projects"
+  - "agile project governance"
+  - "earned value management software"
+  - "software project monitoring"
+  - "software project forecasting"
+  - "software team coordination"
+  - "project portfolio management software"
+  # Topup query
+  - "software project delay prediction"
+
+software_engineering:
+  # Base queries
+  - "software engineering"
+  - "empirical software engineering"
+  - "mining software repositories"
+  - "software process improvement"
+  # Wave1 queries
+  - "empirical studies in software engineering"
+  - "mining software repositories research"
+  - "software process models"
+  - "evidence based software engineering"
+  - "human aspects software engineering"
+  - "software engineering experiments"
+  - "software engineering education research"
+  - "automated software engineering"
+  - "software engineering tools"
+  - "software engineering methodology"
+  # Topup query
+  - "evidence synthesis software engineering"
+
+bug_prediction:
+  # Base queries
+  - "bug prediction"
+  - "defect prediction in software"
+  - "fault prone module prediction"
+  - "just in time defect prediction"
+  # Wave1 queries
+  - "cross project defect prediction"
+  - "just in time defect prediction"
+  - "defect prediction with machine learning"
+  - "fault localization software"
+  - "bug triaging automation"
+  - "issue prediction in software"
+  - "defect density prediction"
+  - "fault prone component detection"
+  - "bug report analysis"
+  - "software defect datasets"
+  # Topup query
+  - "deep learning bug prediction"
+
+artificial_intelligence:
+  # Base queries
+  - "artificial intelligence"
+  - "ai methods for software engineering"
+  - "intelligent software systems"
+  - "knowledge based systems"
+  # Wave1 queries
+  - "knowledge representation ai"
+  - "automated planning ai"
+  - "reasoning under uncertainty"
+  - "multi agent systems ai"
+  - "intelligent decision support"
+  - "explainable artificial intelligence"
+  - "neuro symbolic ai"
+  - "ai for software analytics"
+  - "large language models for coding"
+  - "autonomous agents in software"
+  # Topup query
+  - "agentic ai systems"
+
+code_quality:
+  # Base queries
+  - "code quality"
+  - "code smell detection"
+  - "technical debt analysis"
+  - "maintainability metrics"
+  # Wave1 queries
+  - "code maintainability analysis"
+  - "software quality models"
+  - "code readability assessment"
+  - "code complexity metrics"
+  - "technical debt measurement"
+  - "refactoring recommendation systems"
+  - "code smell classification"
+  - "quality gate automation"
+  - "software quality assurance"
+  - "clean code practices research"
+  # Topup query
+  - "automated code quality assessment"
+
+other_se_topics:
+  # Base queries
+  - "software reliability"
+  - "human factors in software engineering"
+  - "software sustainability"
+  - "software engineering education"
+  # Wave1 queries
+  - "software reliability engineering"
+  - "software sustainability practices"
+  - "green software engineering"
+  - "human computer interaction software engineering"
+  - "developer productivity"
+  - "software ecosystems"
+  - "open source software engineering"
+  - "socio technical systems software"
+  - "software engineering ethics"
+  - "software engineering for safety critical systems"
+  # Topup query
+  - "software engineering knowledge graphs"

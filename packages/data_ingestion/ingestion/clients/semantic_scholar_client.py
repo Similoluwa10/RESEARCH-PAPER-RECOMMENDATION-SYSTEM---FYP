@@ -44,8 +44,14 @@ class SemanticScholarClient(BaseAPIClient):
         """
         super().__init__(timeout)
         self.api_key = api_key
-        self._headers = {"x-api-key": api_key} if api_key else {}
-        self._delay = self.API_KEY_DELAY if api_key else self.FREE_TIER_DELAY
+        # Only set header if API key is provided and not empty
+        self._headers = {}
+        if api_key and api_key.strip():
+            self._headers = {"x-api-key": api_key.strip()}
+            self.logger.info(f"Using Semantic Scholar API key: {api_key[:10]}...")
+        else:
+            self.logger.info("Using Semantic Scholar free tier (no API key)")
+        self._delay = self.API_KEY_DELAY if (api_key and api_key.strip()) else self.FREE_TIER_DELAY
         self._last_request_time: float = 0
     
     @property
@@ -81,14 +87,21 @@ class SemanticScholarClient(BaseAPIClient):
                 timeout=self.timeout,
             )
             
-            # Handle rate limiting with exponential backoff (up to 3 retries)
+            # Handle rate limiting and 403 errors with exponential backoff (up to 3 retries)
             retries = 0
-            while response.status_code == 429 and retries < 3:
+            while (response.status_code in [429, 403] and retries < 3):
                 retries += 1
-                retry_after = int(response.headers.get("Retry-After", 60 * retries))
-                self.logger.warning(
-                    f"Rate limited (attempt {retries}/3). Waiting {retry_after}s..."
-                )
+                if response.status_code == 403:
+                    retry_after = int(response.headers.get("Retry-After", 60 * retries))
+                    self.logger.warning(
+                        f"Access forbidden (attempt {retries}/3). Waiting {retry_after}s... "
+                        f"(API key: {'yes' if self._headers else 'no'})"
+                    )
+                else:  # 429
+                    retry_after = int(response.headers.get("Retry-After", 60 * retries))
+                    self.logger.warning(
+                        f"Rate limited (attempt {retries}/3). Waiting {retry_after}s..."
+                    )
                 time.sleep(retry_after)
                 self._last_request_time = time.time()
                 response = requests.get(
@@ -100,6 +113,13 @@ class SemanticScholarClient(BaseAPIClient):
             
             if response.status_code == 429:
                 self.logger.warning("Still rate limited after 3 retries, skipping this query")
+                return []
+            
+            if response.status_code == 403:
+                self.logger.warning(
+                    f"Still forbidden after 3 retries. Status: {response.status_code}. "
+                    f"API key present: {bool(self._headers)}"
+                )
                 return []
             
             response.raise_for_status()
