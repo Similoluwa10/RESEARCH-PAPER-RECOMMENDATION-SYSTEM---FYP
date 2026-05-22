@@ -6,8 +6,13 @@ It creates the FastAPI app instance, configures middleware, and
 registers all API routers.
 """
 
+import sys
+import os
 import logging
 from contextlib import asynccontextmanager
+
+# Add packages directory to path for nlp module access
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'packages'))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,6 +20,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.config import settings
 from src.routers import auth, health, papers, recommendations, search
 from src.services.embedding_service import EmbeddingService
+from src.services.baseline_service import BaselineService
+from src.models.base import engine
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +42,17 @@ async def lifespan(app: FastAPI):
         logger.info("✓ Embedding model loaded successfully")
     except Exception as e:
         logger.error(f"Failed to pre-warm embedding model: {e}")
+    
+    # Initialize TF-IDF baseline for keyword search
+    logger.info("Initializing TF-IDF baseline model...")
+    try:
+        async with AsyncSession(engine) as session:
+            baseline = BaselineService(session)
+            await baseline.initialize()
+            logger.info("✓ TF-IDF baseline model initialized successfully")
+    except Exception as e:
+        logger.warning(f"TF-IDF baseline initialization deferred: {e}")
+        logger.warning("  (Will be initialized on first keyword search)")
     
     yield
     # Shutdown: Clean up resources

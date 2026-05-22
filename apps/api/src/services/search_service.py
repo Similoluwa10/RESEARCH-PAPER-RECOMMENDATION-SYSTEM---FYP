@@ -6,13 +6,18 @@ Supports multiple search methods for comparison.
 """
 
 from typing import Any, Dict, Optional
+import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.paper_repository import PaperRepository
 from src.services.embedding_service import EmbeddingService
+from src.services.baseline_service import BaselineService
 from src.schemas.search import SearchRequest, SearchResponse
 from src.core.enums import SearchMethod
+
+logger = logging.getLogger(__name__)
+
 
 class SearchService:
     """
@@ -25,6 +30,7 @@ class SearchService:
         self.db = db
         self.repository = PaperRepository(db)
         self.embedding_service = EmbeddingService()
+        self.baseline_service = BaselineService(db)
     
     async def search(
         self,
@@ -94,16 +100,23 @@ class SearchService:
         Uses packages/nlp/baselines for traditional search.
         Good baseline for comparison in evaluation.
         """
-        # TODO: Implement using packages/nlp baselines
-        
-        result = {
-            "results": [],
-            "method": "keyword",
-            "total": 0,
-            "query": search_request.query,
-        }
-        
-        return SearchResponse.from_model(result)
+        try:
+            normalized_filters = search_request.filters.model_dump() if hasattr(search_request.filters, "model_dump") else search_request.filters
+            
+            return await self.baseline_service.search(
+                query=search_request.query,
+                top_k=search_request.top_k,
+                filters=normalized_filters,
+            )
+        except Exception as e:
+            logger.error(f"Error in keyword search: {e}")
+            return SearchResponse.from_model({
+                "results": [],
+                "method": "keyword",
+                "total": 0,
+                "query": search_request.query,
+                "error": str(e),
+            })
     
     async def _hybrid_search(
         self,

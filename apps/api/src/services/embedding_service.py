@@ -30,9 +30,16 @@ NLP_SRC_PATH = PROJECT_ROOT / "packages" / "nlp" / "src"
 
 if str(NLP_SRC_PATH) not in sys.path:
     sys.path.insert(0, str(NLP_SRC_PATH))
-from embeddings.sentence_transformer import SentenceTransformerEmbedding
 
-#from packages.nlp.src.embeddings.sentence_transformer import SentenceTransformerEmbedding
+try:
+    # Try to use domain-specific embeddings first (SPECTER for academic papers)
+    from domain_embeddings import DomainEmbeddingModel
+    DOMAIN_EMBEDDINGS_AVAILABLE = True
+except ImportError:
+    DOMAIN_EMBEDDINGS_AVAILABLE = False
+
+# Fallback to sentence-transformers
+from embeddings.sentence_transformer import SentenceTransformerEmbedding
 
 
 class EmbeddingService:
@@ -48,7 +55,7 @@ class EmbeddingService:
     - Batch caching: Intelligently caches batch operations
     """
 
-    _model_cache: Dict[str, SentenceTransformerEmbedding] = {}
+    _model_cache: Dict[str, any] = {}
     _model_cache_lock = Lock()
 
     _embedding_cache: "OrderedDict[str, tuple[float, List[float]]]" = OrderedDict()
@@ -59,31 +66,43 @@ class EmbeddingService:
     _cache_misses: int = 0
     _stats_lock = Lock()
 
-    def __init__(self, model_name: str | None = None):
+    def __init__(self, model_name: str | None = None, use_domain_model: bool = False):
         """
         Initialize embedding service.
 
         Args:
             model_name: Optional model override. If omitted, uses
-                `settings.EMBEDDING_MODEL_NAME`.
+                `settings.EMBEDDING_MODEL_NAME`. Default: all-MiniLM-L6-v2
+            use_domain_model: Whether to use domain-specific embeddings (SPECTER) if available.
+                              Disabled by default - using standard all-MiniLM-L6-v2
         """
-        self.model_name = model_name or settings.EMBEDDING_MODEL_NAME
-        self.model = self._get_or_create_model(self.model_name)
+        self.model_name = model_name or "sentence-transformers/all-MiniLM-L6-v2"
+        self.use_domain_model = use_domain_model and DOMAIN_EMBEDDINGS_AVAILABLE
+        self.model = self._get_or_create_model(self.model_name, self.use_domain_model)
         
         # Use configurable cache settings
         self._embedding_cache_ttl = settings.EMBEDDING_CACHE_TTL_SECONDS
         self._embedding_cache_max = settings.EMBEDDING_CACHE_MAX_ITEMS
 
     @classmethod
-    def _get_or_create_model(cls, model_name: str) -> SentenceTransformerEmbedding:
+    def _get_or_create_model(cls, model_name: str, use_domain_model: bool = True):
+        cache_key = f"{model_name}:domain={use_domain_model}"
         with cls._model_cache_lock:
-            model = cls._model_cache.get(model_name)
+            model = cls._model_cache.get(cache_key)
             if model is None:
-                # Pass Hugging Face API token for authenticated requests
-                # This avoids rate limits when downloading models
-                hf_token = settings.HUGGINGFACE_API_KEY if settings.HUGGINGFACE_API_KEY else None
-                model = SentenceTransformerEmbedding(model_name, hf_token=hf_token)
-                cls._model_cache[model_name] = model
+                if use_domain_model and DOMAIN_EMBEDDINGS_AVAILABLE:
+                    try:
+                        logger.info(f"Loading domain-specific embedding model: {model_name}")
+                        model = DomainEmbeddingModel(model_name)
+                        logger.info("Domain model loaded successfully. Using SPECTER or fallback.")
+                    except Exception as e:
+                        logger.warning(f"Failed to load domain model: {e}. Falling back to SentenceTransformer.")
+                        hf_token = settings.HUGGINGFACE_API_KEY if settings.HUGGINGFACE_API_KEY else None
+                        model = SentenceTransformerEmbedding(model_name, hf_token=hf_token)
+                else:
+                    hf_token = settings.HUGGINGFACE_API_KEY if settings.HUGGINGFACE_API_KEY else None
+                    model = SentenceTransformerEmbedding(model_name, hf_token=hf_token)
+                cls._model_cache[cache_key] = model
             return model
 
     @staticmethod

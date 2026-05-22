@@ -1,0 +1,686 @@
+{
+  "timestamp": "2026-05-14T22:26:00.668826",
+  "evaluation_type": "ranking_quality",
+  "methodology": "Semantic coherence-based evaluation (NOT keyword matching)",
+  "queries_evaluated": 10,
+  "per_query_results": [
+    {
+      "query": "bug prediction",
+      "semantic_variant": "defect prediction and fault localization",
+      "semantic_search": {
+        "coherence_scores": [
+          0.6312414407730103,
+          0.5684992671012878,
+          0.45267271995544434,
+          0.45768821239471436,
+          0.5831388235092163,
+          0.4544736444950104,
+          0.48412325978279114,
+          0.472418874502182,
+          0.5569050312042236,
+          0.37460657954216003
+        ],
+        "metrics": {
+          "mean_coherence": 0.503576785326004,
+          "median_coherence": 0.4782710671424866,
+          "std_coherence": 0.07401208353901496,
+          "ranking_consistency": 0.5848195531123314,
+          "top_5_avg": 0.5386480927467346,
+          "perfect_ranking_pct": 40.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "A Defect is Being Born: How Close Are We? A Time Sensitive Forecasting Approach",
+          "Empirical Analysis of Temporal and Spatial Fault Characteristics in Multi-Fault Bug Repositories",
+          "Machine Learning Techniques for Software Quality Assurance: A Survey"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.5302969217300415,
+          0.7724494338035583,
+          0.617450475692749,
+          0.7185496687889099,
+          0.7210181951522827,
+          0.7362481951713562,
+          0.6489804983139038,
+          0.6228200793266296,
+          0.6363216638565063,
+          0.6912307143211365
+        ],
+        "metrics": {
+          "mean_coherence": 0.6695365846157074,
+          "median_coherence": 0.6701056063175201,
+          "std_coherence": 0.06809818602057968,
+          "ranking_consistency": -0.13850954775077592,
+          "top_5_avg": 0.6719529390335083,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Bug Prediction Using Source Code Embedding Based on Doc2Vec",
+          "Bytes : Method level bug prediction: An overview",
+          "Enhanced Bug Prediction in JavaScript Programs with Hybrid Call-Graph Based Invocation Metrics"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": -0.1659597992897034,
+        "semantic_ranking_quality_advantage": 0.7233291008631073,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "technical debt",
+      "semantic_variant": "software maintainability and code quality",
+      "semantic_search": {
+        "coherence_scores": [
+          0.10574030131101608,
+          0.2084997445344925,
+          0.23371738195419312,
+          0.1139235869050026,
+          0.14607170224189758,
+          0.15034952759742737,
+          0.1499449759721756,
+          0.309347540140152,
+          0.13965371251106262,
+          0.13996556401252747
+        ],
+        "metrics": {
+          "mean_coherence": 0.16972140371799468,
+          "median_coherence": 0.1480083391070366,
+          "std_coherence": 0.05951205075881138,
+          "ranking_consistency": -0.05623349263098519,
+          "top_5_avg": 0.16159054338932038,
+          "perfect_ranking_pct": 30.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Quality Assurance of LLM-generated Code: Addressing Non-Functional Quality Characteristics",
+          "Evaluating Software Contribution Quality: Time-to-Modification Theory",
+          "On the Adoption and Effects of Source Code Reuse on Defect Proneness and Maintenance Effort"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.6848422884941101,
+          0.7998315691947937,
+          0.8013337850570679,
+          0.6245126724243164,
+          0.6176164150238037,
+          0.591659665107727,
+          0.5945404767990112,
+          0.5445807576179504,
+          0.6162686944007874,
+          0.5838687419891357
+        ],
+        "metrics": {
+          "mean_coherence": 0.6459055066108703,
+          "median_coherence": 0.6169425547122955,
+          "std_coherence": 0.08437995300618517,
+          "ranking_consistency": 0.7713765756908297,
+          "top_5_avg": 0.7056273460388184,
+          "perfect_ranking_pct": 30.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Technical debt and agile software development practices and processes: An industry practitioner survey",
+          "Estimation and Prediction of technical debt: a proposal",
+          "Technical Debt Management: The Road Ahead for Successful Software Delivery"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": -0.4761841028928756,
+        "semantic_ranking_quality_advantage": -0.8276100683218149,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "CI/CD",
+      "semantic_variant": "continuous integration deployment DevOps pipelines",
+      "semantic_search": {
+        "coherence_scores": [
+          0.16119202971458435,
+          0.2231854647397995,
+          0.07569936662912369,
+          0.5192748308181763,
+          0.15621769428253174,
+          0.014674574136734009,
+          0.23063930869102478,
+          0.2695941627025604,
+          0.39773064851760864,
+          0.12230487167835236
+        ],
+        "metrics": {
+          "mean_coherence": 0.21705129519104957,
+          "median_coherence": 0.19218874722719193,
+          "std_coherence": 0.14272409870765052,
+          "ranking_consistency": -0.09981456445940763,
+          "top_5_avg": 0.22711387723684312,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "DevOps Automation Pipeline Deployment with IaC (Infrastructure as Code)",
+          "Problems and Solutions of Continuous Deployment: A Systematic Review",
+          "Foundational DevOps Patterns"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.510459303855896,
+          0.3773093521595001,
+          0.4105142056941986,
+          0.39802417159080505,
+          0.39773064851760864,
+          0.5423529744148254,
+          0.4449497163295746,
+          0.4999140799045563,
+          0.32028889656066895,
+          0.5192748308181763
+        ],
+        "metrics": {
+          "mean_coherence": 0.442081817984581,
+          "median_coherence": 0.4277319610118866,
+          "std_coherence": 0.06926394920776707,
+          "ranking_consistency": -0.21566863306958736,
+          "top_5_avg": 0.4188075363636017,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "CI/CD Configuration Practices in Open-Source Android Apps: An Empirical Study",
+          "When AI Agents Touch CI/CD Configurations: Frequency and Success",
+          "Empirical Analysis on CI/CD Pipeline Evolution in Machine Learning Projects"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": -0.22503052279353145,
+        "semantic_ranking_quality_advantage": 0.11585406861017973,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "code review",
+      "semantic_variant": "code inspection peer review verification",
+      "semantic_search": {
+        "coherence_scores": [
+          0.40888887643814087,
+          0.45218560099601746,
+          0.3037142753601074,
+          0.41815537214279175,
+          0.33935311436653137,
+          0.32546430826187134,
+          0.28889337182044983,
+          0.36195817589759827,
+          0.28712373971939087,
+          0.27162230014801025
+        ],
+        "metrics": {
+          "mean_coherence": 0.3457359135150909,
+          "median_coherence": 0.33240871131420135,
+          "std_coherence": 0.059333260320763,
+          "ranking_consistency": 0.676025773353783,
+          "top_5_avg": 0.3844594478607178,
+          "perfect_ranking_pct": 40.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Targeted Code Inspection based on Human Errors",
+          "SmartPatchLinker: An Open-Source Tool to Linked Changes Detection for Code Review",
+          "LightSys: Lightweight and Efficient CI System for Improving Integration Speed of Software"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.6153301000595093,
+          0.5421371459960938,
+          0.5766881108283997,
+          0.6939020156860352,
+          0.6029441952705383,
+          0.6876072287559509,
+          0.6602881550788879,
+          0.7037259340286255,
+          0.5717929601669312,
+          0.6067038774490356
+        ],
+        "metrics": {
+          "mean_coherence": 0.6261119723320008,
+          "median_coherence": 0.6110169887542725,
+          "std_coherence": 0.05389230788832576,
+          "ranking_consistency": -0.28381760684914836,
+          "top_5_avg": 0.6062003135681152,
+          "perfect_ranking_pct": 40.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "The Upper Bound of Information Diffusion in Code Review",
+          "Measuring Information Diffusion in Code Review at Spotify",
+          "CodeAgent: Autonomous Communicative Agents for Code Review"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": -0.28037605881690986,
+        "semantic_ranking_quality_advantage": 0.9598433802029314,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "software testing",
+      "semantic_variant": "test automation quality assurance validation",
+      "semantic_search": {
+        "coherence_scores": [
+          0.5226412415504456,
+          0.36548346281051636,
+          0.5167071223258972,
+          0.553878903388977,
+          0.5679484605789185,
+          0.5292640924453735,
+          0.6330345273017883,
+          0.720623791217804,
+          0.4895744025707245,
+          0.530478298664093
+        ],
+        "metrics": {
+          "mean_coherence": 0.5429634302854538,
+          "median_coherence": 0.5298711955547333,
+          "std_coherence": 0.08730112726815999,
+          "ranking_consistency": -0.2845415578210809,
+          "top_5_avg": 0.505331838130951,
+          "perfect_ranking_pct": 40.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "A self-assessment Instrument for assessing test automation maturity",
+          "AI-Driven Tools in Modern Software Quality Assurance: An Assessment of Benefits, Challenges, and Future Directions",
+          "Improving Test Automation Maturity: a Multivocal Literature Review"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.6982515454292297,
+          0.685040295124054,
+          0.5826317071914673,
+          0.7552589178085327,
+          0.7339027523994446,
+          0.6081441640853882,
+          0.707958996295929,
+          0.5211197733879089,
+          0.6366658806800842,
+          0.5948033332824707
+        ],
+        "metrics": {
+          "mean_coherence": 0.6523777365684509,
+          "median_coherence": 0.6608530879020691,
+          "std_coherence": 0.0714862475859886,
+          "ranking_consistency": 0.49575787851093667,
+          "top_5_avg": 0.6910170435905456,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Evolution of Software Testing Strategies and Trends: Semantic Content Analysis of Software Research Corpus of the Last 40 Years",
+          "Comprehension of Software Testing and Impacts of Automation Testing",
+          "Can Language Models Pass Software Testing Certification Exams? a case study"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": -0.10941430628299709,
+        "semantic_ranking_quality_advantage": -0.7802994363320176,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "machine learning in software engineering",
+      "semantic_variant": "deep learning neural networks software development",
+      "semantic_search": {
+        "coherence_scores": [
+          0.559363603591919,
+          0.5040002465248108,
+          0.4120897352695465,
+          0.6730336546897888,
+          0.5727976560592651,
+          0.507542073726654,
+          0.7887489199638367,
+          0.4248739778995514,
+          0.6120971441268921,
+          0.48093628883361816
+        ],
+        "metrics": {
+          "mean_coherence": 0.5535483300685883,
+          "median_coherence": 0.5334528386592865,
+          "std_coherence": 0.10947150202595997,
+          "ranking_consistency": -0.06574412936472541,
+          "top_5_avg": 0.5442569792270661,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Augmenting software engineering with AI and developing it further towards AI-assisted model-driven software engineering",
+          "Deep Learning Methods for Software Requirement Classification: A Performance Study on the PURE dataset",
+          "An Exploratory Study on Automatic Identification of Assumptions in the Development of Deep Learning Frameworks"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.7887489199638367,
+          0.4484475255012512,
+          0.5313063859939575,
+          0.6246333718299866,
+          0.3990393579006195,
+          0.2707752287387848,
+          0.5276978015899658,
+          0.455396831035614,
+          0.5087961554527283,
+          0.6946722269058228
+        ],
+        "metrics": {
+          "mean_coherence": 0.5249513804912567,
+          "median_coherence": 0.518246978521347,
+          "std_coherence": 0.14134700417321375,
+          "ranking_consistency": 0.12842289098835627,
+          "top_5_avg": 0.5584351122379303,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "A Systematic Literature Review on the Use of Machine Learning in Software Engineering",
+          "Quantum Artificial Intelligence for Software Engineering: the Road Ahead",
+          "Deep Learning-based Software Engineering: Progress, Challenges, and Opportunities"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": 0.02859694957733161,
+        "semantic_ranking_quality_advantage": -0.1941670203530817,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "code smell",
+      "semantic_variant": "software quality anti-pattern design problem",
+      "semantic_search": {
+        "coherence_scores": [
+          0.24994580447673798,
+          0.21279454231262207,
+          0.2425113469362259,
+          0.2027183324098587,
+          0.21617847681045532,
+          0.1986074447631836,
+          0.23363760113716125,
+          0.12847356498241425,
+          0.2634004056453705,
+          0.23183566331863403
+        ],
+        "metrics": {
+          "mean_coherence": 0.21801031827926637,
+          "median_coherence": 0.22400707006454468,
+          "std_coherence": 0.03574002565129543,
+          "ranking_consistency": 0.06448065328809738,
+          "top_5_avg": 0.22482970058918,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "A Design Recipe and Recipe-Based Errors for Regular Expressions",
+          "Secure and trusted white-box verification",
+          "How We Built Cedar: A Verification-Guided Approach"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.6155620813369751,
+          0.599861741065979,
+          0.6258062124252319,
+          0.746788740158081,
+          0.5529411435127258,
+          0.6462722420692444,
+          0.4100663363933563,
+          0.5573300123214722,
+          0.662834107875824,
+          0.6149340271949768
+        ],
+        "metrics": {
+          "mean_coherence": 0.6032396644353867,
+          "median_coherence": 0.615248054265976,
+          "std_coherence": 0.08292916804828576,
+          "ranking_consistency": 0.046023920903898,
+          "top_5_avg": 0.6281919836997986,
+          "perfect_ranking_pct": 60.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "SACS: A Code Smell Dataset using Semi-automatic Generation Approach",
+          "Code smell detection based on multi-agent collaboration and large language models",
+          "Polyglot Code Smell Detection for Infrastructure as Code with GLITCH"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": -0.3852293461561203,
+        "semantic_ranking_quality_advantage": 0.018456732384199377,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "security vulnerability",
+      "semantic_variant": "software security vulnerability exploitation attack",
+      "semantic_search": {
+        "coherence_scores": [
+          0.5445553660392761,
+          0.445247620344162,
+          0.47695064544677734,
+          0.48992088437080383,
+          0.5132228136062622,
+          0.4897971749305725,
+          0.48245513439178467,
+          0.5031247735023499,
+          0.503415048122406,
+          0.4533984363079071
+        ],
+        "metrics": {
+          "mean_coherence": 0.49020878970623016,
+          "median_coherence": 0.48985902965068817,
+          "std_coherence": 0.027271014461935018,
+          "ranking_consistency": 0.375326507900349,
+          "top_5_avg": 0.4939794659614563,
+          "perfect_ranking_pct": 40.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "A Systematic Literature Review on Automated Exploit and Security Test Generation",
+          "A Systematic Literature Review on Detecting Software Vulnerabilities with Large Language Models",
+          "Code Vulnerability Detection: A Comparative Analysis of Emerging Large Language Models"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.4802168309688568,
+          0.41652703285217285,
+          0.4319645166397095,
+          0.37764257192611694,
+          0.4916573464870453,
+          0.40390586853027344,
+          0.48714184761047363,
+          0.494586318731308,
+          0.4383218288421631,
+          0.460263192653656
+        ],
+        "metrics": {
+          "mean_coherence": 0.4482227355241776,
+          "median_coherence": 0.44929251074790955,
+          "std_coherence": 0.038771070026598,
+          "ranking_consistency": -0.2884391815289711,
+          "top_5_avg": 0.4396016597747803,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Vulnerability Classification on Source Code using Text Mining and Deep Learning Techniques",
+          "Do Software Security Practices Yield Fewer Vulnerabilities?",
+          "CVEfixes: Automated Collection of Vulnerabilities and Their Fixes from Open-Source Software"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": 0.04198605418205259,
+        "semantic_ranking_quality_advantage": 0.66376568942932,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "refactoring",
+      "semantic_variant": "code improvement restructuring optimization",
+      "semantic_search": {
+        "coherence_scores": [
+          0.37973934412002563,
+          0.36329522728919983,
+          0.31153538823127747,
+          0.6502958536148071,
+          0.3904302418231964,
+          0.5214451551437378,
+          0.3465081453323364,
+          0.28899282217025757,
+          0.5889056921005249,
+          0.2849525809288025
+        ],
+        "metrics": {
+          "mean_coherence": 0.41261004507541654,
+          "median_coherence": 0.37151728570461273,
+          "std_coherence": 0.12230590794742306,
+          "ranking_consistency": -0.17414588237969647,
+          "top_5_avg": 0.4190592110157013,
+          "perfect_ranking_pct": 30.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "SemOpt: LLM-Driven Code Optimization via Rule-Based Analysis",
+          "Learning Performance-Improving Code Edits",
+          "CodeScore-R: An Automated Robustness Metric for Assessing the FunctionalCorrectness of Code Synthesis"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.5975958704948425,
+          0.6598367691040039,
+          0.6920540928840637,
+          0.6223759651184082,
+          0.5910202860832214,
+          0.6271243095397949,
+          0.7392716407775879,
+          0.6981554627418518,
+          0.6655749082565308,
+          0.556763231754303
+        ],
+        "metrics": {
+          "mean_coherence": 0.6449772536754608,
+          "median_coherence": 0.6434805393218994,
+          "std_coherence": 0.05324308412129677,
+          "ranking_consistency": -0.013773425991899974,
+          "top_5_avg": 0.6325765967369079,
+          "perfect_ranking_pct": 50.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "RefSearch: A Search Engine for Refactoring",
+          "Behind the Scenes: On the Relationship Between Developer Experience and Refactoring",
+          "Automating Source Code Refactoring in the Classroom"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": -0.23236720860004423,
+        "semantic_ranking_quality_advantage": -0.16037245638779649,
+        "semantic_diversity_advantage": 0.0
+      }
+    },
+    {
+      "query": "requirements engineering",
+      "semantic_variant": "requirement specification elicitation analysis",
+      "semantic_search": {
+        "coherence_scores": [
+          0.678942084312439,
+          0.6770181059837341,
+          0.6288063526153564,
+          0.7233465909957886,
+          0.6600550413131714,
+          0.7179362773895264,
+          0.780813992023468,
+          0.7604244947433472,
+          0.7832314968109131,
+          0.7418187856674194
+        ],
+        "metrics": {
+          "mean_coherence": 0.7152393221855163,
+          "median_coherence": 0.7206414341926575,
+          "std_coherence": 0.050038441359538985,
+          "ranking_consistency": -0.7692585574751863,
+          "top_5_avg": 0.6736336350440979,
+          "perfect_ranking_pct": 60.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Adventures in FRET and Specification",
+          "FRETting about Requirements: Formalised Requirements for an Aircraft Engine Controller",
+          "Deriving Product Line Requirements: the RED-PL Guidance Approach"
+        ]
+      },
+      "tfidf_search": {
+        "coherence_scores": [
+          0.726789116859436,
+          0.6776359677314758,
+          0.6396360993385315,
+          0.7452954649925232,
+          0.5547031164169312,
+          0.6874197721481323,
+          0.6445369720458984,
+          0.7249048948287964,
+          0.49611636996269226,
+          0.6579466462135315
+        ],
+        "metrics": {
+          "mean_coherence": 0.6554984420537948,
+          "median_coherence": 0.6677913069725037,
+          "std_coherence": 0.07443941610926659,
+          "ranking_consistency": 0.4021879271966085,
+          "top_5_avg": 0.6688119530677795,
+          "perfect_ranking_pct": 60.0
+        },
+        "diversity": 1.0,
+        "top_3_titles": [
+          "Towards an Approach to Pattern-based Domain-Specific Requirements Engineering",
+          "Teaching Model-based Requirements Engineering to Industry Professionals: An Experience Report",
+          "An initial Theory to Understand and Manage Requirements Engineering Debt in Practice"
+        ]
+      },
+      "advantage": {
+        "semantic_coherence_advantage": 0.05974088013172152,
+        "semantic_ranking_quality_advantage": -1.171446484671795,
+        "semantic_diversity_advantage": 0.0
+      }
+    }
+  ],
+  "aggregated_metrics": {
+    "semantic_coherence": {
+      "mean": 0.4168665633350611,
+      "std": 0.16796866910163288,
+      "min": 0.16972140371799468,
+      "max": 0.7152393221855163
+    },
+    "tfidf_coherence": {
+      "mean": 0.5912903094291687,
+      "std": 0.08266174374107348,
+      "min": 0.442081817984581,
+      "max": 0.6695365846157074
+    },
+    "semantic_ranking_quality": {
+      "mean": 0.025091430352347878,
+      "std": 0.40721659563362983
+    },
+    "tfidf_ranking_quality": {
+      "mean": 0.09035607981002462,
+      "std": 0.3419295848302927
+    },
+    "advantages": {
+      "coherence_improvement": -0.1744237460941076,
+      "coherence_improvement_pct": -29.498833874428986,
+      "ranking_quality_improvement": -0.06526464945767674,
+      "semantic_diversity_advantage": 0.0
+    }
+  }
+}

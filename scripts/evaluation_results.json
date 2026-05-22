@@ -1,0 +1,770 @@
+{
+  "timestamp": null,
+  "queries_evaluated": 10,
+  "metrics": {
+    "semantic": {
+      "precision_at_5": {
+        "mean": 0.84,
+        "std": 0.32386554137309653,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "precision_at_10": {
+        "mean": 0.8,
+        "std": 0.32659863237109044,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "recall_at_5": {
+        "mean": 0.4791666666666667,
+        "std": 0.17921510973005472,
+        "min": 0.0,
+        "max": 0.6666666666666666
+      },
+      "recall_at_10": {
+        "mean": 0.9,
+        "std": 0.31622776601683794,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "mrr": {
+        "mean": 0.9,
+        "std": 0.31622776601683794,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "ndcg_at_10": {
+        "mean": 0.875053411640609,
+        "std": 0.31102341801271194,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "response_time_ms": {
+        "mean": 7134.912753105164,
+        "std": 21482.17275857,
+        "min": 99.20859336853027,
+        "max": 68252.80737876892
+      },
+      "results_count": {
+        "mean": 10,
+        "std": 0.0,
+        "min": 10,
+        "max": 10
+      },
+      "relevant_found": {
+        "mean": 8,
+        "std": 3.265986323710904,
+        "min": 0,
+        "max": 10
+      }
+    },
+    "tfidf": {
+      "precision_at_5": {
+        "mean": 1.0,
+        "std": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "precision_at_10": {
+        "mean": 1.0,
+        "std": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "recall_at_5": {
+        "mean": 0.5,
+        "std": 0.0,
+        "min": 0.5,
+        "max": 0.5
+      },
+      "recall_at_10": {
+        "mean": 1.0,
+        "std": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "mrr": {
+        "mean": 1.0,
+        "std": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "ndcg_at_10": {
+        "mean": 1.0,
+        "std": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "response_time_ms": {
+        "mean": 30218.80705356598,
+        "std": 3956.744561654543,
+        "min": 23476.82785987854,
+        "max": 34465.65747261047
+      },
+      "results_count": {
+        "mean": 10,
+        "std": 0.0,
+        "min": 10,
+        "max": 10
+      },
+      "relevant_found": {
+        "mean": 10,
+        "std": 0.0,
+        "min": 10,
+        "max": 10
+      }
+    },
+    "advantages": {
+      "precision_at_10": "-20.0%",
+      "recall_at_10": "-10.0%",
+      "mrr": "-10.0%",
+      "ndcg_at_10": "-12.5%"
+    }
+  },
+  "detailed_results": [
+    {
+      "query": "bug prediction",
+      "semantic_query": "defect prediction and fault localization",
+      "semantic_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 68252.80737876892,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 34193.40205192566,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 0,
+        "semantic_unique": 10,
+        "semantic_precision_advantage": 0.0,
+        "semantic_ndcg_advantage": 0.0,
+        "tfidf_faster": true,
+        "speedup_ratio": 1.996081211080462
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "A Defect is Being Born: How Close Are We? A Time Sensitive F",
+            "score": 0.5877670541087366
+          },
+          {
+            "title": "Empirical Analysis of Temporal and Spatial Fault Characteris",
+            "score": 0.5805110335350037
+          },
+          {
+            "title": "Machine Learning Techniques for Software Quality Assurance: ",
+            "score": 0.5683659315109253
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "Bug Prediction Using Source Code Embedding Based on Doc2Vec",
+            "score": 0.6011038165180531
+          },
+          {
+            "title": "Bytes : Method level bug prediction: An overview",
+            "score": 0.5488931886139099
+          },
+          {
+            "title": "Enhanced Bug Prediction in JavaScript Programs with Hybrid C",
+            "score": 0.5195183814496441
+          }
+        ]
+      }
+    },
+    {
+      "query": "technical debt",
+      "semantic_query": "software maintainability and code quality",
+      "semantic_metrics": {
+        "precision_at_5": 0.8,
+        "precision_at_10": 0.6,
+        "recall_at_5": 0.6666666666666666,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 0.8922902494331068,
+        "response_time_ms": 1947.2301006317139,
+        "results_count": 10,
+        "relevant_found": 6
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 33780.77244758606,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 0,
+        "semantic_unique": 10,
+        "semantic_precision_advantage": -0.4,
+        "semantic_ndcg_advantage": -0.10770975056689325,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.05764314903257522
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "Quality Assurance of LLM-generated Code: Addressing Non-Func",
+            "score": 0.6213294493359667
+          },
+          {
+            "title": "Evaluating Software Contribution Quality: Time-to-Modificati",
+            "score": 0.6106161707272438
+          },
+          {
+            "title": "On the Adoption and Effects of Source Code Reuse on Defect P",
+            "score": 0.5925355443316049
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "Technical debt and agile software development practices and ",
+            "score": 0.8615735858483322
+          },
+          {
+            "title": "Estimation and Prediction of technical debt: a proposal",
+            "score": 0.8477883431291969
+          },
+          {
+            "title": "Technical Debt Management: The Road Ahead for Successful Sof",
+            "score": 0.7910356058515258
+          }
+        ]
+      }
+    },
+    {
+      "query": "CI/CD",
+      "semantic_query": "continuous integration deployment DevOps pipelines",
+      "semantic_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 109.72213745117188,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 32270.246982574463,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 2,
+        "semantic_unique": 8,
+        "semantic_precision_advantage": 0.0,
+        "semantic_ndcg_advantage": 0.0,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.003400102190430104
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "DevOps Automation Pipeline Deployment with IaC (Infrastructu",
+            "score": 0.7059493871316134
+          },
+          {
+            "title": "Problems and Solutions of Continuous Deployment: A Systemati",
+            "score": 0.6398100852966309
+          },
+          {
+            "title": "Foundational DevOps Patterns",
+            "score": 0.636913537979126
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "CI/CD Configuration Practices in Open-Source Android Apps: A",
+            "score": 0.8544827714379442
+          },
+          {
+            "title": "When AI Agents Touch CI/CD Configurations: Frequency and Suc",
+            "score": 0.8154198082417226
+          },
+          {
+            "title": "Empirical Analysis on CI/CD Pipeline Evolution in Machine Le",
+            "score": 0.7973335953647738
+          }
+        ]
+      }
+    },
+    {
+      "query": "code review",
+      "semantic_query": "code inspection peer review verification",
+      "semantic_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 0.8,
+        "recall_at_5": 0.625,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 0.9795590597167471,
+        "response_time_ms": 268.4311866760254,
+        "results_count": 10,
+        "relevant_found": 8
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 30475.752115249634,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 0,
+        "semantic_unique": 10,
+        "semantic_precision_advantage": -0.19999999999999996,
+        "semantic_ndcg_advantage": -0.02044094028325294,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.008808025004958163
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "Targeted Code Inspection based on Human Errors",
+            "score": 0.5238628387451172
+          },
+          {
+            "title": "SmartPatchLinker: An Open-Source Tool to Linked Changes Dete",
+            "score": 0.48966243863105774
+          },
+          {
+            "title": "LightSys: Lightweight and Efficient CI System for Improving ",
+            "score": 0.48533091036493214
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "The Upper Bound of Information Diffusion in Code Review",
+            "score": 0.7863368238180435
+          },
+          {
+            "title": "Measuring Information Diffusion in Code Review at Spotify",
+            "score": 0.7701705615563661
+          },
+          {
+            "title": "CodeAgent: Autonomous Communicative Agents for Code Review",
+            "score": 0.726872845168222
+          }
+        ]
+      }
+    },
+    {
+      "query": "software testing",
+      "semantic_query": "test automation quality assurance validation",
+      "semantic_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 150.17080307006836,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 34465.65747261047,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 0,
+        "semantic_unique": 10,
+        "semantic_precision_advantage": 0.0,
+        "semantic_ndcg_advantage": 0.0,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.004357114126994608
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "A self-assessment Instrument for assessing test automation m",
+            "score": 0.6561696734327284
+          },
+          {
+            "title": "AI-Driven Tools in Modern Software Quality Assurance: An Ass",
+            "score": 0.6396874404139864
+          },
+          {
+            "title": "Improving Test Automation Maturity: a Multivocal Literature ",
+            "score": 0.6373770236968994
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "Evolution of Software Testing Strategies and Trends: Semanti",
+            "score": 0.6749685771550692
+          },
+          {
+            "title": "Comprehension of Software Testing and Impacts of Automation ",
+            "score": 0.6020876656789433
+          },
+          {
+            "title": "Can Language Models Pass Software Testing Certification Exam",
+            "score": 0.5846215089526845
+          }
+        ]
+      }
+    },
+    {
+      "query": "machine learning in software engineering",
+      "semantic_query": "deep learning neural networks software development",
+      "semantic_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 145.96152305603027,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 30202.491998672485,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 1,
+        "semantic_unique": 9,
+        "semantic_precision_advantage": 0.0,
+        "semantic_ndcg_advantage": 0.0,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.004832764232250962
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "Augmenting software engineering with AI and developing it fu",
+            "score": 0.6268792152404785
+          },
+          {
+            "title": "Deep Learning Methods for Software Requirement Classificatio",
+            "score": 0.5988960266113281
+          },
+          {
+            "title": "An Exploratory Study on Automatic Identification of Assumpti",
+            "score": 0.5472060441970825
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "A Systematic Literature Review on the Use of Machine Learnin",
+            "score": 0.5066575890081054
+          },
+          {
+            "title": "Quantum Artificial Intelligence for Software Engineering: th",
+            "score": 0.4476692967336776
+          },
+          {
+            "title": "Deep Learning-based Software Engineering: Progress, Challeng",
+            "score": 0.33621279356863165
+          }
+        ]
+      }
+    },
+    {
+      "query": "code smell",
+      "semantic_query": "software quality anti-pattern design problem",
+      "semantic_metrics": {
+        "precision_at_5": 0.0,
+        "precision_at_10": 0.0,
+        "recall_at_5": 0.0,
+        "recall_at_10": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_10": 0.0,
+        "response_time_ms": 106.75501823425293,
+        "results_count": 10,
+        "relevant_found": 0
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 23476.82785987854,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 0,
+        "semantic_unique": 10,
+        "semantic_precision_advantage": -1.0,
+        "semantic_ndcg_advantage": -1.0,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.004547250543021413
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "A Design Recipe and Recipe-Based Errors for Regular Expressi",
+            "score": 0.3828194737434387
+          },
+          {
+            "title": "Secure and trusted white-box verification",
+            "score": 0.3759732320324647
+          },
+          {
+            "title": "How We Built Cedar: A Verification-Guided Approach",
+            "score": 0.36530862061330027
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "SACS: A Code Smell Dataset using Semi-automatic Generation A",
+            "score": 0.6903888813753536
+          },
+          {
+            "title": "Code smell detection based on multi-agent collaboration and ",
+            "score": 0.6816995251478373
+          },
+          {
+            "title": "Polyglot Code Smell Detection for Infrastructure as Code wit",
+            "score": 0.6787296428272713
+          }
+        ]
+      }
+    },
+    {
+      "query": "security vulnerability",
+      "semantic_query": "software security vulnerability exploitation attack",
+      "semantic_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 99.20859336853027,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 25291.311979293823,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 0,
+        "semantic_unique": 10,
+        "semantic_precision_advantage": 0.0,
+        "semantic_ndcg_advantage": 0.0,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.003922635308510411
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "A Systematic Literature Review on Automated Exploit and Secu",
+            "score": 0.6018296954834867
+          },
+          {
+            "title": "A Systematic Literature Review on Detecting Software Vulnera",
+            "score": 0.5724668502807617
+          },
+          {
+            "title": "Code Vulnerability Detection: A Comparative Analysis of Emer",
+            "score": 0.5646014473079782
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "Vulnerability Classification on Source Code using Text Minin",
+            "score": 0.4677534417183934
+          },
+          {
+            "title": "Do Software Security Practices Yield Fewer Vulnerabilities?",
+            "score": 0.4639055598146718
+          },
+          {
+            "title": "CVEfixes: Automated Collection of Vulnerabilities and Their ",
+            "score": 0.4341777929446318
+          }
+        ]
+      }
+    },
+    {
+      "query": "refactoring",
+      "semantic_query": "code improvement restructuring optimization",
+      "semantic_metrics": {
+        "precision_at_5": 0.6,
+        "precision_at_10": 0.6,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 0.8786848072562361,
+        "response_time_ms": 114.78996276855469,
+        "results_count": 10,
+        "relevant_found": 6
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 26059.616327285767,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 0,
+        "semantic_unique": 10,
+        "semantic_precision_advantage": -0.4,
+        "semantic_ndcg_advantage": -0.1213151927437639,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.004404898419335655
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "SemOpt: LLM-Driven Code Optimization via Rule-Based Analysis",
+            "score": 0.5438719339523395
+          },
+          {
+            "title": "Learning Performance-Improving Code Edits",
+            "score": 0.5327860077874651
+          },
+          {
+            "title": "CodeScore-R: An Automated Robustness Metric for Assessing th",
+            "score": 0.5244306765666423
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "RefSearch: A Search Engine for Refactoring",
+            "score": 0.7283388845726193
+          },
+          {
+            "title": "Behind the Scenes: On the Relationship Between Developer Exp",
+            "score": 0.7188401412956351
+          },
+          {
+            "title": "Automating Source Code Refactoring in the Classroom",
+            "score": 0.7082413485327136
+          }
+        ]
+      }
+    },
+    {
+      "query": "requirements engineering",
+      "semantic_query": "requirement specification elicitation analysis",
+      "semantic_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 154.0508270263672,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "tfidf_metrics": {
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0,
+        "recall_at_5": 0.5,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "response_time_ms": 31971.991300582886,
+        "results_count": 10,
+        "relevant_found": 10
+      },
+      "comparison": {
+        "overlap": 0,
+        "semantic_unique": 10,
+        "semantic_precision_advantage": 0.0,
+        "semantic_ndcg_advantage": 0.0,
+        "tfidf_faster": false,
+        "speedup_ratio": 0.0048183056719259985
+      },
+      "top_results": {
+        "semantic": [
+          {
+            "title": "Adventures in FRET and Specification",
+            "score": 0.773624910496182
+          },
+          {
+            "title": "FRETting about Requirements: Formalised Requirements for an ",
+            "score": 0.644637427053606
+          },
+          {
+            "title": "Deriving Product Line Requirements: the RED-PL Guidance Appr",
+            "score": 0.6352713704109192
+          }
+        ],
+        "tfidf": [
+          {
+            "title": "Towards an Approach to Pattern-based Domain-Specific Require",
+            "score": 0.5877213041236812
+          },
+          {
+            "title": "Teaching Model-based Requirements Engineering to Industry Pr",
+            "score": 0.5732533465726852
+          },
+          {
+            "title": "An initial Theory to Understand and Manage Requirements Engi",
+            "score": 0.5593431285284347
+          }
+        ]
+      }
+    }
+  ],
+  "performance_metrics": {
+    "semantic": [],
+    "tfidf": []
+  }
+}
