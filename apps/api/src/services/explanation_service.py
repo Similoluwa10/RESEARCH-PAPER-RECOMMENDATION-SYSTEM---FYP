@@ -6,7 +6,7 @@ Core component for the "Explainable" aspect of the system.
 """
 
 import logging
-from typing import Any, List
+from typing import Any, List, Optional
 
 from src.schemas.recommendation import RecommendationExplanation
 from src.services.langchain_explainer import LangChainExplainer
@@ -27,22 +27,27 @@ class ExplanationService:
         """Initialize LangChain explainer with fallback support."""
         self.langchain_explainer = LangChainExplainer()
         self.use_langchain = self.langchain_explainer.is_available()
+        self._llm_failed = False  # Track if LLM has failed, disable subsequent attempts
         
         if self.use_langchain:
-            logger.info("Using LangChain for explanations")
+            logger.info("✓ Using LangChain for explanations")
         else:
-            logger.warning("LangChain unavailable, using fallback explanations")
+            logger.warning(
+                "⚠ LangChain unavailable, using fallback explanations. "
+                "Configure LANGCHAIN_PROVIDER and required API keys to enable LLM-based explanations."
+            )
     
     def generate_explanation(
         self,
         query_text: str,
         paper: Any,
         similarity_score: float,
-    ) -> RecommendationExplanation:
+    ) -> Optional[RecommendationExplanation]:
         """
         Generate a full explanation for a recommendation.
         
         Uses LangChain if available, falls back to heuristics otherwise.
+        If LLM fails on first attempt, all subsequent calls use heuristic.
         
         Args:
             query_text: The user's search query or paper text
@@ -50,23 +55,34 @@ class ExplanationService:
             similarity_score: Overall similarity score (0-1)
             
         Returns:
-            Explanation dictionary with summary, reasoning, and metadata
+            Explanation object with summary, reasoning, and metadata
         """
         key_terms = self.extract_key_terms(query_text, paper)
         
-        if self.use_langchain:
-            result = self.langchain_explainer.generate_explanation(
-                query=query_text,
-                paper=paper,
-                similarity_score=similarity_score,
-                key_terms=key_terms,
-            )
-        else:
+        try:
+            # If LLM already failed once, skip LLM attempts entirely
+            if self.use_langchain and not self._llm_failed:
+                result = self.langchain_explainer.generate_explanation(
+                    query=query_text,
+                    paper=paper,
+                    similarity_score=similarity_score,
+                    key_terms=key_terms,
+                )
+            else:
+                result = self._generate_heuristic_explanation(
+                    query_text, paper, similarity_score, key_terms
+                )
+            
+            return RecommendationExplanation.from_model(result)
+        except Exception as e:
+            logger.error(f"Error generating explanation (disabling LLM): {e}", exc_info=True)
+            # Mark LLM as failed - all subsequent explanations will use heuristics
+            self._llm_failed = True
+            # Return heuristic explanation as fallback
             result = self._generate_heuristic_explanation(
                 query_text, paper, similarity_score, key_terms
             )
-        
-        return RecommendationExplanation.from_model(result)
+            return RecommendationExplanation.from_model(result)
     
     def extract_key_terms(
         self,
@@ -86,22 +102,39 @@ class ExplanationService:
         Returns:
             List of important matching terms (up to 5)
         """
+        # Filter out common words and normalize
+        common_words = {
+            'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
+            'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'be', 'been',
+            'have', 'has', 'do', 'does', 'will', 'would', 'could', 'should',
+            'that', 'this', 'these', 'those', 'which', 'who', 'what', 'when',
+            'where', 'why', 'how', 'all', 'each', 'every', 'both', 'few',
+            'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only',
+            'own', 'same', 'so', 'than', 'too', 'very', 'paper', 'research',
+            'study', 'method', 'approach', 'using', 'based', 'etc'
+        }
+        
         query_words = set(
-            word.lower() for word in query.split() 
-            if len(word) > 4  # Only significant words
+            word.lower().strip('.,;:!?()[]{}') 
+            for word in query.split() 
+            if len(word) > 3 and word.lower() not in common_words
         )
         
-        paper_text = f"{paper.title} {paper.abstract}".lower()
+        paper_text = f"{paper.title or ''} {paper.abstract or ''}".lower()
         paper_words = set(
-            word.lower() for word in paper_text.split()
-            if len(word) > 4
+            word.lower().strip('.,;:!?()[]{}')
+            for word in paper_text.split()
+            if len(word) > 3 and word.lower() not in common_words
         )
         
         # Find overlapping important terms
         overlap = query_words & paper_words
         
         # Sort and limit to top 5
-        return sorted(list(overlap))[:5]
+        key_terms = sorted(list(overlap))[:5]
+        
+        logger.debug(f"Extracted key terms: {key_terms}")
+        return key_terms
     
     def _generate_heuristic_explanation(
         self,
@@ -114,29 +147,41 @@ class ExplanationService:
         # Determine strength of match
         if similarity_score >= 0.8:
             strength = "highly"
+            confidence = "high"
         elif similarity_score >= 0.6:
             strength = "moderately"
-        else:
-            strength = "somewhat"
-        
-        # Build explanation
-        if key_terms:
-            terms_str = ", ".join(key_terms[:3])
-            summary = f"This paper is {strength} relevant due to shared concepts: {terms_str}."
-        else:
-            summary = f"This paper is {strength} relevant based on semantic similarity ({similarity_score:.0%})."
-        
-        # Assess confidence
-        if similarity_score >= 0.7:
-            confidence = "high"
+            confidence = "medium"
         elif similarity_score >= 0.4:
+            strength = "somewhat"
             confidence = "medium"
         else:
+            strength = "tangentially"
             confidence = "low"
+        
+        # Build explanation summary
+        if key_terms:
+            terms_str = ", ".join(key_terms[:3])
+            summary = f"This paper is {strength} relevant due to shared concepts in {terms_str}."
+        else:
+            summary = f"This paper is {strength} relevant based on semantic similarity."
+        
+        # Add detail about the match quality
+        if similarity_score >= 0.8:
+            summary += " Strong thematic alignment with your query."
+        elif similarity_score >= 0.5:
+            summary += f" Similarity score: {similarity_score:.0%}"
+        
+        # Provide reasoning steps based on heuristics
+        reasoning = []
+        if key_terms:
+            reasoning.append(f"• Key matching terms: {', '.join(key_terms[:3])}")
+        reasoning.append(f"• Semantic similarity score: {similarity_score:.2%}")
+        reasoning.append(f"• Confidence level: {confidence}")
+        reasoning_text = "\n".join(reasoning)
         
         return {
             "summary": summary,
-            "reasoning_steps": f"Heuristic analysis: Similarity Score {similarity_score:.2%}",
+            "reasoning_steps": reasoning_text,
             "key_terms": key_terms,
             "confidence": confidence,
         }

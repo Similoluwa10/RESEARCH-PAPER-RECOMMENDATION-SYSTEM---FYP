@@ -159,9 +159,8 @@ Go straight to the point about the connection and relevance."""
         
         except Exception as e:
             logger.error(f"LangChain explanation generation failed: {e}")
-            return self._generate_fallback_explanation(
-                query, paper, similarity_score, key_terms
-            )
+            # Re-raise so ExplanationService can catch and disable LLM for subsequent attempts
+            raise
     
     def _assess_confidence(self, score: float) -> str:
         """Assess confidence level based on similarity score."""

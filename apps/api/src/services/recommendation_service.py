@@ -44,8 +44,8 @@ class RecommendationService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repository = PaperRepository(db)
-        # EXPLANATION MODULE DISABLED: Uncomment to re-enable
-        # self.explanation_service = ExplanationService()
+        # EXPLANATION MODULE: Now re-enabled for full explainability
+        self.explanation_service = ExplanationService()
         self.embedding_service = EmbeddingService()
         self.min_recommendation_similarity = 0.5
 
@@ -139,17 +139,15 @@ class RecommendationService:
         for item in matches:
             score = float(item["score"])
             bounded_score = max(0.0, min(1.0, score))
-            # EXPLANATION MODULE DISABLED: Uncomment to re-enable
-            # explanation = (
-            #     self.explanation_service.generate_explanation(
-            #         query_text=text,
-            #         paper=item["paper"],
-            #         similarity_score=bounded_score,
-            #     )
-            #     if include_explanations
-            #     else None
-            # )
-            explanation = None
+            explanation = (
+                self.explanation_service.generate_explanation(
+                    query_text=text,
+                    paper=item["paper"],
+                    similarity_score=bounded_score,
+                )
+                if include_explanations
+                else None
+            )
             recommendation = {
                 "paper": item["paper"],
                 "score": bounded_score,
@@ -202,22 +200,20 @@ class RecommendationService:
             min_similarity=self.min_recommendation_similarity,
         )
         query_text = f"{paper.title} {paper.abstract}" if paper else ""
-        # EXPLANATION MODULE DISABLED: Uncomment to re-enable
+        # EXPLANATION MODULE: Now re-enabled for full explainability
         recommendations = [
             {
                 "paper": item["paper"],
                 "score": item["score"],
-                # Explanation generation disabled
-                # "explanation": (
-                #     self.explanation_service.generate_explanation(
-                #         query_text=query_text,
-                #         paper=item["paper"],
-                #         similarity_score=max(0.0, min(1.0, float(item["score"]))),
-                #     )
-                #     if include_explanations
-                #     else None
-                # ),
-                "explanation": None,
+                "explanation": (
+                    self.explanation_service.generate_explanation(
+                        query_text=query_text,
+                        paper=item["paper"],
+                        similarity_score=max(0.0, min(1.0, float(item["score"]))),
+                    )
+                    if include_explanations
+                    else None
+                ),
             }
             for item in matches
         ]

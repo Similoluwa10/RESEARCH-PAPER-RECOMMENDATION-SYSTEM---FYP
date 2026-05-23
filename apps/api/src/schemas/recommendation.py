@@ -23,14 +23,32 @@ class SimilarityBreakdown(BaseModel):
 class RecommendationExplanation(BaseModel):
     """Explanation for a recommendation."""
     
-    summary: str
-    # key_terms: List[str]
-    # similarity_breakdown: SimilarityBreakdown
+    summary: str = Field(
+        ...,
+        description="Concise explanation of recommendation relevance"
+    )
+    reasoning_steps: Optional[str] = Field(
+        None,
+        description="Detailed step-by-step reasoning from LLM"
+    )
+    key_terms: List[str] = Field(
+        default_factory=list,
+        description="Key matching terms between query and paper"
+    )
+    confidence: str = Field(
+        default="medium",
+        description="Confidence level: high, medium, low"
+    )
 
     @classmethod
     def from_model(cls, result: dict) -> "RecommendationExplanation":
         """Build explanation model from service-layer payload."""
-        return cls(summary=result.get("summary", ""))
+        return cls(
+            summary=result.get("summary", ""),
+            reasoning_steps=result.get("reasoning_steps"),
+            key_terms=result.get("key_terms", []),
+            confidence=result.get("confidence", "medium"),
+        )
 
 
 class RecommendationWithExplanation(BaseModel):
