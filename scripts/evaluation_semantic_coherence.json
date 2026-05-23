@@ -1,0 +1,1412 @@
+{
+  "timestamp": "2026-05-23T08:07:05.325986",
+  "evaluation_type": "Semantic Coherence Analysis (No Manual Judgments)",
+  "methodology": "Measures semantic relevance, synonym handling, and contextual understanding",
+  "total_queries": 20,
+  "query_results": [
+    {
+      "query": "bug prediction",
+      "semantic_query": "defect prediction and fault localization techniques",
+      "semantic": {
+        "coherence_scores": [
+          0.22830858436691615,
+          0.4334307474049701,
+          0.23993572617599201,
+          0.2313349429760938,
+          0.2964998879819529,
+          0.2349711333239487,
+          0.3423529286929239,
+          0.16016922156081403,
+          0.3673228066446472,
+          0.2612645001719056
+        ],
+        "mean_coherence": 0.27955904793001646,
+        "median_coherence": 0.2612645001719056,
+        "top_3_avg_coherence": 0.30055835264929276,
+        "diversity": {
+          "diversity_score": 0.4125013838848785,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "SBEST: Spectrum-Based Fault Localization Without Fault-Triggering Tests",
+          "A Defect is Being Born: How Close Are We? A Time Sensitive Forecasting Approach",
+          "Debugging Flaky Tests using Spectrum-based Fault Localization"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.1521295610478084,
+          0.37082648205038937,
+          0.1901818582418311,
+          0.32511399671223573,
+          0.24672354538510533,
+          0.31774222741838165,
+          0.27199211507570653,
+          0.29985249399791314,
+          0.2850670644087513,
+          0.24691927328867103
+        ],
+        "mean_coherence": 0.27065486176267933,
+        "median_coherence": 0.2850670644087513,
+        "top_3_avg_coherence": 0.23771263378000962,
+        "diversity": {
+          "diversity_score": 0.3157483653536093,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Bug Prediction Using Source Code Embedding Based on Doc2Vec",
+          "Bytes : Method level bug prediction: An overview",
+          "Enhanced Bug Prediction in JavaScript Programs with Hybrid Call-Graph Based Invocation Metrics"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.09999999999999999,
+        "synonym_overlaps": [
+          0.3,
+          0.0,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    },
+    {
+      "query": "technical debt",
+      "semantic_query": "software maintainability code quality and technical debt management",
+      "semantic": {
+        "coherence_scores": [
+          0.5431215713791624,
+          0.4732464896773021,
+          0.4535237786594595,
+          0.3946557172648618,
+          0.45162622410111597,
+          0.393506974192127,
+          0.32548538991557674,
+          0.476209403258504,
+          0.4270904004365508,
+          0.39794968701245037
+        ],
+        "mean_coherence": 0.43364156358971107,
+        "median_coherence": 0.45162622410111597,
+        "top_3_avg_coherence": 0.4899639465719747,
+        "diversity": {
+          "diversity_score": 0.3495373259318341,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Technical Debt and Maintainability: How do tools measure it?",
+          "Increasing, not Diminishing: Investigating the Returns of Highly Maintainable Code",
+          "Evidence is All We Need: Do Self-Admitted Technical Debts Impact Method-Level Maintenance?"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.3272544586388213,
+          0.37127700602049407,
+          0.393506974192127,
+          0.29495275157263845,
+          0.4270904004365508,
+          0.3125479869260803,
+          0.35259390131810653,
+          0.37024313634865225,
+          0.32548538991557674,
+          0.40218646876809716
+        ],
+        "mean_coherence": 0.3577138474137145,
+        "median_coherence": 0.37024313634865225,
+        "top_3_avg_coherence": 0.36401281295048077,
+        "diversity": {
+          "diversity_score": 0.3542361322108081,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Technical debt and agile software development practices and processes: An industry practitioner survey",
+          "Estimation and Prediction of technical debt: a proposal",
+          "Technical Debt Management: The Road Ahead for Successful Software Delivery"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.0,
+        "synonym_overlaps": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 3
+    },
+    {
+      "query": "CI/CD",
+      "semantic_query": "continuous integration continuous deployment DevOps pipelines",
+      "semantic": {
+        "coherence_scores": [
+          0.5721927081223358,
+          0.4256038868849412,
+          0.49736982684837583,
+          0.44279551953127627,
+          0.453983124934326,
+          0.4529695734100758,
+          0.46153964510357226,
+          0.42925466977489835,
+          0.47392813400398126,
+          0.45911042339497943
+        ],
+        "mean_coherence": 0.46687475120087624,
+        "median_coherence": 0.45911042339497943,
+        "top_3_avg_coherence": 0.4983888072852176,
+        "diversity": {
+          "diversity_score": 0.43314632823471455,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "DevOps Automation Pipeline Deployment with IaC (Infrastructure as Code)",
+          "Problems and Solutions of Continuous Deployment: A Systematic Review",
+          "Decisions in Continuous Integration and Delivery: An Exploratory Study"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.36223910180417507,
+          0.3873798051755164,
+          0.4436460617921105,
+          0.3725914308936671,
+          0.4529695734100758,
+          0.47414965822736477,
+          0.40351447699584186,
+          0.4462742468078277,
+          0.4825994423369533,
+          0.49736982684837583
+        ],
+        "mean_coherence": 0.43227336242919084,
+        "median_coherence": 0.4462742468078277,
+        "top_3_avg_coherence": 0.3977549895906007,
+        "diversity": {
+          "diversity_score": 0.43777084670683936,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "CI/CD Configuration Practices in Open-Source Android Apps: An Empirical Study",
+          "When AI Agents Touch CI/CD Configurations: Frequency and Success",
+          "Empirical Analysis on CI/CD Pipeline Evolution in Machine Learning Projects"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.3333333333333333,
+        "synonym_overlaps": [
+          0.5,
+          0.0,
+          0.5
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 2
+    },
+    {
+      "query": "code review",
+      "semantic_query": "code inspection peer review verification quality assurance",
+      "semantic": {
+        "coherence_scores": [
+          0.258971841046303,
+          0.14336666669836107,
+          0.14320201360282825,
+          0.16534636394652347,
+          0.2063247158426429,
+          0.21608485496967011,
+          0.11269937161087207,
+          0.18428631460236833,
+          0.181597185098187,
+          0.16090739521779296
+        ],
+        "mean_coherence": 0.17727867226355493,
+        "median_coherence": 0.181597185098187,
+        "top_3_avg_coherence": 0.1818468404491641,
+        "diversity": {
+          "diversity_score": 0.4044741858543947,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "On (Mis)perceptions of testing effectiveness: an empirical study",
+          "A Brief Survey on Oracle-based Test Adequacy Metrics",
+          "Test Code Refactoring Unveiled: Where and How Does It Affect Test Code Quality and Effectiveness?"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.2381159939540377,
+          0.2548205382698455,
+          0.25231944647602833,
+          0.22839705857549375,
+          0.19324590253897445,
+          0.2584487062256332,
+          0.22958402945546208,
+          0.22760570653681633,
+          0.25055088945912796,
+          0.2644101469425928
+        ],
+        "mean_coherence": 0.2397498418434012,
+        "median_coherence": 0.25055088945912796,
+        "top_3_avg_coherence": 0.2484186595666372,
+        "diversity": {
+          "diversity_score": 0.35227358488092375,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "The Upper Bound of Information Diffusion in Code Review",
+          "Measuring Information Diffusion in Code Review at Spotify",
+          "CodeAgent: Autonomous Communicative Agents for Code Review"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.0,
+        "synonym_overlaps": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    },
+    {
+      "query": "software testing",
+      "semantic_query": "test automation quality assurance validation testing methodologies",
+      "semantic": {
+        "coherence_scores": [
+          0.30907313639510725,
+          0.3713521156372501,
+          0.38563605234093834,
+          0.36558712257879555,
+          0.43972233141994554,
+          0.3893219459635322,
+          0.3929222938421194,
+          0.3630456785230991,
+          0.3800671213324961,
+          0.3470044990337998
+        ],
+        "mean_coherence": 0.37437322970670833,
+        "median_coherence": 0.3800671213324961,
+        "top_3_avg_coherence": 0.3553537681244319,
+        "diversity": {
+          "diversity_score": 0.3843826711911582,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Improving Test Automation Maturity: a Multivocal Literature Review",
+          "Software Test Automation Maturity -- A Survey of the State of the Practice",
+          "A self-assessment Instrument for assessing test automation maturity"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.3297627995404999,
+          0.4277009814275481,
+          0.387973136408184,
+          0.37207271422271915,
+          0.34326815210001205,
+          0.41445286240975243,
+          0.33752587202557605,
+          0.31534421758740805,
+          0.36116284929654263,
+          0.2914167172674087
+        ],
+        "mean_coherence": 0.3580680302285651,
+        "median_coherence": 0.36116284929654263,
+        "top_3_avg_coherence": 0.3818123057920773,
+        "diversity": {
+          "diversity_score": 0.4413309391749081,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Evolution of Software Testing Strategies and Trends: Semantic Content Analysis of Software Research Corpus of the Last 40 Years",
+          "Comprehension of Software Testing and Impacts of Automation Testing",
+          "Can Language Models Pass Software Testing Certification Exams? a case study"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.16666666666666669,
+        "synonym_overlaps": [
+          0.4,
+          0.0,
+          0.1
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    },
+    {
+      "query": "machine learning",
+      "semantic_query": "deep learning neural networks machine learning AI applications",
+      "semantic": {
+        "coherence_scores": [
+          0.4429930192712801,
+          0.43206286845842246,
+          0.5169874928947576,
+          0.43321583429048593,
+          0.4486742398327347,
+          0.4648431146565546,
+          0.4301528003080175,
+          0.3804530496452865,
+          0.4447845617713899,
+          0.43981816517612105
+        ],
+        "mean_coherence": 0.44339851463050506,
+        "median_coherence": 0.4429930192712801,
+        "top_3_avg_coherence": 0.4640144602081534,
+        "diversity": {
+          "diversity_score": 0.47654277008350443,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "A Survey of Algorithm Debt in Machine and Deep Learning Systems: Definition, Smells, and Future Work",
+          "An inclusive review on deep learning techniques and their scope in handwriting recognition",
+          "Local Approximations, Real Interpolation and Machine Learning"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.3673300902559318,
+          0.43557050882941517,
+          0.44387103932625926,
+          0.27971919612609486,
+          0.3830443156362182,
+          0.4172693478002567,
+          0.42607370073882467,
+          0.4012266794076147,
+          0.2591002449432629,
+          0.2804490210268522
+        ],
+        "mean_coherence": 0.36936541440907306,
+        "median_coherence": 0.4012266794076147,
+        "top_3_avg_coherence": 0.4155905461372021,
+        "diversity": {
+          "diversity_score": 0.5409401000257242,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Informed Machine Learning -- A Taxonomy and Survey of Integrating Knowledge into Learning Systems",
+          "Engineering problems in machine learning systems",
+          "Machine Learning in Epidemiology"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.2333333333333333,
+        "synonym_overlaps": [
+          0.7,
+          0.0,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    },
+    {
+      "query": "code smell",
+      "semantic_query": "code smell anti-pattern design problem code quality issues",
+      "semantic": {
+        "coherence_scores": [
+          0.2009727170804193,
+          0.21646573663388624,
+          0.18669272039895946,
+          0.24044044075740056,
+          0.2505237049128607,
+          0.2336882693600546,
+          0.20289860738832655,
+          0.20297128466091474,
+          0.22359851141226927,
+          0.2302839067855338
+        ],
+        "mean_coherence": 0.2188535899390625,
+        "median_coherence": 0.22359851141226927,
+        "top_3_avg_coherence": 0.201377058037755,
+        "diversity": {
+          "diversity_score": 0.3942521873762487,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Beyond Strict Rules: Assessing the Effectiveness of Large Language Models for Code Smell Detection",
+          "An Eclipse Plugin to Support Code Smells Detection",
+          "Analyzing Dependency Distribution Changes Arising from Code Smell Interactions"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.19893207792723389,
+          0.16601911188608542,
+          0.22141068403803743,
+          0.26041396943846373,
+          0.18669272039895946,
+          0.17740658660579756,
+          0.14731581193434184,
+          0.2505237049128607,
+          0.16174776569643345,
+          0.14913867470962705
+        ],
+        "mean_coherence": 0.19196011075478406,
+        "median_coherence": 0.18669272039895946,
+        "top_3_avg_coherence": 0.19545395795045226,
+        "diversity": {
+          "diversity_score": 0.37551249098331885,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "SACS: A Code Smell Dataset using Semi-automatic Generation Approach",
+          "Code smell detection based on multi-agent collaboration and large language models",
+          "Polyglot Code Smell Detection for Infrastructure as Code with GLITCH"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.03333333333333333,
+        "synonym_overlaps": [
+          0.0,
+          0.1,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 2
+    },
+    {
+      "query": "security vulnerability",
+      "semantic_query": "software security vulnerability exploitation threat attack detection",
+      "semantic": {
+        "coherence_scores": [
+          0.36943014073571745,
+          0.4097728019627921,
+          0.36706293906834764,
+          0.4350195763364777,
+          0.3730177911002289,
+          0.2967556587856466,
+          0.3427540791430497,
+          0.37798537508072116,
+          0.38831894390140875,
+          0.4025472439407187
+        ],
+        "mean_coherence": 0.37626645500551087,
+        "median_coherence": 0.37798537508072116,
+        "top_3_avg_coherence": 0.38208862725561904,
+        "diversity": {
+          "diversity_score": 0.3113866904052433,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "A Systematic Literature Review on Detecting Software Vulnerabilities with Large Language Models",
+          "MVD: A Multi-Lingual Software Vulnerability Detection Framework",
+          "Literature review on vulnerability detection using NLP technology"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.34260048739325133,
+          0.4122700444682955,
+          0.29515985839927106,
+          0.3177898106628273,
+          0.34263406645384165,
+          0.4400728521861357,
+          0.3916013837495844,
+          0.30804510277882713,
+          0.3033450521243295,
+          0.39363654199117093
+        ],
+        "mean_coherence": 0.35471552002075346,
+        "median_coherence": 0.34263406645384165,
+        "top_3_avg_coherence": 0.3500101300869393,
+        "diversity": {
+          "diversity_score": 0.41411366960875456,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Vulnerability Classification on Source Code using Text Mining and Deep Learning Techniques",
+          "Do Software Security Practices Yield Fewer Vulnerabilities?",
+          "CVEfixes: Automated Collection of Vulnerabilities and Their Fixes from Open-Source Software"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.23333333333333334,
+        "synonym_overlaps": [
+          0.6,
+          0.0,
+          0.1
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    },
+    {
+      "query": "refactoring",
+      "semantic_query": "code refactoring improvement restructuring optimization maintenance",
+      "semantic": {
+        "coherence_scores": [
+          0.4346591074682421,
+          0.36414091117200154,
+          0.430603844699889,
+          0.3981348705834479,
+          0.37861826251596975,
+          0.4348755826258548,
+          0.499477245256323,
+          0.40494111757415996,
+          0.3984681160217931,
+          0.4072344133086716
+        ],
+        "mean_coherence": 0.41511534712263526,
+        "median_coherence": 0.4072344133086716,
+        "top_3_avg_coherence": 0.4098012877800442,
+        "diversity": {
+          "diversity_score": 0.3632520832948998,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Opti Code Pro: A Heuristic Search-based Approach to Code Refactoring",
+          "CODECLEANER: Elevating Standards with A Robust Data Contamination Mitigation Toolkit",
+          "Empirical Evaluation of a Live Environment for Extract Method Refactoring"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.4348755826258548,
+          0.41387370064049844,
+          0.4274163214587947,
+          0.3690892189713104,
+          0.3917039827748596,
+          0.4286533368035609,
+          0.48370787722784125,
+          0.4094457079259465,
+          0.41461696345308985,
+          0.41249615053552025
+        ],
+        "mean_coherence": 0.41858788424172766,
+        "median_coherence": 0.41461696345308985,
+        "top_3_avg_coherence": 0.42538853490838263,
+        "diversity": {
+          "diversity_score": 0.4165791698192834,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "RefSearch: A Search Engine for Refactoring",
+          "Behind the Scenes: On the Relationship Between Developer Experience and Refactoring",
+          "Automating Source Code Refactoring in the Classroom"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.0,
+        "synonym_overlaps": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 1
+    },
+    {
+      "query": "requirements engineering",
+      "semantic_query": "requirements specification elicitation analysis engineering",
+      "semantic": {
+        "coherence_scores": [
+          0.44920230393372773,
+          0.2707962021123911,
+          0.3164364265246309,
+          0.2985529455389351,
+          0.356442455290614,
+          0.4102756542547472,
+          0.3583747517755109,
+          0.3583574300934953,
+          0.23881055212580926,
+          0.3045526811680692
+        ],
+        "mean_coherence": 0.33618014028179305,
+        "median_coherence": 0.356442455290614,
+        "top_3_avg_coherence": 0.34547831085691655,
+        "diversity": {
+          "diversity_score": 0.40413176202234014,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Adventures in FRET and Specification",
+          "Towards an Approach to Pattern-based Domain-Specific Requirements Engineering",
+          "Influencia de fatores organizacionais e sociais na etapa de levantamento de requisitos"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.2707962021123911,
+          0.21657987285548974,
+          0.2932405021939164,
+          0.25817902210070476,
+          0.23983547050097365,
+          0.3074094867097007,
+          0.27479128966519717,
+          0.32449063603222195,
+          0.3743388447107271,
+          0.27020267409204857
+        ],
+        "mean_coherence": 0.2829864000973371,
+        "median_coherence": 0.27479128966519717,
+        "top_3_avg_coherence": 0.2602055257205991,
+        "diversity": {
+          "diversity_score": 0.4255953384900704,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Towards an Approach to Pattern-based Domain-Specific Requirements Engineering",
+          "Teaching Model-based Requirements Engineering to Industry Professionals: An Experience Report",
+          "An initial Theory to Understand and Manage Requirements Engineering Debt in Practice"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.2,
+        "synonym_overlaps": [
+          0.2,
+          0.4,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 1
+    },
+    {
+      "query": "API design",
+      "semantic_query": "API design patterns web service interfaces REST GraphQL",
+      "semantic": {
+        "coherence_scores": [
+          0.34556268400592893,
+          0.2981662481117767,
+          0.2587033335474016,
+          0.3003516116365492,
+          0.2135042563053109,
+          0.3554591542356309,
+          0.23498416220588303,
+          0.32518971347072634,
+          0.26768187316422976,
+          0.2072924766455545
+        ],
+        "mean_coherence": 0.2806895513328992,
+        "median_coherence": 0.2981662481117767,
+        "top_3_avg_coherence": 0.3008107552217024,
+        "diversity": {
+          "diversity_score": 0.5014514840290201,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Model-Driven Generation of Microservice Interfaces: From LEMMA Domain Models to Jolie APIs",
+          "How Do Microservice API Patterns Impact Understandability? A Controlled Experiment",
+          "A Microservices Identification Method Based on Spectral Clustering for Industrial Legacy Systems"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.1522203407393471,
+          0.31544168438096487,
+          0.24992560765731708,
+          0.28409564700525347,
+          0.3828458895442294,
+          0.16387856053771,
+          0.301308504131344,
+          0.24369170304036036,
+          0.3515887677467573,
+          0.2420815409071475
+        ],
+        "mean_coherence": 0.26870782456904313,
+        "median_coherence": 0.28409564700525347,
+        "top_3_avg_coherence": 0.23919587759254302,
+        "diversity": {
+          "diversity_score": 0.5014276134755481,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Automatic Unit Test Generation for Deep Learning Frameworks based on API Knowledge",
+          "A Modeling Method for Model-Driven API Management",
+          "APIRAT: Integrating Multi-source API Knowledge for Enhanced Code Translation with LLMs"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.2,
+        "synonym_overlaps": [
+          0.1,
+          0.0,
+          0.5
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    },
+    {
+      "query": "version control",
+      "semantic_query": "git version control branching strategy merge conflicts",
+      "semantic": {
+        "coherence_scores": [
+          0.4503055273212294,
+          0.4023626250921425,
+          0.4457976860453732,
+          0.43643779046941766,
+          0.38799447101360174,
+          0.34348007697099303,
+          0.3624383790427912,
+          0.3208352379832369,
+          0.436513183037769,
+          0.3966447442059239
+        ],
+        "mean_coherence": 0.39828097211824787,
+        "median_coherence": 0.4023626250921425,
+        "top_3_avg_coherence": 0.432821946152915,
+        "diversity": {
+          "diversity_score": 0.3644946103884649,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Analyzing DevOps Practices Through Merge Request Data: A Case Study in Networking Software Company",
+          "Beyond the YAML File: Understanding Real-World GitHub Actions Workflow Adoption",
+          "Analyzing the Effects of CI/CD on Open Source Repositories in GitHub and GitLab"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.22200640553663387,
+          0.2950471287898161,
+          0.3310675870447364,
+          0.3329666093908765,
+          0.2622826486779273,
+          0.0,
+          0.254499819887372,
+          0.40085699053583257,
+          0.09720841605893993,
+          0.3882594337340157
+        ],
+        "mean_coherence": 0.258419503965615,
+        "median_coherence": 0.2950471287898161,
+        "top_3_avg_coherence": 0.28270704045706213,
+        "diversity": {
+          "diversity_score": 0.6946963977097513,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "The Research on a Knowledge Graph-Based Method for Detecting Version Differences in Metering Foundations",
+          "A Grounded Theory of Cognitive Load Drivers in Novice Agile Software Development Teams",
+          "Introducing High School Students to Version Control, Continuous Integration, and Quality Assurance"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.16666666666666669,
+        "synonym_overlaps": [
+          0.1,
+          0.0,
+          0.4
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    },
+    {
+      "query": "performance optimization",
+      "semantic_query": "performance tuning optimization algorithm efficiency bottleneck analysis",
+      "semantic": {
+        "coherence_scores": [
+          0.2646542965923768,
+          0.4151955141255188,
+          0.26342987760194037,
+          0.28110800116561285,
+          0.3028660177509801,
+          0.3465706257637776,
+          0.23291213643042008,
+          0.27132184826128314,
+          0.2176198800270227,
+          0.2888223899416542
+        ],
+        "mean_coherence": 0.28845005876605867,
+        "median_coherence": 0.28110800116561285,
+        "top_3_avg_coherence": 0.3144265627732787,
+        "diversity": {
+          "diversity_score": 0.5186926132448435,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Automated Dynamic Algorithm Configuration",
+          "How Low Can You Go? The Data-Light SE Challenge",
+          "Surrogate-based optimization of system architectures subject to hidden constraints"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.2041152629536036,
+          0.18575820252447484,
+          0.2060018275836234,
+          0.11454896444071094,
+          0.27012633761160687,
+          0.21200202462831874,
+          0.22578946976866965,
+          0.33182005946911886,
+          0.2176198800270227,
+          0.28399634115930994
+        ],
+        "mean_coherence": 0.22517783701664595,
+        "median_coherence": 0.2176198800270227,
+        "top_3_avg_coherence": 0.19862509768723394,
+        "diversity": {
+          "diversity_score": 0.6514748392652598,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "SemOpt: LLM-Driven Code Optimization via Rule-Based Analysis",
+          "Ising-based Test Optimization and Benchmarking",
+          "Compiler Optimization Testing Based on Optimization-Guided Equivalence Transformations"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.0,
+        "synonym_overlaps": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 1
+    },
+    {
+      "query": "design patterns",
+      "semantic_query": "design patterns software architecture creational structural behavioral",
+      "semantic": {
+        "coherence_scores": [
+          0.37086856244557187,
+          0.3029494751321886,
+          0.3561813645225247,
+          0.21484668659066275,
+          0.21821162005636852,
+          0.29246724322706796,
+          0.30178358121714743,
+          0.27860154994986086,
+          0.2853790982004005,
+          0.25480125891167016
+        ],
+        "mean_coherence": 0.2876090440253463,
+        "median_coherence": 0.29246724322706796,
+        "top_3_avg_coherence": 0.3433331340334284,
+        "diversity": {
+          "diversity_score": 0.479444090666022,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Capturing Software Architecture Knowledge for Pattern-Driven Design",
+          "Systematically reviewing the layered architectural pattern principles and their use to reconstruct software architectures",
+          "How to Extend the Abstraction Refinement Model for Systems with Emergent Behavior ?"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.29537980914767237,
+          0.27023290881502104,
+          0.33030875829603334,
+          0.13995694555168814,
+          0.2692871102581379,
+          0.3169808775494851,
+          0.19317173515098518,
+          0.25074569893537335,
+          0.21974568200595745,
+          0.2044412617927438
+        ],
+        "mean_coherence": 0.24902507875030977,
+        "median_coherence": 0.2692871102581379,
+        "top_3_avg_coherence": 0.29864049208624227,
+        "diversity": {
+          "diversity_score": 0.5163265950899942,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Impact of Design Patterns on Software Complexity and Size",
+          "CodeBERT-based Language Model for Design Patterns",
+          "From Theory to Practice: Applying Design Patterns in Real-World Software Projects"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.26666666666666666,
+        "synonym_overlaps": [
+          0.5,
+          0.0,
+          0.3
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    },
+    {
+      "query": "logging monitoring",
+      "semantic_query": "logging monitoring observability tracing metrics collection",
+      "semantic": {
+        "coherence_scores": [
+          0.4962052531035599,
+          0.4443773623060444,
+          0.3970982817783464,
+          0.3788114451949429,
+          0.31503829142936146,
+          0.42910083850620817,
+          0.3881282815045797,
+          0.4212775993837171,
+          0.32843874407661033,
+          0.3652465989698692
+        ],
+        "mean_coherence": 0.39637226962532396,
+        "median_coherence": 0.3970982817783464,
+        "top_3_avg_coherence": 0.44589363239598356,
+        "diversity": {
+          "diversity_score": 0.356336891943954,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Log-based software monitoring: a systematic mapping study",
+          "End-to-End Automated Logging via Multi-Agent Framework",
+          "AutoLog: A Log Sequence Synthesis Framework for Anomaly Detection"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.42910083850620817,
+          0.3807412758291955,
+          0.3049827469778583,
+          0.4443773623060444,
+          0.3330514738259267,
+          0.4377555242056209,
+          0.28981982082434854,
+          0.31503829142936146,
+          0.3881282815045797,
+          0.50744949823054
+        ],
+        "mean_coherence": 0.3830445113639684,
+        "median_coherence": 0.3881282815045797,
+        "top_3_avg_coherence": 0.3716082871044207,
+        "diversity": {
+          "diversity_score": 0.37390258590185066,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "The Sense of Logging in the Linux Kernel",
+          "Understanding Solidity Event Logging Practices in the Wild",
+          "Larger Is Not Always Better: Exploring Small Open-source Language Models in Logging Statement Generation"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.16666666666666666,
+        "synonym_overlaps": [
+          0.0,
+          0.5,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 4
+    },
+    {
+      "query": "microservices",
+      "semantic_query": "microservices architecture service-oriented distributed systems",
+      "semantic": {
+        "coherence_scores": [
+          0.5409731537079473,
+          0.5176950596310218,
+          0.4701573925247482,
+          0.4177989127220275,
+          0.5464761279003562,
+          0.4252353354172511,
+          0.49006933441002865,
+          0.4559778355722057,
+          0.4154847483278221,
+          0.4958254669201174
+        ],
+        "mean_coherence": 0.4775693367133526,
+        "median_coherence": 0.49006933441002865,
+        "top_3_avg_coherence": 0.5096085352879057,
+        "diversity": {
+          "diversity_score": 0.3353557708583858,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Towards Microservices and Beyond: An incoming Paradigm Shift in Distributed Computing",
+          "Microservices: How To Make Your Application Scale",
+          "Analysis of Service-oriented Modeling Approaches for Viewpoint-specific Model-driven Development of Microservice Architecture"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.5464761279003562,
+          0.41318835229325246,
+          0.4257489369749571,
+          0.4530772549791753,
+          0.36505698205236836,
+          0.40594529061094664,
+          0.4282831634735971,
+          0.42033748126090553,
+          0.38055615600911274,
+          0.3889173487073936
+        ],
+        "mean_coherence": 0.42275870942620647,
+        "median_coherence": 0.42033748126090553,
+        "top_3_avg_coherence": 0.4618044723895219,
+        "diversity": {
+          "diversity_score": 0.37450841043342664,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Microservices in Practice: A Survey Study",
+          "Optimizing microservices with hyperparameter optimization",
+          "Design, Monitoring, and Testing of Microservices Systems: The Practitioners' Perspective"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.6333333333333333,
+        "synonym_overlaps": [
+          0.9,
+          0.6,
+          0.4
+        ],
+        "is_consistent": true,
+        "interpretation": "Good synonym handling"
+      },
+      "result_overlap": 1
+    },
+    {
+      "query": "documentation",
+      "semantic_query": "code documentation API documentation technical writing",
+      "semantic": {
+        "coherence_scores": [
+          0.30610896793851194,
+          0.3038970404217023,
+          0.29268647063609976,
+          0.30413966790913616,
+          0.309613032629937,
+          0.24970344432516633,
+          0.2622245666344327,
+          0.22945281034640264,
+          0.2673251734322841,
+          0.24284208948719477
+        ],
+        "mean_coherence": 0.2767993263760868,
+        "median_coherence": 0.29268647063609976,
+        "top_3_avg_coherence": 0.30089749299877133,
+        "diversity": {
+          "diversity_score": 0.36343432625711664,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Prompt-Driven Code Summarization: A Systematic Literature Review",
+          "Supporting Software Maintenance with Dynamically Generated Document Hierarchies",
+          "Evaluating the Use of LLMs for Documentation to Code Traceability"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.3416954847965794,
+          0.33229203686093434,
+          0.2888977371745659,
+          0.25109666214551307,
+          0.3328143390973235,
+          0.3038970404217023,
+          0.336289054618924,
+          0.28321557070779,
+          0.32222599604973234,
+          0.24970344432516633
+        ],
+        "mean_coherence": 0.3042127366198231,
+        "median_coherence": 0.32222599604973234,
+        "top_3_avg_coherence": 0.32096175294402657,
+        "diversity": {
+          "diversity_score": 0.4629870039834061,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Towards identifying and minimizing customer-facing documentation debt",
+          "One Documentation Does Not Fit All: Case Study of TensorFlow Documentation",
+          "Expanding ML-Documentation Standards For Better Security"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.0,
+        "synonym_overlaps": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 2
+    },
+    {
+      "query": "scalability",
+      "semantic_query": "scalability horizontal scaling load balancing capacity planning",
+      "semantic": {
+        "coherence_scores": [
+          0.2601752724851285,
+          0.1711459408790692,
+          0.2611492547115355,
+          0.1977823869592774,
+          0.1970835197844747,
+          0.11542687652808548,
+          0.25739140788232884,
+          0.10664929456469907,
+          0.16129357738272265,
+          0.1346000352505069
+        ],
+        "mean_coherence": 0.18626975664278284,
+        "median_coherence": 0.1970835197844747,
+        "top_3_avg_coherence": 0.23082348935857774,
+        "diversity": {
+          "diversity_score": 0.5466541779123971,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Theodolite: Scalability Benchmarking of Distributed Stream Processing Engines in Microservice Architectures",
+          "Reliable Microservice Tail Latency Prediction via Decoupled Dual-Stream Learning and Gradient Modulation",
+          "Multi-Dimensional Autoscaling of Stream Processing Services on Edge Devices"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.2565988345118546,
+          0.23827800221903606,
+          0.2601752724851285,
+          0.21879289195245955,
+          0.1311207329815085,
+          0.055865617466436146,
+          0.014357397679157446,
+          0.22625496404848366,
+          0.1311822499248413,
+          0.13573953208558298
+        ],
+        "mean_coherence": 0.16683654953544888,
+        "median_coherence": 0.21879289195245955,
+        "top_3_avg_coherence": 0.2516840364053397,
+        "diversity": {
+          "diversity_score": 0.720929254230575,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Agile Elicitation of Scalability Requirements for Open Systems: A Case Study",
+          "Benchmarking scalability of stream processing frameworks deployed as microservices in the cloud",
+          "Theodolite: Scalability Benchmarking of Distributed Stream Processing Engines in Microservice Architectures"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.2333333333333333,
+        "synonym_overlaps": [
+          0.0,
+          0.0,
+          0.7
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 1
+    },
+    {
+      "query": "data structures",
+      "semantic_query": "data structures algorithms arrays trees graphs linked lists",
+      "semantic": {
+        "coherence_scores": [
+          0.3490435974318131,
+          0.3074217557280323,
+          0.23174120657307284,
+          0.24472163078108045,
+          0.2601742402681644,
+          0.2143056500383258,
+          0.2498432715940958,
+          0.26563234165775185,
+          0.2497412810101033,
+          0.21808655315983883
+        ],
+        "mean_coherence": 0.2590711528242279,
+        "median_coherence": 0.2498432715940958,
+        "top_3_avg_coherence": 0.2960688532443061,
+        "diversity": {
+          "diversity_score": 0.5268037177669477,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Data-driven Verification of Procedural Programs with Integer Arrays",
+          "Foundational theory for optimal decision tree problems. I. Algorithmic and geometric foundations",
+          "On Complexity Bounds and Confluence of Parallel Term Rewriting"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.2639177964664914,
+          0.3516835306819299,
+          0.13075763953257846,
+          0.24095899208174143,
+          0.07553480646549815,
+          0.1518667456629883,
+          0.15781105570034937,
+          0.24472163078108045,
+          0.26868483981199986,
+          0.32327374646360196
+        ],
+        "mean_coherence": 0.22092107836482594,
+        "median_coherence": 0.24472163078108045,
+        "top_3_avg_coherence": 0.24878632222699992,
+        "diversity": {
+          "diversity_score": 0.7121402439825568,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Introspector: A general-purpose tool for visualizing and comparing runtime object structures on the Java platform",
+          "DEVELOPING A CELIOTM PROGRAMMING LEARNING TOOL TO FACILIATE TEACHING AND LEARNING DATA STRUCTURE CONCEPTS IN C++ FOR NOVICE PROGRAMMERS",
+          "Angular Dispersion Accelerates $k$-Nearest Neighbors Machine Translation"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.4333333333333333,
+        "synonym_overlaps": [
+          0.6,
+          0.0,
+          0.7
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 1
+    },
+    {
+      "query": "error handling",
+      "semantic_query": "error handling exception management failure recovery resilience",
+      "semantic": {
+        "coherence_scores": [
+          0.22085098228483502,
+          0.15034189925137442,
+          0.157846697118587,
+          0.18538925919651827,
+          0.1992333879999001,
+          0.16593087903181758,
+          0.13187776794671735,
+          0.16908226331373355,
+          0.11777149097593809,
+          0.1289759263866308
+        ],
+        "mean_coherence": 0.16273005535060522,
+        "median_coherence": 0.16593087903181758,
+        "top_3_avg_coherence": 0.1763465262182655,
+        "diversity": {
+          "diversity_score": 0.3888383090254911,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "Reflections on Software Failure Analysis",
+          "SBEST: Spectrum-Based Fault Localization Without Fault-Triggering Tests",
+          "Just-in-Time Flaky Test Detection via Abstracted Failure Symptom Matching"
+        ]
+      },
+      "tfidf": {
+        "coherence_scores": [
+          0.19747189831499312,
+          0.24543975478737368,
+          0.24195299850991747,
+          0.17469389401987778,
+          0.11763613228908487,
+          0.21219314408707302,
+          0.025710966705177474,
+          0.18097594153876118,
+          0.20172348382203842,
+          0.14232659953508175
+        ],
+        "mean_coherence": 0.1740124813609379,
+        "median_coherence": 0.19747189831499312,
+        "top_3_avg_coherence": 0.22828821720409476,
+        "diversity": {
+          "diversity_score": 0.6345377597790052,
+          "is_diverse": true,
+          "interpretation": "Good diversity"
+        },
+        "top_3_titles": [
+          "ErrorExplainer: Automated Extraction of Error Contexts from Smart Contracts",
+          "Unveiling Exception Handling Guidelines Adopted by Java Developers",
+          "Towards Exception Safety Code Generation with Intermediate Representation Agents Framework"
+        ]
+      },
+      "synonym_handling": {
+        "avg_overlap": 0.0,
+        "synonym_overlaps": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "is_consistent": false,
+        "interpretation": "Poor synonym handling"
+      },
+      "result_overlap": 0
+    }
+  ],
+  "summary": {
+    "semantic": {
+      "mean_coherence": 0.32676914177226524,
+      "std_coherence": 0.10675967134905644,
+      "avg_diversity": 0.41575566901859295,
+      "best_query_coherence": 0.4775693367133526
+    },
+    "tfidf": {
+      "mean_coherence": 0.29745957920870253,
+      "std_coherence": 0.10198055884995592,
+      "avg_diversity": 0.4858515670552807,
+      "best_query_coherence": 0.43227336242919084
+    },
+    "comparison": {
+      "semantic_wins": 16,
+      "tfidf_wins": 4,
+      "ties": 0,
+      "winner": "SEMANTIC"
+    },
+    "synonym_handling": {
+      "avg_overlap": 0.16999999999999998,
+      "interpretation": "Poor synonym handling"
+    }
+  }
+}

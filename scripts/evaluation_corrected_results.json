@@ -1,0 +1,389 @@
+{
+  "timestamp": "2026-05-22T23:07:12.565764",
+  "evaluation_type": "Semantic vs TF-IDF with Pre-Defined Ground Truth",
+  "total_queries": 10,
+  "queries_results": [
+    {
+      "query": "bug prediction",
+      "semantic_query": "defect prediction and fault localization techniques",
+      "ground_truth_size": 4119,
+      "semantic": {
+        "precision": 1.0,
+        "recall": 0.0024277737314882253,
+        "f1": 0.004843787842092517,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 4109,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "SBEST: Spectrum-Based Fault Localization Without Fault-Triggering Tests",
+          "A Defect is Being Born: How Close Are We? A Time Sensitive Forecasting Approach",
+          "Debugging Flaky Tests using Spectrum-based Fault Localization"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.0024277737314882253,
+        "f1": 0.004843787842092517,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 4109,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Bug Prediction Using Source Code Embedding Based on Doc2Vec",
+          "Bytes : Method level bug prediction: An overview",
+          "Enhanced Bug Prediction in JavaScript Programs with Hybrid Call-Graph Based Invocation Metrics"
+        ]
+      },
+      "overlap": 0,
+      "semantic_unique": 10,
+      "tfidf_unique": 10
+    },
+    {
+      "query": "technical debt",
+      "semantic_query": "software maintainability code quality and debt management",
+      "ground_truth_size": 731,
+      "semantic": {
+        "precision": 1.0,
+        "recall": 0.013679890560875513,
+        "f1": 0.02699055330634278,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 721,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Technical Debt and Maintainability: How do tools measure it?",
+          "Increasing, not Diminishing: Investigating the Returns of Highly Maintainable Code",
+          "Evidence is All We Need: Do Self-Admitted Technical Debts Impact Method-Level Maintenance?"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.013679890560875513,
+        "f1": 0.02699055330634278,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 721,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Technical debt and agile software development practices and processes: An industry practitioner survey",
+          "Estimation and Prediction of technical debt: a proposal",
+          "Technical Debt Management: The Road Ahead for Successful Software Delivery"
+        ]
+      },
+      "overlap": 3,
+      "semantic_unique": 7,
+      "tfidf_unique": 7
+    },
+    {
+      "query": "CI/CD",
+      "semantic_query": "continuous integration continuous deployment DevOps pipelines automation",
+      "ground_truth_size": 2109,
+      "semantic": {
+        "precision": 1.0,
+        "recall": 0.00474158368895211,
+        "f1": 0.009438414346389807,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 2099,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "DevOps Automation Pipeline Deployment with IaC (Infrastructure as Code)",
+          "Foundational DevOps Patterns",
+          "Problems and Solutions of Continuous Deployment: A Systematic Review"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.00474158368895211,
+        "f1": 0.009438414346389807,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 2099,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "CI/CD Configuration Practices in Open-Source Android Apps: An Empirical Study",
+          "When AI Agents Touch CI/CD Configurations: Frequency and Success",
+          "Empirical Analysis on CI/CD Pipeline Evolution in Machine Learning Projects"
+        ]
+      },
+      "overlap": 2,
+      "semantic_unique": 8,
+      "tfidf_unique": 8
+    },
+    {
+      "query": "code review",
+      "semantic_query": "code inspection peer review verification quality assurance",
+      "ground_truth_size": 2256,
+      "semantic": {
+        "precision": 0.2,
+        "recall": 0.0008865248226950354,
+        "f1": 0.00176522506619594,
+        "true_positives": 2,
+        "false_positives": 8,
+        "false_negatives": 2254,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "On (Mis)perceptions of testing effectiveness: an empirical study",
+          "A Brief Survey on Oracle-based Test Adequacy Metrics",
+          "Test Code Refactoring Unveiled: Where and How Does It Affect Test Code Quality and Effectiveness?"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.004432624113475178,
+        "f1": 0.008826125330979701,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 2246,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "The Upper Bound of Information Diffusion in Code Review",
+          "Measuring Information Diffusion in Code Review at Spotify",
+          "CodeAgent: Autonomous Communicative Agents for Code Review"
+        ]
+      },
+      "overlap": 0,
+      "semantic_unique": 10,
+      "tfidf_unique": 10
+    },
+    {
+      "query": "software testing",
+      "semantic_query": "test automation quality assurance validation testing methodologies",
+      "ground_truth_size": 5831,
+      "semantic": {
+        "precision": 1.0,
+        "recall": 0.001714971702966901,
+        "f1": 0.00342407122068139,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 5821,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Improving Test Automation Maturity: a Multivocal Literature Review",
+          "Software Test Automation Maturity -- A Survey of the State of the Practice",
+          "A self-assessment Instrument for assessing test automation maturity"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.001714971702966901,
+        "f1": 0.00342407122068139,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 5821,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Evolution of Software Testing Strategies and Trends: Semantic Content Analysis of Software Research Corpus of the Last 40 Years",
+          "Comprehension of Software Testing and Impacts of Automation Testing",
+          "Can Language Models Pass Software Testing Certification Exams? a case study"
+        ]
+      },
+      "overlap": 0,
+      "semantic_unique": 10,
+      "tfidf_unique": 10
+    },
+    {
+      "query": "machine learning software engineering",
+      "semantic_query": "deep learning neural networks machine learning AI software development",
+      "ground_truth_size": 16740,
+      "semantic": {
+        "precision": 1.0,
+        "recall": 0.0005973715651135006,
+        "f1": 0.0011940298507462685,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 16730,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Augmenting software engineering with AI and developing it further towards AI-assisted model-driven software engineering",
+          "A Systematic Literature Review on the Use of Machine Learning in Software Engineering",
+          "Deep Learning Methods for Software Requirement Classification: A Performance Study on the PURE dataset"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.0005973715651135006,
+        "f1": 0.0011940298507462685,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 16730,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "A Systematic Literature Review on the Use of Machine Learning in Software Engineering",
+          "Quantum Artificial Intelligence for Software Engineering: the Road Ahead",
+          "Deep Learning-based Software Engineering: Progress, Challenges, and Opportunities"
+        ]
+      },
+      "overlap": 1,
+      "semantic_unique": 9,
+      "tfidf_unique": 9
+    },
+    {
+      "query": "code smell",
+      "semantic_query": "code smell anti-pattern design problem bad practices",
+      "ground_truth_size": 226,
+      "semantic": {
+        "precision": 0.2,
+        "recall": 0.008849557522123894,
+        "f1": 0.016949152542372878,
+        "true_positives": 2,
+        "false_positives": 8,
+        "false_negatives": 224,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "A Differential Fuzzing-Based Evaluation of Functional Equivalence in LLM-Generated Code Refactorings",
+          "Automated Reasoning and Detection of Specious Configuration in Large Systems with Symbolic Execution",
+          "PairSmell: A Novel Perspective Inspecting Software Modular Structure"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.04424778761061947,
+        "f1": 0.0847457627118644,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 216,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "SACS: A Code Smell Dataset using Semi-automatic Generation Approach",
+          "Code smell detection based on multi-agent collaboration and large language models",
+          "Polyglot Code Smell Detection for Infrastructure as Code with GLITCH"
+        ]
+      },
+      "overlap": 0,
+      "semantic_unique": 10,
+      "tfidf_unique": 10
+    },
+    {
+      "query": "security vulnerability",
+      "semantic_query": "software security vulnerability exploitation attack threat detection",
+      "ground_truth_size": 2902,
+      "semantic": {
+        "precision": 1.0,
+        "recall": 0.0034458993797381117,
+        "f1": 0.006868131868131868,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 2892,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "A Systematic Literature Review on Detecting Software Vulnerabilities with Large Language Models",
+          "Literature review on vulnerability detection using NLP technology",
+          "MVD: A Multi-Lingual Software Vulnerability Detection Framework"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.0034458993797381117,
+        "f1": 0.006868131868131868,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 2892,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Vulnerability Classification on Source Code using Text Mining and Deep Learning Techniques",
+          "Do Software Security Practices Yield Fewer Vulnerabilities?",
+          "CVEfixes: Automated Collection of Vulnerabilities and Their Fixes from Open-Source Software"
+        ]
+      },
+      "overlap": 0,
+      "semantic_unique": 10,
+      "tfidf_unique": 10
+    },
+    {
+      "query": "refactoring",
+      "semantic_query": "code refactoring improvement restructuring optimization maintenance",
+      "ground_truth_size": 3599,
+      "semantic": {
+        "precision": 1.0,
+        "recall": 0.0027785495971103086,
+        "f1": 0.005541701302299807,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 3589,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Opti Code Pro: A Heuristic Search-based Approach to Code Refactoring",
+          "CODECLEANER: Elevating Standards with A Robust Data Contamination Mitigation Toolkit",
+          "Empirical Evaluation of a Live Environment for Extract Method Refactoring"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.0027785495971103086,
+        "f1": 0.005541701302299807,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 3589,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "RefSearch: A Search Engine for Refactoring",
+          "Behind the Scenes: On the Relationship Between Developer Experience and Refactoring",
+          "Automating Source Code Refactoring in the Classroom"
+        ]
+      },
+      "overlap": 1,
+      "semantic_unique": 9,
+      "tfidf_unique": 9
+    },
+    {
+      "query": "requirements engineering",
+      "semantic_query": "requirements specification elicitation analysis engineering",
+      "ground_truth_size": 7095,
+      "semantic": {
+        "precision": 1.0,
+        "recall": 0.0014094432699083862,
+        "f1": 0.002814919071076707,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 7085,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Adventures in FRET and Specification",
+          "Towards an Approach to Pattern-based Domain-Specific Requirements Engineering",
+          "Influencia de fatores organizacionais e sociais na etapa de levantamento de requisitos"
+        ]
+      },
+      "tfidf": {
+        "precision": 1.0,
+        "recall": 0.0014094432699083862,
+        "f1": 0.002814919071076707,
+        "true_positives": 10,
+        "false_positives": 0,
+        "false_negatives": 7085,
+        "retrieved_count": 10,
+        "top_3_titles": [
+          "Towards an Approach to Pattern-based Domain-Specific Requirements Engineering",
+          "Teaching Model-based Requirements Engineering to Industry Professionals: An Experience Report",
+          "An initial Theory to Understand and Manage Requirements Engineering Debt in Practice"
+        ]
+      },
+      "overlap": 1,
+      "semantic_unique": 9,
+      "tfidf_unique": 9
+    }
+  ],
+  "summary_statistics": {
+    "semantic": {
+      "avg_f1": 0.007982998641632997,
+      "avg_precision": 0.8400000000000001,
+      "avg_recall": 0.004053156584097198,
+      "best_f1": 0.02699055330634278,
+      "worst_f1": 0.0011940298507462685
+    },
+    "tfidf": {
+      "avg_f1": 0.015468749685060526,
+      "avg_precision": 1.0,
+      "avg_recall": 0.00794758952202477,
+      "best_f1": 0.0847457627118644,
+      "worst_f1": 0.0011940298507462685
+    },
+    "comparison": {
+      "semantic_wins": 0,
+      "tfidf_wins": 2,
+      "ties": 8,
+      "winner": "TF-IDF"
+    }
+  }
+}
