@@ -1,30 +1,13 @@
 version: '3.8'
 
 services:
-  research_recommender_db:
-    image: pgvector/pgvector:pg16
-    container_name: research_recommender_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: research_recommender_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - research_recommender_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   research_recommender_api:
     build:
       context: ../../
       dockerfile: infrastructure/docker/Dockerfile.api
     container_name: research_recommender_api
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@research_recommender_db:5432/research_recommender_db
+      # Database URL is now read from .env file (Neon hosted)
       - APP_ENV=development
       - DEBUG=true
     ports:
@@ -33,9 +16,6 @@ services:
       - ../../apps/api:/app
       - ../../packages/nlp:/packages/nlp
       - ../../packages/shared:/packages/shared
-    depends_on:
-      research_recommender_db:
-        condition: service_healthy
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 
   research_recommender_web:
@@ -54,6 +34,3 @@ services:
     depends_on:
       - research_recommender_api
     command: npm run dev
-
-volumes:
-  research_recommender_data:

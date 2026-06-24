@@ -3,8 +3,12 @@ explanation_service.py - Explanation Service (XAI)
 
 Generates human-readable explanations for recommendations using LangChain.
 Core component for the "Explainable" aspect of the system.
+
+Supports concurrent async explanation generation via asyncio.Semaphore
+for improved performance when processing multiple papers.
 """
 
+import asyncio
 import logging
 from typing import Any, List, Optional
 
@@ -21,33 +25,48 @@ class ExplanationService:
     Uses LangChain for LLM-based explanations with fallback to heuristics.
     Provides explainability features to help users understand
     why specific papers were recommended.
+    
+    Supports concurrent async explanation generation via asyncio.Semaphore.
     """
     
-    def __init__(self):
-        """Initialize LangChain explainer with fallback support."""
+    def __init__(self, max_concurrent: int = 5):
+        """
+        Initialize LangChain explainer with fallback support and concurrency control.
+        
+        Args:
+            max_concurrent: Maximum number of concurrent LLM explanation requests.
+                           Lower values reduce API rate limit issues, higher values
+                           improve throughput. Default is 5.
+        """
         self.langchain_explainer = LangChainExplainer()
         self.use_langchain = self.langchain_explainer.is_available()
         self._llm_failed = False  # Track if LLM has failed, disable subsequent attempts
         
+        # Semaphore for controlling concurrent LLM calls
+        self.semaphore = asyncio.Semaphore(max_concurrent)
+        self.max_concurrent = max_concurrent
+        
         if self.use_langchain:
-            logger.info("✓ Using LangChain for explanations")
+            logger.info(f"✓ Using LangChain for explanations (max {max_concurrent} concurrent)")
         else:
             logger.warning(
                 "⚠ LangChain unavailable, using fallback explanations. "
                 "Configure LANGCHAIN_PROVIDER and required API keys to enable LLM-based explanations."
             )
     
-    def generate_explanation(
+    async def generate_explanation(
         self,
         query_text: str,
         paper: Any,
         similarity_score: float,
     ) -> Optional[RecommendationExplanation]:
         """
-        Generate a full explanation for a recommendation.
+        Generate a full explanation for a recommendation asynchronously.
         
         Uses LangChain if available, falls back to heuristics otherwise.
         If LLM fails on first attempt, all subsequent calls use heuristic.
+        
+        Respects concurrency limits via semaphore to avoid overwhelming LLM APIs.
         
         Args:
             query_text: The user's search query or paper text
@@ -62,12 +81,14 @@ class ExplanationService:
         try:
             # If LLM already failed once, skip LLM attempts entirely
             if self.use_langchain and not self._llm_failed:
-                result = self.langchain_explainer.generate_explanation(
-                    query=query_text,
-                    paper=paper,
-                    similarity_score=similarity_score,
-                    key_terms=key_terms,
-                )
+                # Acquire semaphore slot before making LLM call
+                async with self.semaphore:
+                    result = await self.langchain_explainer.generate_explanation(
+                        query=query_text,
+                        paper=paper,
+                        similarity_score=similarity_score,
+                        key_terms=key_terms,
+                    )
             else:
                 result = self._generate_heuristic_explanation(
                     query_text, paper, similarity_score, key_terms

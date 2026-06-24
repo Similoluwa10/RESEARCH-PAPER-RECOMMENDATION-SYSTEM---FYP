@@ -3,8 +3,12 @@ recommendation_service.py - Recommendation Service
 
 Core business logic for generating paper recommendations.
 Orchestrates embedding generation, similarity search, and explanations.
+
+Supports concurrent async explanation generation via asyncio.gather()
+for improved performance when processing multiple recommendations.
 """
 
+import asyncio
 import logging
 import time
 from collections import OrderedDict
@@ -44,8 +48,10 @@ class RecommendationService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repository = PaperRepository(db)
-        # EXPLANATION MODULE: Now re-enabled for full explainability
-        self.explanation_service = ExplanationService()
+        # EXPLANATION MODULE: Now re-enabled with concurrent async support
+        self.explanation_service = ExplanationService(
+            max_concurrent=settings.MAX_CONCURRENT_EXPLANATIONS
+        )
         self.embedding_service = EmbeddingService()
         self.min_recommendation_similarity = 0.5
 
@@ -111,6 +117,7 @@ class RecommendationService:
         Get recommendations based on input text.
         
         Generates embedding for text and finds similar papers.
+        Generates explanations concurrently for improved performance.
         
         Args:
             text: Query text to find similar papers for
@@ -135,25 +142,51 @@ class RecommendationService:
             min_similarity=self.min_recommendation_similarity,
         )
 
-        recommendations = []       
-        for item in matches:
-            score = float(item["score"])
-            bounded_score = max(0.0, min(1.0, score))
-            explanation = (
+        recommendations = []
+        
+        if include_explanations and matches:
+            # Generate all explanations concurrently using asyncio.gather()
+            logger.debug(f"Generating {len(matches)} explanations concurrently...")
+            
+            explanation_tasks = [
                 self.explanation_service.generate_explanation(
                     query_text=text,
                     paper=item["paper"],
-                    similarity_score=bounded_score,
+                    similarity_score=max(0.0, min(1.0, float(item["score"]))),
                 )
-                if include_explanations
-                else None
-            )
-            recommendation = {
-                "paper": item["paper"],
-                "score": bounded_score,
-                "explanation": explanation,
-            }
-            recommendations.append(recommendation)
+                for item in matches
+            ]
+            
+            # Run all explanation tasks in parallel
+            explanations = await asyncio.gather(*explanation_tasks, return_exceptions=True)
+            
+            # Build recommendations with explanations
+            for item, explanation in zip(matches, explanations):
+                score = float(item["score"])
+                bounded_score = max(0.0, min(1.0, score))
+                
+                # Handle exceptions in individual explanation tasks
+                if isinstance(explanation, Exception):
+                    logger.warning(f"Exception in explanation generation: {explanation}")
+                    explanation = None
+                
+                recommendation = {
+                    "paper": item["paper"],
+                    "score": bounded_score,
+                    "explanation": explanation,
+                }
+                recommendations.append(recommendation)
+        else:
+            # No explanations requested - build recommendations without waiting for LLM
+            for item in matches:
+                score = float(item["score"])
+                bounded_score = max(0.0, min(1.0, score))
+                recommendation = {
+                    "paper": item["paper"],
+                    "score": bounded_score,
+                    "explanation": None,
+                }
+                recommendations.append(recommendation)
         
         result = {
             "recommendations": recommendations,
@@ -172,6 +205,7 @@ class RecommendationService:
         Find papers similar to a specific paper.
         
         Uses the paper's embedding to find semantically similar papers.
+        Generates explanations concurrently for improved performance.
         
         Args:
             paper_id: ID of the paper to find similar papers for
@@ -199,24 +233,53 @@ class RecommendationService:
             top_k=None,  # Return all matching papers
             min_similarity=self.min_recommendation_similarity,
         )
+        
         query_text = f"{paper.title} {paper.abstract}" if paper else ""
-        # EXPLANATION MODULE: Now re-enabled for full explainability
-        recommendations = [
-            {
-                "paper": item["paper"],
-                "score": item["score"],
-                "explanation": (
-                    self.explanation_service.generate_explanation(
-                        query_text=query_text,
-                        paper=item["paper"],
-                        similarity_score=max(0.0, min(1.0, float(item["score"]))),
-                    )
-                    if include_explanations
-                    else None
-                ),
-            }
-            for item in matches
-        ]
+        recommendations = []
+        
+        if include_explanations and matches:
+            # Generate all explanations concurrently using asyncio.gather()
+            logger.debug(f"Generating {len(matches)} similar paper explanations concurrently...")
+            
+            explanation_tasks = [
+                self.explanation_service.generate_explanation(
+                    query_text=query_text,
+                    paper=item["paper"],
+                    similarity_score=max(0.0, min(1.0, float(item["score"]))),
+                )
+                for item in matches
+            ]
+            
+            # Run all explanation tasks in parallel
+            explanations = await asyncio.gather(*explanation_tasks, return_exceptions=True)
+            
+            # Build recommendations with explanations
+            for item, explanation in zip(matches, explanations):
+                score = float(item["score"])
+                bounded_score = max(0.0, min(1.0, score))
+                
+                # Handle exceptions in individual explanation tasks
+                if isinstance(explanation, Exception):
+                    logger.warning(f"Exception in explanation generation: {explanation}")
+                    explanation = None
+                
+                recommendation = {
+                    "paper": item["paper"],
+                    "score": bounded_score,
+                    "explanation": explanation,
+                }
+                recommendations.append(recommendation)
+        else:
+            # No explanations requested - build recommendations without waiting for LLM
+            for item in matches:
+                score = float(item["score"])
+                bounded_score = max(0.0, min(1.0, score))
+                recommendation = {
+                    "paper": item["paper"],
+                    "score": bounded_score,
+                    "explanation": None,
+                }
+                recommendations.append(recommendation)
         
         result = {
             "recommendations": recommendations,

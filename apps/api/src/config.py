@@ -24,6 +24,7 @@ class Settings(BaseSettings):
         env_file=ROOT_ENV_FILE,
         env_file_encoding="utf-8",
         case_sensitive=False,
+        extra="ignore",  # Ignore extra fields in .env
     )
     
     # Application
@@ -36,6 +37,9 @@ class Settings(BaseSettings):
     DATABASE_URL: str 
     DB_POOL_SIZE: int 
     DB_MAX_OVERFLOW: int
+    
+    # Redis (optional - for caching)
+    REDIS_URL: str = ""
     
     # JWT Authentication
     JWT_SECRET_KEY: str 
@@ -55,6 +59,9 @@ class Settings(BaseSettings):
     EMBEDDING_CACHE_MAX_ITEMS: int 
     RECOMMENDATION_CACHE_TTL_SECONDS: int 
     RECOMMENDATION_CACHE_MAX_ITEMS: int 
+    
+    # Concurrency Configuration for Explanation Generation
+    MAX_CONCURRENT_EXPLANATIONS: int = 5  # Max concurrent LLM calls for explanations
     
     # Query Optimization
     EMBEDDING_BATCH_SIZE: int

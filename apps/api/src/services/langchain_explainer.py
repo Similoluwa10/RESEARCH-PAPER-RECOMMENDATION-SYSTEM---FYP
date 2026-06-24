@@ -3,8 +3,11 @@ LangChain-based Explainability Service
 
 Generates detailed, reasoning-based explanations for recommendations
 using LangChain LLMs with modern API patterns.
+
+Supports async/concurrent explanation generation for improved performance.
 """
 
+import asyncio
 import logging
 from typing import Any, Dict, List, Optional
 
@@ -84,7 +87,7 @@ class LangChainExplainer:
         else:
             raise ValueError(f"Unsupported LangChain provider: {self.provider}")
     
-    def generate_explanation(
+    async def generate_explanation(
         self,
         query: str,
         paper: Any,
@@ -92,7 +95,9 @@ class LangChainExplainer:
         key_terms: List[str] = None,
     ) -> Dict[str, Any]:
         """
-        Generate a complete LLM-based explanation.
+        Generate a complete LLM-based explanation asynchronously.
+        
+        Uses ainvoke for non-blocking LLM calls, allowing concurrent explanation generation.
         
         Args:
             query: User's search query
@@ -116,7 +121,7 @@ class LangChainExplainer:
             # Limit abstract length for token efficiency
             abstract = (paper.abstract or "")[:500]
             
-            # Step 1: Generate reasoning steps
+            # Step 1: Generate reasoning steps (async)
             reasoning_prompt = f"""Analyze why this paper is recommended for this research query.
 
 Query: {query}
@@ -133,10 +138,10 @@ Provide step-by-step reasoning:
 Be concise and structured."""
             
             reasoning_message = HumanMessage(content=reasoning_prompt)
-            reasoning_result = self.llm.invoke([reasoning_message])
+            reasoning_result = await self.llm.ainvoke([reasoning_message])
             reasoning_text = reasoning_result.content
             
-            # Step 2: Generate summary explanation
+            # Step 2: Generate summary explanation (async)
             summary_prompt = f"""Explain why this paper is relevant in 2-3 sentences. Be direct and specific.
 
 Query: {query}
@@ -147,7 +152,7 @@ Do not use phrases like "This paper matches..." or "because this paper...".
 Go straight to the point about the connection and relevance."""
             
             summary_message = HumanMessage(content=summary_prompt)
-            summary_result = self.llm.invoke([summary_message])
+            summary_result = await self.llm.ainvoke([summary_message])
             summary_text = summary_result.content
             
             return {
