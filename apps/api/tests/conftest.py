@@ -14,7 +14,7 @@ from src.models.base import Base
 from src.dependencies import get_db
 
 # Test database URL
-TEST_DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/research_recommender_test"
+TEST_DATABASE_URL = "postgresql+psycopg://postgres:postgres@localhost:5432/research_recommender_test"
 
 
 @pytest.fixture(scope="session")

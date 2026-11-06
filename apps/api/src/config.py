@@ -14,7 +14,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
 
-ROOT_ENV_FILE = ROOT_DIR / "apps" / "api" / ".env"
+ROOT_ENV_FILE = ROOT_DIR / ".env"
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
