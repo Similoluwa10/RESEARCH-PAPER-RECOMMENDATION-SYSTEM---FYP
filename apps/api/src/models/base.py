@@ -11,6 +11,7 @@ from typing import AsyncGenerator
 
 from sqlalchemy import DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -21,12 +22,32 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from src.config import settings
 
 
+def _build_async_engine_config(database_url: str) -> tuple[str, dict[str, object]]:
+    """Normalize asyncpg connection settings for SQLAlchemy."""
+
+    url = make_url(database_url)
+    connect_args: dict[str, object] = {}
+
+    if url.drivername.endswith("+asyncpg"):
+        query = dict(url.query)
+        sslmode = query.pop("sslmode", None)
+        query.pop("channel_binding", None)
+        url = url.set(query=query)
+
+        if sslmode and sslmode.lower() != "disable":
+            connect_args["ssl"] = True
+
+    return str(url), connect_args
+
+
 # Create async database engine
+database_url, connect_args = _build_async_engine_config(settings.DATABASE_URL)
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    database_url,
     echo=settings.DEBUG,
     pool_size=settings.DB_POOL_SIZE,
     max_overflow=settings.DB_MAX_OVERFLOW,
+    connect_args=connect_args,
 )
 
 # Create async session factory

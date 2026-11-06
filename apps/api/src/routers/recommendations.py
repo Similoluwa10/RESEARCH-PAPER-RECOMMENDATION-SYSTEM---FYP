@@ -35,13 +35,12 @@ async def get_recommendations(
     Returns recommendations with explainability data.
     """
     service = RecommendationService(db)
-    
+
     if request.paper_id:
-        result = await service.get_similar_papers(
+        return await service.get_similar_papers(
             paper_id=request.paper_id,
             include_explanations=request.include_explanation,
         )
-        return result
 
     if not request.query_text:
         raise HTTPException(

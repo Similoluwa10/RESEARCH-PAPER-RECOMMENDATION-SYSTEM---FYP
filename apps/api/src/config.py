@@ -7,8 +7,7 @@ Loads settings from environment variables and .env files.
 
 from functools import lru_cache
 from pathlib import Path
-from typing import List
-
+from typing import List, Optional
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -27,6 +26,7 @@ class Settings(BaseSettings):
         extra="ignore",  # Ignore extra fields in .env
     )
     
+    
     # Application
     APP_NAME: str = "Research Paper Recommender API"
     APP_ENV: str = "development"
@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str 
     
     # Database
-    DATABASE_URL: str 
+    DATABASE_URL: str
     DB_POOL_SIZE: int 
     DB_MAX_OVERFLOW: int
     
