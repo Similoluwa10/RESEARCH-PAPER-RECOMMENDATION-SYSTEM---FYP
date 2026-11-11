@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Download, ExternalLink, ChevronLeft } from 'lucide-react';
@@ -14,7 +14,7 @@ interface PaperDetailProps {
   };
 }
 
-export default function PaperDetailPage({ params }: PaperDetailProps) {
+function PaperDetailContent({ params }: PaperDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [session, setSession] = useState<AuthSession | null>(null);
@@ -229,5 +229,13 @@ export default function PaperDetailPage({ params }: PaperDetailProps) {
 
       <Footer />
     </div>
+  );
+}
+
+export default function PaperDetailPage({ params }: PaperDetailProps) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <PaperDetailContent params={params} />
+    </Suspense>
   );
 }

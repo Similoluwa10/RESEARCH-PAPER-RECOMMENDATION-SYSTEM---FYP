@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, Eye, EyeOff, Lock } from 'lucide-react';
 import { resetPassword } from '@/lib/api';
@@ -12,7 +12,7 @@ const formInputClass =
 const submitButtonClass =
   'w-full inline-flex items-center justify-center gap-2 rounded-lg border border-secondary/70 bg-secondary px-4 py-2.5 text-secondary-foreground font-semibold shadow-sm transition-all hover:bg-secondary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40 disabled:opacity-50 disabled:cursor-not-allowed';
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const params = useSearchParams();
   const token = useMemo(() => params.get('token') ?? '', [params]);
 
@@ -156,5 +156,13 @@ export default function ResetPasswordPage() {
         </section>
       </main>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
