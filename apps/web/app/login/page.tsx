@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { getCurrentUser, loginWithGoogleToken, loginWithPassword } from '@/lib/api';
@@ -17,7 +17,7 @@ const submitButtonClass =
 const googleButtonClass =
   'w-full inline-flex items-center justify-center gap-3 rounded-lg border border-granite/45 bg-light px-4 py-2.5 text-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:bg-muted/50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40';
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -191,5 +191,13 @@ export default function LoginPage() {
         </section>
       </main>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <LoginContent />
+    </Suspense>
   );
 }

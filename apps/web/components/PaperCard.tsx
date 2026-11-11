@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { Trash2, Download, Lightbulb } from 'lucide-react';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -20,7 +21,7 @@ interface PaperCardProps {
   onUnsave?: (id: string) => void;
 }
 
-export default function PaperCard({
+function PaperCardContent({
   id,
   title,
   authors,
@@ -117,5 +118,13 @@ export default function PaperCard({
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function PaperCard(props: PaperCardProps) {
+  return (
+    <Suspense fallback={<div className="card-base p-6 animate-pulse h-64" />}>
+      <PaperCardContent {...props} />
+    </Suspense>
   );
 }
