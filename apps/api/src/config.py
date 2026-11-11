@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str 
     JWT_ALGORITHM: str 
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int 
-    GOOGLE_CLIENT_ID: str 
+    GOOGLE_CLIENT_ID: str = ""
     
     # CORS
     CORS_ORIGINS: List[str] 
@@ -72,20 +72,20 @@ class Settings(BaseSettings):
     SEMANTIC_SCHOLAR_API_KEY: str = ""
     
     # Hugging Face API (for higher rate limits on model downloads and inference)
-    HUGGINGFACE_API_KEY: str 
+    HUGGINGFACE_API_KEY: str = ""
     
     # LangChain Configuration for Explainability
-    LANGCHAIN_PROVIDER: str  # "openai", "ollama", "anthropic", or "groq"
-    LANGCHAIN_CHAT_MODEL: str # For OpenAI provider
-    LANGCHAIN_TEMPERATURE: float # Lower for consistency
+    LANGCHAIN_PROVIDER: str = "groq"  # "openai", "ollama", "anthropic", or "groq"
+    LANGCHAIN_CHAT_MODEL: str = "gpt-3.5-turbo"  # For OpenAI provider
+    LANGCHAIN_TEMPERATURE: float = 0.3  # Lower for consistency
     
     # Provider-specific API keys/configurations
-    OPENAI_API_KEY: str 
-    ANTHROPIC_API_KEY: str
-    GROQ_API_KEY: str
-    GROQ_MODEL: str  # Groq model
-    OLLAMA_BASE_URL: str # Default Ollama endpoint
-    OLLAMA_MODEL: str  # Default Ollama model 
+    OPENAI_API_KEY: str = ""
+    ANTHROPIC_API_KEY: str = ""
+    GROQ_API_KEY: str = ""
+    GROQ_MODEL: str = "openai/gpt-oss-20b"  # Groq model
+    #OLLAMA_BASE_URL: str = "http://localhost:11434"  # Default Ollama endpoint
+    #OLLAMA_MODEL: str = "mistral"  # Default Ollama model 
 
 
 @lru_cache()
