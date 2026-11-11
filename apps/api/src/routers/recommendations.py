@@ -7,7 +7,7 @@ The core feature of the intelligent recommendation system.
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies import get_current_user, get_db
@@ -40,6 +40,7 @@ async def get_recommendations(
         return await service.get_similar_papers(
             paper_id=request.paper_id,
             include_explanations=request.include_explanation,
+            top_k=request.top_k,
         )
 
     if not request.query_text:
@@ -51,6 +52,7 @@ async def get_recommendations(
     result = await service.get_recommendations_for_text(
         text=request.query_text,
         include_explanations=request.include_explanation,
+        top_k=request.top_k,
     )
     return result
 
@@ -58,6 +60,7 @@ async def get_recommendations(
 @router.get("/similar/{paper_id}", response_model=RecommendationResponse)
 async def get_similar_papers(
     paper_id: UUID,
+    top_k: int = Query(100, ge=1, le=100, description="Maximum number of similar papers to return"),
     db: AsyncSession = Depends(get_db),
 ) -> RecommendationResponse:
     """
@@ -66,7 +69,7 @@ async def get_similar_papers(
     Uses semantic similarity based on paper embeddings.
     """
     service = RecommendationService(db)
-    result = await service.get_similar_papers(paper_id)
+    result = await service.get_similar_papers(paper_id, top_k=top_k)
     return result
 
 

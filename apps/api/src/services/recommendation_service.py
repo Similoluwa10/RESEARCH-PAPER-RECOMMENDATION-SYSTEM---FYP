@@ -13,7 +13,7 @@ import logging
 import time
 from collections import OrderedDict
 from threading import Lock
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,12 +53,19 @@ class RecommendationService:
             max_concurrent=settings.MAX_CONCURRENT_EXPLANATIONS
         )
         self.embedding_service = EmbeddingService()
-        self.min_recommendation_similarity = 0.5
+        self.min_recommendation_similarity = 0.6
+        self.default_top_k = 100
 
     @classmethod
-    def _make_text_cache_key(cls, text: str, include_explanations: bool, min_similarity: float) -> str:
+    def _make_text_cache_key(
+        cls,
+        text: str,
+        include_explanations: bool,
+        min_similarity: float,
+        top_k: int,
+    ) -> str:
         normalized = " ".join((text or "").split()).lower()
-        return f"text::{include_explanations}::{min_similarity:.4f}::{normalized}"
+        return f"text::{include_explanations}::{min_similarity:.4f}::{top_k}::{normalized}"
 
     @classmethod
     def _make_paper_cache_key(
@@ -66,8 +73,9 @@ class RecommendationService:
         paper_id: UUID,
         include_explanations: bool,
         min_similarity: float,
+        top_k: int,
     ) -> str:
-        return f"paper::{paper_id}::{include_explanations}::{min_similarity:.4f}"
+        return f"paper::{paper_id}::{include_explanations}::{min_similarity:.4f}::{top_k}"
 
     @classmethod
     def _get_cached_result(cls, key: str) -> Dict[str, Any] | None:
@@ -108,10 +116,50 @@ class RecommendationService:
             
             logger.debug(f"Recommendation cache SET: {len(cls._result_cache)} items in cache")
     
+    async def _build_recommendations(
+        self,
+        matches: List[Dict[str, Any]],
+        query_text: str,
+        include_explanations: bool,
+    ) -> List[Dict[str, Any]]:
+        """Assemble recommendation items and optionally generate explanations concurrently."""
+        if not matches:
+            return []
+
+        if include_explanations:
+            logger.debug(f"Generating {len(matches)} explanations concurrently...")
+            explanation_tasks = [
+                self.explanation_service.generate_explanation(
+                    query_text=query_text,
+                    paper=item["paper"],
+                    similarity_score=max(0.0, min(1.0, float(item["score"]))),
+                )
+                for item in matches
+            ]
+            explanations = await asyncio.gather(*explanation_tasks, return_exceptions=True)
+        else:
+            explanations = [None] * len(matches)
+
+        recommendations: List[Dict[str, Any]] = []
+        for item, explanation in zip(matches, explanations):
+            bounded_score = max(0.0, min(1.0, float(item["score"])))
+            if isinstance(explanation, Exception):
+                logger.warning(f"Exception in explanation generation: {explanation}")
+                explanation = None
+            recommendations.append(
+                {
+                    "paper": item["paper"],
+                    "score": bounded_score,
+                    "explanation": explanation,
+                }
+            )
+        return recommendations
+
     async def get_recommendations_for_text(
         self,
         text: str,
         include_explanations: bool = True,
+        top_k: Optional[int] = None,
     ) -> RecommendationResponse:
         """
         Get recommendations based on input text.
@@ -122,14 +170,17 @@ class RecommendationService:
         Args:
             text: Query text to find similar papers for
             include_explanations: Whether to generate XAI explanations
+            top_k: Maximum number of papers to return (defaults to 100)
             
         Returns:
             Recommendations with scores and optional explanations
         """
+        effective_top_k = self.default_top_k if top_k is None else top_k
         cache_key = self._make_text_cache_key(
             text=text,
             include_explanations=include_explanations,
             min_similarity=self.min_recommendation_similarity,
+            top_k=effective_top_k,
         )
         cached = self._get_cached_result(cache_key)
         if cached is not None:
@@ -138,55 +189,15 @@ class RecommendationService:
         query_vector = self.embedding_service.encode_text(text)
         matches = await self.repository.search_by_embedding(
             embedding=query_vector,
-            top_k=None,  # Return all matching papers
+            top_k=effective_top_k,
             min_similarity=self.min_recommendation_similarity,
         )
 
-        recommendations = []
-        
-        if include_explanations and matches:
-            # Generate all explanations concurrently using asyncio.gather()
-            logger.debug(f"Generating {len(matches)} explanations concurrently...")
-            
-            explanation_tasks = [
-                self.explanation_service.generate_explanation(
-                    query_text=text,
-                    paper=item["paper"],
-                    similarity_score=max(0.0, min(1.0, float(item["score"]))),
-                )
-                for item in matches
-            ]
-            
-            # Run all explanation tasks in parallel
-            explanations = await asyncio.gather(*explanation_tasks, return_exceptions=True)
-            
-            # Build recommendations with explanations
-            for item, explanation in zip(matches, explanations):
-                score = float(item["score"])
-                bounded_score = max(0.0, min(1.0, score))
-                
-                # Handle exceptions in individual explanation tasks
-                if isinstance(explanation, Exception):
-                    logger.warning(f"Exception in explanation generation: {explanation}")
-                    explanation = None
-                
-                recommendation = {
-                    "paper": item["paper"],
-                    "score": bounded_score,
-                    "explanation": explanation,
-                }
-                recommendations.append(recommendation)
-        else:
-            # No explanations requested - build recommendations without waiting for LLM
-            for item in matches:
-                score = float(item["score"])
-                bounded_score = max(0.0, min(1.0, score))
-                recommendation = {
-                    "paper": item["paper"],
-                    "score": bounded_score,
-                    "explanation": None,
-                }
-                recommendations.append(recommendation)
+        recommendations = await self._build_recommendations(
+            matches=matches,
+            query_text=text,
+            include_explanations=include_explanations,
+        )
         
         result = {
             "recommendations": recommendations,
@@ -200,6 +211,7 @@ class RecommendationService:
         self,
         paper_id: UUID,
         include_explanations: bool = True,
+        top_k: Optional[int] = None,
     ) -> RecommendationResponse:
         """
         Find papers similar to a specific paper.
@@ -210,14 +222,17 @@ class RecommendationService:
         Args:
             paper_id: ID of the paper to find similar papers for
             include_explanations: Whether to generate explanations
+            top_k: Maximum number of similar papers to return (defaults to 100)
             
         Returns:
             Similar papers with similarity scores
         """
+        effective_top_k = self.default_top_k if top_k is None else top_k
         cache_key = self._make_paper_cache_key(
             paper_id=paper_id,
             include_explanations=include_explanations,
             min_similarity=self.min_recommendation_similarity,
+            top_k=effective_top_k,
         )
         cached = self._get_cached_result(cache_key)
         if cached is not None:
@@ -230,56 +245,16 @@ class RecommendationService:
         
         matches = await self.repository.find_similar(
             paper_id=paper_id,
-            top_k=None,  # Return all matching papers
+            top_k=effective_top_k,
             min_similarity=self.min_recommendation_similarity,
         )
         
         query_text = f"{paper.title} {paper.abstract}" if paper else ""
-        recommendations = []
-        
-        if include_explanations and matches:
-            # Generate all explanations concurrently using asyncio.gather()
-            logger.debug(f"Generating {len(matches)} similar paper explanations concurrently...")
-            
-            explanation_tasks = [
-                self.explanation_service.generate_explanation(
-                    query_text=query_text,
-                    paper=item["paper"],
-                    similarity_score=max(0.0, min(1.0, float(item["score"]))),
-                )
-                for item in matches
-            ]
-            
-            # Run all explanation tasks in parallel
-            explanations = await asyncio.gather(*explanation_tasks, return_exceptions=True)
-            
-            # Build recommendations with explanations
-            for item, explanation in zip(matches, explanations):
-                score = float(item["score"])
-                bounded_score = max(0.0, min(1.0, score))
-                
-                # Handle exceptions in individual explanation tasks
-                if isinstance(explanation, Exception):
-                    logger.warning(f"Exception in explanation generation: {explanation}")
-                    explanation = None
-                
-                recommendation = {
-                    "paper": item["paper"],
-                    "score": bounded_score,
-                    "explanation": explanation,
-                }
-                recommendations.append(recommendation)
-        else:
-            # No explanations requested - build recommendations without waiting for LLM
-            for item in matches:
-                score = float(item["score"])
-                bounded_score = max(0.0, min(1.0, score))
-                recommendation = {
-                    "paper": item["paper"],
-                    "score": bounded_score,
-                    "explanation": None,
-                }
-                recommendations.append(recommendation)
+        recommendations = await self._build_recommendations(
+            matches=matches,
+            query_text=query_text,
+            include_explanations=include_explanations,
+        )
         
         result = {
             "recommendations": recommendations,

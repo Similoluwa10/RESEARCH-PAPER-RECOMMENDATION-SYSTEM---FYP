@@ -9,7 +9,8 @@ Supports async/concurrent explanation generation for improved performance.
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional
+import re
+from typing import Any, Dict, List, Optional, Tuple
 
 from src.config import settings
 
@@ -120,44 +121,41 @@ class LangChainExplainer:
             
             # Limit abstract length for token efficiency
             abstract = (paper.abstract or "")[:500]
+            key_concepts = ", ".join(key_terms) if key_terms else "semantic similarity"
             
-            # Step 1: Generate reasoning steps (async)
-            reasoning_prompt = f"""Analyze why this paper is recommended for this research query.
+            # Single-prompt request combining structured reasoning and concise summary
+            prompt = f"""Analyze why this paper is recommended for this research query, then provide a concise summary.
 
 Query: {query}
 Recommended Paper: {paper.title}
 Abstract Summary: {abstract}
 Similarity Score: {similarity_score:.2%}
+Key Concepts: {key_concepts}
 
-Provide step-by-step reasoning:
+Respond using the exact two XML sections below:
+
+<reasoning>
+Provide concise, structured step-by-step reasoning:
 1. Main concepts in the query
 2. How these concepts appear in the paper
 3. Relevance assessment
 4. Key matching terms
+</reasoning>
 
-Be concise and structured."""
+<summary>
+Explain why this paper is relevant in 2-3 direct, specific sentences. Do not use phrases like "This paper matches..." or "because this paper...". Go straight to the point about the connection and relevance.
+</summary>"""
             
-            reasoning_message = HumanMessage(content=reasoning_prompt)
-            reasoning_result = await self.llm.ainvoke([reasoning_message])
-            reasoning_text = reasoning_result.content
-            
-            # Step 2: Generate summary explanation (async)
-            summary_prompt = f"""Explain why this paper is relevant in 2-3 sentences. Be direct and specific.
-
-Query: {query}
-Paper: {paper.title}
-Key Concepts: {", ".join(key_terms) if key_terms else "semantic similarity"}
-
-Do not use phrases like "This paper matches..." or "because this paper...". 
-Go straight to the point about the connection and relevance."""
-            
-            summary_message = HumanMessage(content=summary_prompt)
-            summary_result = await self.llm.ainvoke([summary_message])
-            summary_text = summary_result.content
+            message = HumanMessage(content=prompt)
+            result = await self.llm.ainvoke([message])
+            raw_content = result.content if isinstance(result.content, str) else str(result.content)
+            reasoning_text, summary_text = self._parse_explanation_response(
+                raw_content, similarity_score, key_terms
+            )
             
             return {
-                "summary": summary_text.strip(),
-                "reasoning_steps": reasoning_text.strip(),
+                "summary": summary_text,
+                "reasoning_steps": reasoning_text,
                 "key_terms": key_terms,
                 "confidence": self._assess_confidence(similarity_score),
             }
@@ -166,6 +164,78 @@ Go straight to the point about the connection and relevance."""
             logger.error(f"LangChain explanation generation failed: {e}")
             # Re-raise so ExplanationService can catch and disable LLM for subsequent attempts
             raise
+
+    def _parse_explanation_response(
+        self,
+        raw_content: str,
+        similarity_score: float,
+        key_terms: List[str],
+    ) -> Tuple[str, str]:
+        """Parse reasoning steps and concise summary from a single LLM response."""
+        text = (raw_content or "").strip()
+
+        reasoning_match = re.search(
+            r"<reasoning>\s*(.*?)\s*(?:</reasoning>|(?=<summary>)|$)",
+            text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        summary_match = re.search(
+            r"<summary>\s*(.*?)\s*(?:</summary>|$)",
+            text,
+            re.DOTALL | re.IGNORECASE,
+        )
+
+        reasoning_text = reasoning_match.group(1).strip() if reasoning_match else ""
+        summary_text = summary_match.group(1).strip() if summary_match else ""
+
+        # Fallback to markdown/labeled sections if XML tags were omitted
+        if not reasoning_text and not summary_text:
+            header_reasoning = re.search(
+                r"(?:^|\n)(?:#+\s*|\*\*)?reasoning(?:\*\*)?:?\s*\n?(.*?)(?=(?:\n(?:#+\s*|\*\*)?summary(?:\*\*)?:?)|$)",
+                text,
+                re.DOTALL | re.IGNORECASE,
+            )
+            header_summary = re.search(
+                r"(?:^|\n)(?:#+\s*|\*\*)?summary(?:\*\*)?:?\s*\n?(.*)",
+                text,
+                re.DOTALL | re.IGNORECASE,
+            )
+            if header_reasoning:
+                reasoning_text = header_reasoning.group(1).strip()
+            if header_summary:
+                summary_text = header_summary.group(1).strip()
+
+        # Strip any leftover tags from extracted text
+        reasoning_text = re.sub(r"</?(?:reasoning|summary)>", "", reasoning_text, flags=re.IGNORECASE).strip()
+        summary_text = re.sub(r"</?(?:reasoning|summary)>", "", summary_text, flags=re.IGNORECASE).strip()
+
+        if not summary_text:
+            if reasoning_text:
+                # If only reasoning was returned, try any trailing text after </reasoning> first
+                trailing = re.sub(
+                    r".*?</reasoning>",
+                    "",
+                    text,
+                    count=1,
+                    flags=re.DOTALL | re.IGNORECASE,
+                ).strip()
+                trailing = re.sub(r"</?(?:reasoning|summary)>", "", trailing, flags=re.IGNORECASE).strip()
+                if trailing and trailing != text:
+                    summary_text = trailing
+                else:
+                    fallback = self._generate_fallback_explanation("", None, similarity_score, key_terms)
+                    summary_text = fallback["summary"]
+            else:
+                cleaned = re.sub(r"</?(?:reasoning|summary)>", "", text, flags=re.IGNORECASE).strip()
+                summary_text = cleaned or self._generate_fallback_explanation(
+                    "", None, similarity_score, key_terms
+                )["summary"]
+
+        if not reasoning_text:
+            confidence = self._assess_confidence(similarity_score)
+            reasoning_text = f"Similarity Score: {similarity_score:.2%} | Confidence: {confidence}"
+
+        return reasoning_text, summary_text
     
     def _assess_confidence(self, score: float) -> str:
         """Assess confidence level based on similarity score."""
