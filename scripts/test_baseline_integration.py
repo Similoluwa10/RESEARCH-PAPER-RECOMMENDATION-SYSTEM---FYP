@@ -48,12 +48,12 @@ class BaselineTestSuite:
             
             if baseline_service._is_fitted:
                 print("✓ TF-IDF model initialized successfully")
-                print(f"  - Papers loaded: {len(baseline_service._corpus_papers)}")
+                print(f"  - Papers loaded: {len(baseline_service._corpus_paper_ids)}")
                 print(f"  - Model is fitted: {baseline_service._is_fitted}")
                 self.results["tests"].append({
                     "name": "TF-IDF Initialization",
                     "status": "PASSED",
-                    "papers_count": len(baseline_service._corpus_papers),
+                    "papers_count": len(baseline_service._corpus_paper_ids),
                 })
                 return True
             else:

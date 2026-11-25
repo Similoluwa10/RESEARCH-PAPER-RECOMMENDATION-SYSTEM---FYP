@@ -52,8 +52,15 @@ class Settings(BaseSettings):
     
     # NLP/Embeddings
     EMBEDDING_MODEL_NAME: str 
-    EMBEDDING_DIMENSION: int 
-    
+    EMBEDDING_DIMENSION: int
+    # "auto" (ONNX/fastembed if installed, else sentence-transformers), "onnx" or "torch"
+    EMBEDDING_BACKEND: str = "auto"
+    # Load the embedding model during startup (set False on very small instances
+    # to load it on the first request instead)
+    PREWARM_EMBEDDING_MODEL: bool = True
+    # Fit the TF-IDF keyword-search index during startup (memory heavy; off by default)
+    PREWARM_TFIDF_BASELINE: bool = False
+
     # Caching Configuration
     EMBEDDING_CACHE_TTL_SECONDS: int
     EMBEDDING_CACHE_MAX_ITEMS: int 

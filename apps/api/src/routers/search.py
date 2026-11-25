@@ -137,7 +137,7 @@ async def initialize_baseline(
     This is typically called on application startup.
     """
     baseline = BaselineService(db)
-    await baseline.initialize()
+    await baseline.refit()
     return {
         "status": "initialized",
         "method": "tfidf",

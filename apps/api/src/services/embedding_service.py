@@ -18,7 +18,6 @@ from threading import Lock
 from typing import Any, Dict, List, Sequence, Tuple
 
 import numpy as np
-from scipy.spatial.distance import cosine
 
 from src.config import settings
 
@@ -38,8 +37,32 @@ try:
 except ImportError:
     DOMAIN_EMBEDDINGS_AVAILABLE = False
 
-# Fallback to sentence-transformers
+# Lightweight ONNX backend (no PyTorch) and the sentence-transformers fallback.
+# Both modules import their heavy dependencies lazily.
+from embeddings.onnx_embedding import OnnxEmbedding
 from embeddings.sentence_transformer import SentenceTransformerEmbedding
+
+
+def _create_base_model(model_name: str, hf_token: str | None):
+    """
+    Build the embedding model for the configured backend.
+
+    EMBEDDING_BACKEND:
+      - "onnx": fastembed / ONNX Runtime only (low memory, recommended for deploys)
+      - "torch": sentence-transformers / PyTorch only
+      - "auto" (default): ONNX if fastembed is installed, else sentence-transformers
+    """
+    backend = (settings.EMBEDDING_BACKEND or "auto").lower()
+    if backend in ("onnx", "auto"):
+        try:
+            import fastembed  # noqa: F401
+            logger.info(f"Using ONNX (fastembed) embedding backend for {model_name}")
+            return OnnxEmbedding(model_name, hf_token=hf_token)
+        except ImportError:
+            if backend == "onnx":
+                raise
+            logger.info("fastembed not installed; falling back to sentence-transformers")
+    return SentenceTransformerEmbedding(model_name, hf_token=hf_token)
 
 
 class EmbeddingService:
@@ -98,10 +121,10 @@ class EmbeddingService:
                     except Exception as e:
                         logger.warning(f"Failed to load domain model: {e}. Falling back to SentenceTransformer.")
                         hf_token = settings.HUGGINGFACE_API_KEY if settings.HUGGINGFACE_API_KEY else None
-                        model = SentenceTransformerEmbedding(model_name, hf_token=hf_token)
+                        model = _create_base_model(model_name, hf_token)
                 else:
                     hf_token = settings.HUGGINGFACE_API_KEY if settings.HUGGINGFACE_API_KEY else None
-                    model = SentenceTransformerEmbedding(model_name, hf_token=hf_token)
+                    model = _create_base_model(model_name, hf_token)
                 cls._model_cache[cache_key] = model
             return model
 
@@ -347,12 +370,15 @@ class EmbeddingService:
             logger.warning("Metadata length mismatch for embedding quality score")
             return 0.0
 
-        similarities: List[Tuple[int, float]] = []
-        for idx in range(len(all_embeddings)):
-            sim = 1 - cosine(embedding, all_embeddings[idx])
-            if np.isnan(sim):
-                sim = 0.0
-            similarities.append((idx, float(sim)))
+        corpus = np.asarray(all_embeddings, dtype=np.float64)
+        query = np.asarray(embedding, dtype=np.float64)
+        denom = np.linalg.norm(corpus, axis=1) * np.linalg.norm(query)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            sims = np.where(denom > 0, (corpus @ query) / denom, 0.0)
+        sims = np.nan_to_num(sims)
+        similarities: List[Tuple[int, float]] = [
+            (idx, float(sim)) for idx, sim in enumerate(sims)
+        ]
 
         similarities.sort(key=lambda item: item[1], reverse=True)
 
