@@ -1,0 +1,83 @@
+# Render Blueprint for the FastAPI backend (no Docker).
+# Use it via Render Dashboard -> New -> Blueprint, or copy these settings into
+# an existing Web Service (Build Command, Start Command, Health Check Path, env).
+# Values marked `sync: false` are secrets: Render asks for them on first setup.
+
+services:
+  - type: web
+    name: research-recommender-api
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    # One worker only: each worker loads its own copy of the model (512 MB limit)
+    startCommand: cd apps/api && uvicorn src.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.6
+      # Lower glibc memory fragmentation (helps stay under 512 MB)
+      - key: MALLOC_ARENA_MAX
+        value: "2"
+
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: API_V1_PREFIX
+        value: /api/v1
+      - key: LOG_LEVEL
+        value: INFO
+
+      # Database (Neon)
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_POOL_SIZE
+        value: "5"
+      - key: DB_MAX_OVERFLOW
+        value: "5"
+
+      # Auth
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+
+      # JSON list including the Vercel URL, e.g. ["https://your-app.vercel.app"]
+      - key: CORS_ORIGINS
+        sync: false
+
+      # Embeddings (ONNX runtime, no PyTorch)
+      - key: EMBEDDING_BACKEND
+        value: onnx
+      - key: EMBEDDING_MODEL_NAME
+        value: all-MiniLM-L6-v2
+      - key: EMBEDDING_DIMENSION
+        value: "384"
+      - key: EMBEDDING_BATCH_SIZE
+        value: "64"
+      - key: EMBEDDING_CACHE_TTL_SECONDS
+        value: "7200"
+      - key: EMBEDDING_CACHE_MAX_ITEMS
+        value: "10000"
+      - key: RECOMMENDATION_CACHE_TTL_SECONDS
+        value: "3600"
+      - key: RECOMMENDATION_CACHE_MAX_ITEMS
+        value: "1000"
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+
+      # LLM explanations
+      - key: LANGCHAIN_PROVIDER
+        value: groq
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: GROQ_API_KEY
+        sync: false
+      - key: MAX_CONCURRENT_EXPLANATIONS
+        value: "3"

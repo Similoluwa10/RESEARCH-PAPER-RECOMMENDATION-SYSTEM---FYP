@@ -1,0 +1,86 @@
+name: CI
+
+# Checks only - no Docker, no deployment.
+# Deployments happen automatically from the main branch:
+#   - Backend (apps/api)  -> Render  (see render.yaml)
+#   - Frontend (apps/web) -> Vercel  (project Root Directory: apps/web)
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    env:
+      # Dummy values so the settings can load; no real services are contacted.
+      DEBUG: "false"
+      API_V1_PREFIX: /api/v1
+      DATABASE_URL: postgresql+psycopg://ci:ci@localhost:5432/ci
+      DB_POOL_SIZE: "5"
+      DB_MAX_OVERFLOW: "5"
+      JWT_SECRET_KEY: ci-only-not-a-secret
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      CORS_ORIGINS: '["http://localhost:3000"]'
+      EMBEDDING_MODEL_NAME: all-MiniLM-L6-v2
+      EMBEDDING_DIMENSION: "384"
+      EMBEDDING_BATCH_SIZE: "64"
+      EMBEDDING_CACHE_TTL_SECONDS: "7200"
+      EMBEDDING_CACHE_MAX_ITEMS: "10000"
+      RECOMMENDATION_CACHE_TTL_SECONDS: "3600"
+      RECOMMENDATION_CACHE_MAX_ITEMS: "1000"
+      LOG_LEVEL: INFO
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # Same production dependencies Render installs (requirements.txt at repo root)
+      - name: Install API dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check the API imports and starts up
+        working-directory: ./apps/api
+        run: python -c "from src.main import app; print('API import OK:', app.title)"
+
+      # The test suite expects a local PostgreSQL database, so it does not block CI
+      - name: Run API tests
+        working-directory: ./apps/api
+        run: |
+          pip install pytest==7.4.4 pytest-asyncio==0.23.3
+          pytest tests/ -q --tb=short
+        continue-on-error: true
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build frontend
+        env:
+          NEXT_PUBLIC_API_BASE_URL: http://localhost:8000/api/v1
+        run: npm run build
+
+      - name: Lint frontend
+        run: npm run lint
+        continue-on-error: true
