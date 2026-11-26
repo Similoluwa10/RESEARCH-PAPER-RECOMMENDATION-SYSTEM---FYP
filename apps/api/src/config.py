@@ -5,6 +5,7 @@ Centralized configuration management using pydantic-settings.
 Loads settings from environment variables and .env files.
 """
 
+import json
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Optional
@@ -48,7 +49,33 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str = ""
     
     # CORS
-    CORS_ORIGINS: List[str] 
+    # Accepts a JSON list ('["https://a.app","https://b.app"]') or a
+    # comma-separated string ("https://a.app,https://b.app").
+    CORS_ORIGINS: str = ""
+    # Optional regex for extra origins, e.g. Vercel preview deployments:
+    # r"https://.*\.vercel\.app"
+    CORS_ORIGIN_REGEX: str = ""
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse CORS_ORIGINS into a clean list (no quotes, spaces or trailing slashes)."""
+        raw = (self.CORS_ORIGINS or "").strip()
+        if not raw:
+            return []
+        items: List[str]
+        if raw.startswith("["):
+            try:
+                items = [str(x) for x in json.loads(raw)]
+            except json.JSONDecodeError:
+                items = raw.strip("[]").split(",")
+        else:
+            items = raw.split(",")
+        cleaned = []
+        for item in items:
+            origin = item.strip().strip("'\"").strip().rstrip("/")
+            if origin:
+                cleaned.append(origin)
+        return cleaned
     
     # NLP/Embeddings
     EMBEDDING_MODEL_NAME: str 

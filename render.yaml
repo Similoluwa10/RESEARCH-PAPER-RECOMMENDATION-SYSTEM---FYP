@@ -49,8 +49,12 @@ services:
         sync: false
 
       # JSON list including the Vercel URL, e.g. ["https://your-app.vercel.app"]
+      # (trailing slashes and comma-separated values are also accepted)
       - key: CORS_ORIGINS
         sync: false
+      # Also allow Vercel preview deployments
+      - key: CORS_ORIGIN_REGEX
+        value: https://.*\.vercel\.app
 
       # Embeddings (ONNX runtime, no PyTorch)
       - key: EMBEDDING_BACKEND

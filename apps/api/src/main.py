@@ -33,6 +33,12 @@ async def lifespan(app: FastAPI):
     """Handle startup and shutdown events."""
     # Startup: Initialize database connections, load models, etc.
     logger.info(f"Starting {settings.APP_NAME}...")
+    # print (not logger) so it always shows in the Render logs
+    print(
+        f"CORS allowed origins: {settings.cors_origins_list} "
+        f"| regex: {settings.CORS_ORIGIN_REGEX or None}",
+        flush=True,
+    )
     
     # Pre-warm embedding model to avoid slowness on first request
     if settings.PREWARM_EMBEDDING_MODEL:
@@ -81,7 +87,8 @@ app = FastAPI(
 # Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=settings.cors_origins_list,
+    allow_origin_regex=settings.CORS_ORIGIN_REGEX or None,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
