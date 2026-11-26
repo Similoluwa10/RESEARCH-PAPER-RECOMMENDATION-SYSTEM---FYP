@@ -87,6 +87,9 @@ class Settings(BaseSettings):
     PREWARM_EMBEDDING_MODEL: bool = True
     # Fit the TF-IDF keyword-search index during startup (memory heavy; off by default)
     PREWARM_TFIDF_BASELINE: bool = False
+    # pgvector IVFFlat lists scanned per query. 100 = all lists of the
+    # "lists = 100" index, i.e. exact results (fast enough for ~20k papers).
+    VECTOR_SEARCH_PROBES: int = 100
 
     # Caching Configuration
     EMBEDDING_CACHE_TTL_SECONDS: int

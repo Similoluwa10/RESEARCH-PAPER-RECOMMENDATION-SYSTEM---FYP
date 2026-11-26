@@ -8,7 +8,7 @@ Handles all database operations for research papers.
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import and_, func, or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import settings
@@ -174,6 +174,15 @@ class PaperRepository(BaseRepository[Paper]):
         # Apply limit: use top_k if specified, otherwise return all results
         if top_k is not None:
             query = query.limit(top_k)
+
+        # pgvector approximate indexes only scan part of the data by default
+        # (IVFFlat: 1 list of 100, HNSW: 40 candidates), and the similarity
+        # filter runs afterwards, which silently drops most matches. Widen the
+        # scan for this transaction so results match an exact search.
+        probes = max(1, int(settings.VECTOR_SEARCH_PROBES))
+        await self.db.execute(text(f"SET LOCAL ivfflat.probes = {probes}"))
+        await self.db.execute(text(f"SET LOCAL hnsw.ef_search = {max(probes, (top_k or 100) * 2, 40)}"))
+
         rows = (await self.db.execute(query)).all()
 
         results: List[Dict[str, Any]] = []
